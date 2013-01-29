@@ -173,7 +173,7 @@ PB.$('#element').getStyle('opacity'); //=> 1.0 float
 
 ---
 
-### morph -> animate ?
+### morph
 
 Morph current style to given styles.
 
@@ -208,16 +208,90 @@ PB.$('#element').morph({
 {Function} - called when animation has finished
 
 ###### Returns
-{MixeObjectd} - this
+{Object} - this
 
 ---
 
 ### hasClass
+
+Returns true if the element has the given class name.
+
+###### Signature
+```js
+PB.$('#element').hasClass('foo')
+```
+###### Arguments
+{String} - classname
+
+###### Returns
+{Boolean} - 
+
+---
+
 ### addClass
+
+Add class to element
+
+###### Signature
+```js
+PB.$('#element').addClass('foo')
+```
+###### Arguments
+{String} - classname
+
+###### Returns
+{Object} - this
+
+---
+
 ### removeClass
 
+Removes the class name from element
+
+###### Signature
+```js
+PB.$('#element').removeClass('foo')
+```
+###### Arguments
+{String} - classname
+
+###### Returns
+{Object} - this
+
+---
+
 ### show
+
+Shows the element
+
+> Using css display property
+
+###### Signature
+```js
+PB.$('#element').show()
+```
+
+###### Returns
+{Object} - this
+
+---
+
 ### hide
+
+Hides the element
+
+> Using css display property
+
+###### Signature
+```js
+PB.$('#element').hide()
+```
+
+###### Returns
+{Object} - this
+
+---
+
 ### isVisible
 ### width
 ### innerWidth
