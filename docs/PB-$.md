@@ -72,11 +72,12 @@ PB('#element').parent();
 
 Returns all childeren of all elements in the collection.
 
-#### Signature
+###### Signature
 ~~~
 PB('#element').childeren()
 ~~~
 
+###### Returns
 {Object} - Childeren
 
 ### firstChild
