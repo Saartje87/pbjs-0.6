@@ -1,7 +1,7 @@
 # Hooks
 In general hooks are usefull when programming browser word-arounds. For example css opacity in IE7/8 when we should use filter but dont want to developer to declare his/her styles twice.
 
-**Hooks should only be declared when the browser does not support a future**
+> Hooks should only be declared when the browser does not support a future
 
 ## Setter example
 ~~~
