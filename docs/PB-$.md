@@ -62,7 +62,7 @@ Returns the parent node of the first element in the collection.
 
 ###### Signature
 ~~~
-PB('#element').parent();
+PB.$('#element').parent();
 ~~~
 
 ###### Returns
@@ -74,7 +74,7 @@ Returns all childeren of all elements in the collection.
 
 ###### Signature
 ~~~
-PB('#element').childeren()
+PB.$('#element').childeren()
 ~~~
 
 ###### Returns
