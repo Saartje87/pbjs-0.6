@@ -40,7 +40,7 @@ Add or overwrite attribute in element.
 
 ###### Signature
 ```javascript
-PB.$('#element').setAttr('key', 'value');
+PB.$('#element').getAttr('key');
 ```
 
 ###### Arguments
@@ -49,14 +49,16 @@ PB.$('#element').setAttr('key', 'value');
 
 ###### Returns
 {Object} - The parent element
+
+---
 
 ### removeAttr
 
-Add or overwrite attribute in element.
+Remove attribute in element.
 
 ###### Signature
 ```javascript
-PB.$('#element').setAttr('key', 'value');
+PB.$('#element').removeAttr('key');
 ```
 
 ###### Arguments
@@ -65,6 +67,8 @@ PB.$('#element').setAttr('key', 'value');
 
 ###### Returns
 {Object} - The parent element
+
+---
 
 ### getVal
 ### setVal
@@ -114,6 +118,8 @@ PB.$('#element').parent();
 ###### Returns
 {Object} - The parent element
 
+---
+
 ### childeren
 
 Returns all childeren of all elements in the collection.
@@ -125,6 +131,8 @@ PB.$('#element').childeren()
 
 ###### Returns
 {Object} - Childeren
+
+---
 
 ### firstChild
 ### lastChild
