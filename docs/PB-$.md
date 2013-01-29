@@ -3,8 +3,10 @@ Element selection can be done by specifying an element id or to give a dom node.
 The PB.$ constructor also handles the creation of dom elements
 
 ```js
+// Get element by id
 PB.$('#element_id')
 
+// PB.$ model arround the document
 PB.$(document)
 
 // Create new element(s)
