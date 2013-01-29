@@ -60,12 +60,12 @@ PB.$('<div class="new">Hello World!</div>')
 
 Returns the parent node of the first element in the collection.
 
-#### Signature
+###### Signature
 ~~~
 PB('#element').parent();
 ~~~
 
-Returns
+###### Returns
 {Object} - The parent element
 
 ### childeren
