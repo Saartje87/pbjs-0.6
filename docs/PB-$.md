@@ -1,7 +1,5 @@
 # PB.$
-
-## PB.$ constructor
-Element selection can be done by specifiyn an element id or to give a dom node.
+Element selection can be done by specifying an element id or to give a dom node.
 The PB.$ constructor also handles the creation of dom elements
 
 ```javascript
