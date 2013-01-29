@@ -4,14 +4,14 @@
 Element selection can be done by specifiyn an element id or to give a dom node.
 The PB.$ constructor also handles the creation of dom elements
 
-~~~
+```javascript
 PB.$('#element_id')
 
 PB.$(document)
 
 // Create new element(s)
 PB.$('<div class="new">Hello World!</div>')
-~~~
+```
 
 ## PB.$.Ready
 
@@ -39,9 +39,9 @@ PB.$('#element').setAttr('key', 'value');
 Add or overwrite attribute in element.
 
 ###### Signature
-~~~
+```javascript
 PB.$('#element').setAttr('key', 'value');
-~~~
+```
 
 ###### Arguments
 {String} - key
@@ -55,9 +55,9 @@ PB.$('#element').setAttr('key', 'value');
 Add or overwrite attribute in element.
 
 ###### Signature
-~~~
+```javascript
 PB.$('#element').setAttr('key', 'value');
-~~~
+```
 
 ###### Arguments
 {String} - key
@@ -107,9 +107,9 @@ PB.$('#element').setAttr('key', 'value');
 Returns the parent node of the first element in the collection.
 
 ###### Signature
-~~~
+```javascript
 PB.$('#element').parent();
-~~~
+```
 
 ###### Returns
 {Object} - The parent element
@@ -119,9 +119,9 @@ PB.$('#element').parent();
 Returns all childeren of all elements in the collection.
 
 ###### Signature
-~~~
+```javascript
 PB.$('#element').childeren()
-~~~
+```
 
 ###### Returns
 {Object} - Childeren
