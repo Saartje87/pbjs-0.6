@@ -17,6 +17,21 @@ PB.$('<div class="new">Hello World!</div>')
 
 
 ### setAttr
+
+Add or overwrite attribute in element.
+
+###### Signature
+~~~
+PB.$('#element').setAttr('key', 'value');
+~~~
+
+###### Arguments
+{String} - key
+{String} - value
+
+###### Returns
+{Object} - The parent element
+
 ### getAttr
 ### removeAttr
 
