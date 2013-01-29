@@ -293,6 +293,20 @@ PB.$('#element').hide()
 ---
 
 ### isVisible
+
+Checks whether the element is visible or not
+
+###### Signature
+```js
+PB.$('#element').isVisible()
+```
+
+###### Returns
+{Boolean} - 
+
+---
+
+*** Should width be width or getWidth ??? ***
 ### width
 ### innerWidth
 ### outerWidth
@@ -303,11 +317,64 @@ PB.$('#element').hide()
 ### scrollHeight
 
 ### getXY -> returns position
-### left
-### top
 
-### scrollLeft
-### scrollTop
+Get position from offset element, if getXY(true) is given it will return position from body.
+
+###### Signature
+```js
+// Position from offset parent
+PB.$('#element').getXY();
+
+// Posisition on body
+PB.$('#element').getXY(true);
+```
+
+###### Arguments
+{Boolean} - calculate from body
+
+###### Returns
+{Object} - {top: x, left: x}
+
+---
+
+### setScroll
+
+###### Signature
+```js
+// Position from offset parent
+PB.$('#element').setScroll({
+	
+	top: 200,
+	left: 10
+});
+
+// Posisition on body
+PB.$('#element').setScroll({
+	
+	left: 0
+});
+```
+
+###### Arguments
+{Object} - {top: x, left: y}
+
+###### Returns
+{Object} - this
+
+---
+
+### getScroll
+
+###### Signature
+```js
+// Position from offset parent
+PB.$('#element').getScroll();
+```
+
+###### Returns
+{Object} - {top: x, left: x}
+
+---
 
 # Traversal
 
