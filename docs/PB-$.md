@@ -12,7 +12,12 @@ PB.$('<div class="new">Hello World!</div>')
 ```
 
 ## PB.$.Ready
-
+```javascript
+PB.$.ready(function () {
+	
+	// Document ready to be touched
+});
+```
 
 ### setAttr
 
