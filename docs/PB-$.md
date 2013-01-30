@@ -31,7 +31,7 @@ PB.$('#element').setAttr('key', 'value');
 ```
 
 ###### Arguments
-{String} - key
+{String} - key  
 {String} - value
 
 ###### Returns
@@ -141,7 +141,7 @@ PB.$('#element').setStyle({
 });
 ```
 ###### Arguments
-{Object/String} - css keys/values
+{Object/String} - css keys/values  
 {mixed}* - Optional, css value
 
 ###### Returns
@@ -202,9 +202,9 @@ PB.$('#element').morph({
 });
 ```
 ###### Arguments
-{Object} - styles
-{Numeric} - duration in seconds
-{String} - transition function
+{Object} - styles  
+{Numeric} - duration in seconds  
+{String} - transition function  
 {Function} - called when animation has finished
 
 ###### Returns
