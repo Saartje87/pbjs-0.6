@@ -527,12 +527,154 @@ PB.$('#element').remove();
 # Events
 
 ### on
+
+Add event(s) to element. Can assign callback to multiple event types.
+
+> mouseenter / mouseleave support  
+> normalized event for older browsers (tested on ie 7/8)  
+> normalized event properties/methods; currentTarget, preventDefault(), stopPropagation()
+
+###### Signature
+```javascript
+// Basic event assignment
+PB.$('#element').on('click', function () {
+	
+	// Stuff
+});
+
+// Context handling
+PB.$('#element').on('click', function () {
+	
+	
+}, this);
+
+// Handle multiple event types
+PB.$('#element').on('mouseenter mouseleave', function () {
+	
+	switch ( e.type ) {
+		
+		case 'mouseenter':
+			break;
+		
+		case 'mouseleave':
+			break;
+	}
+});
+```
+###### Arguments
+{String} - event type(s)
+{Function} - callback
+{Object}* - Optional, context
+
+###### Returns
+{Object} - this
+
+---
+
 ### off
+
+Remove event from element.
+
+> context is not considered in removing event  
+> Should we support the removal of multiple event types?
+
+###### Signature
+```javascript
+// Basic event removal
+PB.$('#element').off('click', functionName);
+
+// Removing all event from given event type
+PB.$('#element').off('click');
+
+// Remove all events from element
+PB.$('#element').off();
+```
+###### Arguments
+{String} - event type(s)
+{Function} - callback
+
+###### Returns
+{Object} - this
+
+---
+
 ### once
+
+Add event to element, when triggered the event is removed.
+
+> Method works the same as PB.$.on <-- link
+
+###### Signature
+```javascript
+// Basic event assignment
+PB.$('#element').once('click', function () {
+	
+	// Stuff
+});
+```
+###### Arguments
+{String} - event type(s)
+{Function} - callback
+{Object}* - Optional, context
+
+###### Returns
+{Object} - this
+
+---
+
 ### emit
 
+Trigger the given event
+
+###### Signature
+```javascript
+// Basic event assignment
+PB.$('#element').emit('click');
+```
+###### Arguments
+{String} - event type
+
+###### Returns
+{Object} - this
+
+---
+
 ### empty
+
+Empty the element. 
+
+> Short for PB.$.setHtml('').
+
+###### Signature
+```javascript
+PB.$('#element').empty();
+
+###### Returns
+{Object} - this
+
+---
+
 ### clone
+
+Clone element, add true  to argument when childs should be cloned to. 
+
+> Method should also clone events and data?
+
+###### Signature
+```javascript
+// Only clone element
+PB.$('#element').clone();
+
+// Clone element and childs
+PB.$('#element').clone(true);
+```
+###### Arguments
+{Boolean} - true if childs should be cloned
+
+###### Returns
+{Object} - the cloned element
+
+---
 
 ### getHtml
 ### setHtml
