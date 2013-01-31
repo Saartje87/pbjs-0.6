@@ -2,7 +2,8 @@
 Element selection can be done by specifying an element id or to give a dom node.
 The PB.$ constructor also handles the creation of dom elements
 
-> PB.$ only supports / returns elements which nodeType = 1 (ELEMENT_NODE) or 11 (DOCUMENT_FRAGMENT_NODE). So textnodes won't be returned. 
+> PB.$ only supports / returns elements which nodeType = 1 (ELEMENT_NODE) or 11 (DOCUMENT_FRAGMENT_NODE). So textnodes won't be returned.  
+> Some methods only work as expected on modern browsers, older/ancient browsers do support the method but not all the functionality. For example our morph method, on browsers that support css transition there will be a nice animation, on ie 7/8/9 it act like a setStyle (so no animation on this browsers).
 
 ```js
 // Get element by id
