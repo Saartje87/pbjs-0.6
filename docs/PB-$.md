@@ -2,15 +2,17 @@
 Element selection can be done by specifying an element id or to give a dom node.
 The PB.$ constructor also handles the creation of dom elements
 
+> PB.$ only supports / returns elements which nodeType = 1 (ELEMENT_NODE) or 11 (DOCUMENT_FRAGMENT_NODE). So textnodes won't be returned. 
+
 ```js
 // Get element by id
-PB.$('#element_id')
+PB.$('#element_id');
 
 // PB.$ model arround the document
-PB.$(document)
+PB.$(document);
 
 // Create new element(s)
-PB.$('<div class="new">Hello World!</div>')
+PB.$('<div class="new">Hello World!</div>');
 ```
 
 ## PB.$.Ready
@@ -218,7 +220,7 @@ Returns true if the element has the given class name.
 
 ###### Signature
 ```js
-PB.$('#element').hasClass('foo')
+PB.$('#element').hasClass('foo');
 ```
 ###### Arguments
 {String} - classname
@@ -234,7 +236,7 @@ Add class to element
 
 ###### Signature
 ```js
-PB.$('#element').addClass('foo')
+PB.$('#element').addClass('foo');
 ```
 ###### Arguments
 {String} - classname
@@ -250,7 +252,7 @@ Removes the class name from element
 
 ###### Signature
 ```js
-PB.$('#element').removeClass('foo')
+PB.$('#element').removeClass('foo');
 ```
 ###### Arguments
 {String} - classname
@@ -268,7 +270,7 @@ Shows the element
 
 ###### Signature
 ```js
-PB.$('#element').show()
+PB.$('#element').show();
 ```
 
 ###### Returns
@@ -298,7 +300,7 @@ Checks whether the element is visible or not
 
 ###### Signature
 ```js
-PB.$('#element').isVisible()
+PB.$('#element').isVisible();
 ```
 
 ###### Returns
@@ -388,7 +390,7 @@ PB.$('#element').parent();
 ```
 
 ###### Returns
-{Object} - The parent element
+{Object} - Collection containing the parent element
 
 ---
 
@@ -398,21 +400,118 @@ Returns all childeren of all elements in the collection.
 
 ###### Signature
 ```javascript
-PB.$('#element').childeren()
+PB.$('#element').childeren();
 ```
 
 ###### Returns
-{Object} - Childeren
+{Object} - Collection containing all childeren
 
 ---
 
 ### firstChild
+
+Returns the first child element
+
+###### Signature
+```javascript
+PB.$('#element').firstChild();
+```
+
+###### Returns
+{Object} - Collection containing the first child
+
+---
+
 ### lastChild
+
+Returns the last child element
+
+###### Signature
+```javascript
+PB.$('#element').lastChild();
+```
+
+###### Returns
+{Object} - Collection containing the last child
+
+---
+
 ### next
+
+Returns the next sibling of the first element in our collection
+
+###### Signature
+```javascript
+PB.$('#element').next();
+```
+
+###### Returns
+{Object} - Collection containing the next sibling
+
+---
+
 ### prev
+
+Returns the previous sibling of the first element in our collection
+
+###### Signature
+```javascript
+PB.$('#element').prev();
+```
+
+###### Returns
+{Object} - Collection containing the previous sibling
+
+---
+
 ### closest
-### remove
+
+Bubbles up the dom three for a max iterations or when it matches the given selector.
+Returns element if found null otherwise.
+
+###### Signature
+```javascript
+PB.$('#element').closest('div.match-me');
+```
+###### Arguments
+{String} - CSS selector
+
+###### Returns
+{Object} - Collection containing the previous sibling
+
+---
+
 ### find
+
+Find elements trough CSS selector. Searching from context.
+
+> For CSS selectors we use [Qwery](https://www.google.com) - The Tiny Selector Engine
+
+###### Signature
+```javascript
+PB.$('#element').find('div.find-me');
+```
+###### Arguments
+{String} - CSS selector
+
+###### Returns
+{Object} - Collection containing the previous sibling
+
+---
+
+### remove
+
+Remove element from document and removes cached entries.
+
+###### Signature
+```javascript
+PB.$('#element').remove();
+```
+
+###### Returns
+{Void} - null
+
+---
 
 # Insertion
 
@@ -444,3 +543,12 @@ PB.$('#element').childeren()
 ### getData
 ### setData
 ### removeData
+
+
+*Ideas*
+### first
+### last
+### get
+### push
+### filter
+### forEach
