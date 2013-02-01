@@ -517,12 +517,116 @@ PB.$('#element').remove();
 # Insertion
 
 ### append
+
+Append target element to element.
+
+###### Signature
+```javascript
+PB.$('#element').append( '#target-element' );
+```
+###### Arguments
+{Mixed} - Target element, can handle everything the PB.$ constructor can
+
+###### Returns
+{Object} - this
+
+---
+
 ### appendTo
+
+Append element to target element.
+
+###### Signature
+```javascript
+PB.$('#element').appendTo( '#target-element' );
+```
+###### Arguments
+{Mixed} - Target element, can handle everything the PB.$ constructor can
+
+###### Returns
+{Object} - this
+
+---
+
 ### insertBefore
+
+Insert element before target element.
+
+###### Signature
+```javascript
+PB.$('#element').insertBefore( '#target-element' );
+```
+###### Arguments
+{Mixed} - Target element, can handle everything the PB.$ constructor can
+
+###### Returns
+{Object} - this
+
+---
+
 ### insertAfter
+
+Insert element after target element.
+
+###### Signature
+```javascript
+PB.$('#element').insertBefore( '#target-element' );
+```
+###### Arguments
+{Mixed} - Target element, can handle everything the PB.$ constructor can
+
+###### Returns
+{Object} - this
+
+---
+
 ### prepend
+
+Insert target element as first child element to the element.
+
+###### Signature
+```javascript
+PB.$('#element').prepend( '#target-element' );
+```
+###### Arguments
+{Mixed} - Target element, can handle everything the PB.$ constructor can
+
+###### Returns
+{Object} - this
+
+---
+
 ### prependTo
+
+Insert element as first child element to the target element.
+
+###### Signature
+```javascript
+PB.$('#element').prependTo( '#target-element' );
+```
+###### Arguments
+{Mixed} - Target element, can handle everything the PB.$ constructor can
+
+###### Returns
+{Object} - this
+
+---
+
 ### replace
+
+Replace the target element with our element.
+
+###### Signature
+```javascript
+PB.$('#element').replace( '#target-element' );
+```
+###### Arguments
+{Mixed} - Target element, can handle everything the PB.$ constructor can
+
+###### Returns
+{Object} - this
+
+---
 
 # Events
 
@@ -648,6 +752,7 @@ Empty the element.
 ###### Signature
 ```javascript
 PB.$('#element').empty();
+```
 
 ###### Returns
 {Object} - this
@@ -677,9 +782,76 @@ PB.$('#element').clone(true);
 ---
 
 ### getHtml
+
+Clone element, add true  to argument when childs should be cloned to. 
+
+> Method should also clone events and data?
+
+###### Signature
+```javascript
+// Only clone element
+PB.$('#element').clone();
+
+// Clone element and childs
+PB.$('#element').clone(true);
+```
+###### Arguments
+{Boolean} - true if childs should be cloned
+
+###### Returns
+{Object} - the cloned element
+
+---
+
 ### setHtml
-### getText
+
+Set the `innerHTML` of element
+
+> Note, inserting html in table element is buggy on IE, this should be fixed.
+
+###### Signature
+```javascript
+PB.$('#element').setHtml('<h1>Hello World!</h1>');
+```
+###### Arguments
+{String} - valid html string
+
+###### Returns
+{Object} - this
+
+---
+
+### getHtml
+
+Get the `innerHTML` of element
+
+###### Signature
+```javascript
+PB.$('#element').getHtml(); //=> <h1>Hello World!</h1>
+```
+
+###### Returns
+{String} - html
+
+---
+
 ### setText
+
+Set the `text` of element
+
+###### Signature
+```javascript
+PB.$('#element').setText('Hello world!');
+```
+###### Arguments
+{String} - text
+
+###### Returns
+{Object} - this
+
+---
+
+### getText
 
 ### contains
 
