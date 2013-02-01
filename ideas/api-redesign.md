@@ -23,6 +23,7 @@ PB.$('#id').find('a').getStyle('color');
 - More usefull methods for OOP? (zoejs)
 - Easy seperation of modules (request,dom,class,core)
 - JSONP
+- Easy intergration of custom selectors?
 
 // $ -> aka dom
 Always use setters and getters
