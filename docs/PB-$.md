@@ -323,6 +323,8 @@ PB.$('#element').isVisible();
 
 Get position from offset element, if getXY(true) is given it will return position from body.
 
+> Development reminder, use [getBoundingClientRect](https://developer.mozilla.org/en-US/docs/DOM/element.getBoundingClientRect)
+
 ###### Signature
 ```js
 // Position from offset parent
