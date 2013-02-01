@@ -649,7 +649,7 @@ PB.$('#element').on('click', function () {
 // Context handling
 PB.$('#element').on('click', function () {
 	
-	
+	// Stuff
 }, this);
 
 // Handle multiple event types
@@ -666,8 +666,8 @@ PB.$('#element').on('mouseenter mouseleave', function () {
 });
 ```
 ###### Arguments
-{String} - event type(s)
-{Function} - callback
+{String} - event type(s)  
+{Function} - callback  
 {Object}* - Optional, context
 
 ###### Returns
@@ -694,7 +694,7 @@ PB.$('#element').off('click');
 PB.$('#element').off();
 ```
 ###### Arguments
-{String} - event type(s)
+{String} - event type(s)  
 {Function} - callback
 
 ###### Returns
@@ -717,8 +717,8 @@ PB.$('#element').once('click', function () {
 });
 ```
 ###### Arguments
-{String} - event type(s)
-{Function} - callback
+{String} - event type(s)  
+{Function} - callback  
 {Object}* - Optional, context
 
 ###### Returns
