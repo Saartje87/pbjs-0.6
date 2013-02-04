@@ -2,7 +2,7 @@
 
 *PB.Class([parentClass], classDefenition);*
 
-~~~
+~~~js
 var Foo = PB.Class({
 	
 	construct: function () {
@@ -16,7 +16,7 @@ new Foo();
 
 ## Inheretence
 
-~~~
+~~~js
 var Parent = PB.Class({
 	
 	contruct: function () {
