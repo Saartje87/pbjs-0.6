@@ -31,6 +31,11 @@ Add or overwrite attribute in element.
 ###### Signature
 ```js
 PB.$('#element').setAttr('key', 'value');
+
+PB.$('#element').setAttr({
+	
+	key: 'value'
+});
 ```
 
 ###### Arguments
