@@ -265,7 +265,7 @@ PB.$('#element').removeClass('foo');
 
 ### show
 
-Shows the element
+Shows the element(s)
 
 > Using css display property
 
@@ -281,7 +281,7 @@ PB.$('#element').show();
 
 ### hide
 
-Hides the element
+Hides the element(s)
 
 > Using css display property
 
@@ -310,9 +310,59 @@ PB.$('#element').isVisible();
 ---
 
 *** Should width be width or getWidth ??? ***
+> methods that do not start with get or set and look like thay can handle set/get are only used as getters!
+> For exampe, get the width of an element `PB.$('#element').width() //=> Return pixel value`
+> And for setting the width `PB.$('#element').setStyle('width', 100)`
+> also setting the innerwidth of element doesn't make that much sence to me..
+
 ### width
+
+Get width measured in pixels.
+
+> Todo: Descripe width
+
+###### Signature
+```js
+PB.$('#element').width();
+```
+
+###### Returns
+{Number} - in pixels
+
+---
+
 ### innerWidth
+
+Get inner width measured in pixels.
+
+> Todo: Descripe width
+
+###### Signature
+```js
+PB.$('#element').innerWidth();
+```
+
+###### Returns
+{Number} - in pixels
+
+---
+
 ### outerWidth
+
+Get outer width measured in pixels.
+
+> Todo: Descripe width
+
+###### Signature
+```js
+PB.$('#element').outerWidth();
+```
+
+###### Returns
+{Number} - in pixels
+
+---
+
 ### scrollWidth
 ### height
 ### innerHeight
@@ -324,6 +374,7 @@ PB.$('#element').isVisible();
 Get position from offset element, if getXY(true) is given it will return position from body.
 
 > Development reminder, use [getBoundingClientRect](https://developer.mozilla.org/en-US/docs/DOM/element.getBoundingClientRect)
+> Ideo to create two methods `PB.$('#element').xy()` and `PB.$('#element').xy()`. One for position to first offsetParent, second for the position in document. `offset` -> from offsetParent `position` -> from body.
 
 ###### Signature
 ```js
@@ -475,9 +526,13 @@ Returns element if found null otherwise.
 ###### Signature
 ```javascript
 PB.$('#element').closest('div.match-me');
+
+// Travels to max 5 parent nodes.
+PB.$('#element').closest('div.match-me', 5);
 ```
 ###### Arguments
 {String} - CSS selector
+{Number} - Max iterations (Default 50)
 
 ###### Returns
 {Object} - Collection containing the previous sibling
@@ -486,7 +541,7 @@ PB.$('#element').closest('div.match-me');
 
 ### find
 
-Find elements trough CSS selector. Searching from context.
+Find elements trough CSS selector. Searching from context. Will return a new collection.
 
 > For CSS selectors we use [Qwery](https://www.google.com) - The Tiny Selector Engine
 
@@ -498,7 +553,7 @@ PB.$('#element').find('div.find-me');
 {String} - CSS selector
 
 ###### Returns
-{Object} - Collection containing the previous sibling
+{Object} - New collection containing the matched elements.
 
 ---
 
@@ -855,12 +910,88 @@ PB.$('#element').setText('Hello world!');
 
 ### getText
 
+Get the `text` of element
+
+###### Signature
+```javascript
+PB.$('#element').getText(); //=> 'Hello world!'
+```
+
+###### Returns
+{String} - text
+
+---
+
 ### contains
 
-### getData
+Check if given element is descendant.
+
+###### Signature
+```javascript
+// True
+PB.$(document.body).contains('#element');
+
+// False
+PB.$('#element').contains(document.body);
+```
+###### Arguments
+{Object} - PB.$
+
+###### Returns
+{Boolean} - this
+
+---
+
 ### setData
+
+Set data.
+
+###### Signature
+```javascript
+PB.$('#element').setData('key', 'value');
+
+//PB.$('#element').setData('key', {key: "value"});
+```
+###### Arguments
+{String} - key
+{Mixed} - value
+
+###### Returns
+{Boolean} - this
+
+---
+
+### getData
+
+Get data from attibute, will first look in memory then will chech data- attribute.
+
+###### Signature
+```javascript
+PB.$('#element').getData('key'); //=> 'value'
+```
+###### Arguments
+{String} - key
+
+###### Returns
+{Mixed} - value
+
+---
+
 ### removeData
 
+Remove data.
+
+###### Signature
+```javascript
+PB.$('#element').removeData('key');
+```
+###### Arguments
+{String} - key
+
+###### Returns
+{Object} - this
+
+---
 
 *Ideas*
 ### first
