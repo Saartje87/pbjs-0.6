@@ -2,6 +2,8 @@
 
 Pbjs dom handling!
 
+---
+
 ### PB.$.Ready
 
 Add callback for when the dom is ready for manipulation.
