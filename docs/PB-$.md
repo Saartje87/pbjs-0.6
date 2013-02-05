@@ -1,10 +1,31 @@
 # PB.$
-Element selection can be done by specifying an element id or to give a dom node.
-The PB.$ constructor also handles the creation of dom elements
+
+Pbjs dom handling!
+
+## PB.$.Ready
+
+Add callback for when the dom is ready for manipulation.
+
+###### Signature
+```js
+PB.$.ready(function ( $ ) {
+	
+	// Document ready to be touched
+});
+```
+
+### Constructor
+
+PB.$ will return a wrapper arround arround the the given element. The constructor handles a few types of arguments.
+
+* String starting with #, will try to find element by id.
+* String starting with < and ending with >, will try to create an element.
+* DOM node, retuns a wrapper arround the given node.
+* Idea: Array of DOM nodes, maybe even strings? or handle multiple arguments..
 
 > PB.$ only supports / returns elements which nodeType = 1 (ELEMENT_NODE) or 11 (DOCUMENT_FRAGMENT_NODE). So textnodes won't be returned.  
-> Some methods only work as expected on modern browsers, older/ancient browsers do support the method but not all the functionality. For example our morph method, on browsers that support css transition there will be a nice animation, on ie 7/8/9 it act like a setStyle (so no animation on this browsers).
 
+###### Signature
 ```js
 // Get element by id
 PB.$('#element_id');
@@ -16,13 +37,13 @@ PB.$(document);
 PB.$('<div class="new">Hello World!</div>');
 ```
 
-## PB.$.Ready
-```js
-PB.$.ready(function () {
-	
-	// Document ready to be touched
-});
-```
+###### Arguments
+{Mixed} - string, DOM node
+
+###### Returns
+{Object} - this
+
+---
 
 ### setAttr
 
@@ -183,12 +204,10 @@ PB.$('#element').getStyle('opacity'); //=> 1.0 float
 
 ### morph
 
-Morph current style to given styles.
+Morph/animate element to given styles.
 
-> Order of optional arguments doesn't matter
-
-
-> For now, browsers that not support css transitions will have an styles applied immediately, using setStyle.
+> First argument of this method requires a object, the last arguments don't require a specific order.
+> At this moment the morph method only uses css transition, and there for using morph in an 'older' browser will have instant styles applied.
 
 ###### Signature
 ```js
@@ -809,7 +828,7 @@ PB.$('#element').emit('click');
 
 Empty the element. 
 
-> Short for PB.$.setHtml('').
+> Short for PB.$('#element').setHtml('').
 
 ###### Signature
 ```javascript
@@ -822,28 +841,6 @@ PB.$('#element').empty();
 ---
 
 ### clone
-
-Clone element, add true  to argument when childs should be cloned to. 
-
-> Method should also clone events and data?
-
-###### Signature
-```javascript
-// Only clone element
-PB.$('#element').clone();
-
-// Clone element and childs
-PB.$('#element').clone(true);
-```
-###### Arguments
-{Boolean} - true if childs should be cloned
-
-###### Returns
-{Object} - the cloned element
-
----
-
-### getHtml
 
 Clone element, add true  to argument when childs should be cloned to. 
 
@@ -929,7 +926,7 @@ PB.$('#element').getText(); //=> 'Hello world!'
 
 ### contains
 
-Check if given element is descendant.
+Check if given element is descendant of this.
 
 ###### Signature
 ```javascript
@@ -955,7 +952,11 @@ Set data.
 ```javascript
 PB.$('#element').setData('key', 'value');
 
-//PB.$('#element').setData('key', {key: "value"});
+PB.$('#element').setData({
+	
+	key1: 'value1',
+	key2: 'value2'
+});
 ```
 ###### Arguments
 {String} - key
