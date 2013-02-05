@@ -2,7 +2,7 @@
 
 Pbjs dom handling!
 
-## PB.$.Ready
+### PB.$.Ready
 
 Add callback for when the dom is ready for manipulation.
 
@@ -13,6 +13,14 @@ PB.$.ready(function ( $ ) {
 	// Document ready to be touched
 });
 ```
+
+###### Arguments
+{Function} - callback
+
+###### Returns
+{Void}
+
+---
 
 ### Constructor
 
