@@ -34,6 +34,7 @@ PB.$ will return a wrapper arround arround the the given element. The constructo
 * Idea: Array of DOM nodes, maybe even strings? or handle multiple arguments..
 
 > PB.$ only supports / returns elements which nodeType = 1 (ELEMENT_NODE) or 11 (DOCUMENT_FRAGMENT_NODE). So textnodes won't be returned.  
+> If the contructor failed to handle the argument correctly it will return null instead of a collection.  
 
 ###### Signature
 ```js
@@ -48,7 +49,7 @@ PB.$('<div class="new">Hello World!</div>');
 ```
 
 ###### Arguments
-{Mixed} - string, DOM node
+{Mixed} - string, DOM node, null
 
 ###### Returns
 {Object} - this
@@ -57,7 +58,7 @@ PB.$('<div class="new">Hello World!</div>');
 
 ### setAttr
 
-Add or overwrite attribute in element.
+Set the given attribute(s) for every element in de set.
 
 ###### Signature
 ```js
@@ -80,7 +81,7 @@ PB.$('#element').setAttr({
 
 ### getAttr
 
-Get attribute in element.
+Get the attribute value from the first element in the set.
 
 ###### Signature
 ```js
@@ -97,7 +98,7 @@ PB.$('#element').getAttr('key'); //=> return value
 
 ### removeAttr
 
-Remove attribute in element.
+Remove the given attribute(s) for every element in de set.
 
 ###### Signature
 ```javascript
@@ -114,7 +115,7 @@ PB.$('#element').removeAttr('key');
 
 ### setValue
 
-Set or overwrite value of form element (input, button,..).
+Set the given value for every element in the set. Hellpfull for form elements.
 
 ###### Signature
 ```js
@@ -131,7 +132,7 @@ PB.$('#element').setValue('value');
 
 ### getValue
 
-Get value
+Get the value from the first element in the set.
 
 ###### Signature
 ```js
@@ -143,25 +144,9 @@ PB.$('#element').getValue(); //=> 'value'
 
 ---
 
-### removeValue
-
-Remove value
-
-###### Signature
-```js
-PB.$('#element').removeValue();
-```
-
-###### Returns
-{Object} - this
-
----
-
-### serializeForm
-
 ### setStyle
 
-Set *inline* css style(s) to elements.
+Set *inline* css style(s) for every element in the set.
 
 > Both camelcase (fontSize) and css case(font-size) are supported
 
@@ -190,13 +175,13 @@ PB.$('#element').setStyle({
 
 ### getStyle
 
-Get css style from elements.
+Get css style from the first element in the set.
 
 > Both camelcase (fontSize) and css case(font-size) are supported.
 
-> If retuned value is a pixel value, it will be returned as an integer.
+> Pixel values will always be returned as a number.
 
-> First the inline styles are evaluated, then the computed values.
+> First the inline styles are evaluated, then the computed values. If seconds argument if specified as true it will only use the calculated value and skip inline style.
 
 ###### Signature
 ```js
@@ -206,6 +191,7 @@ PB.$('#element').getStyle('opacity'); //=> 1.0 float
 ```
 ###### Arguments
 {String} - css key
+{Boolean} - false by default. true if value should be calculated
 
 ###### Returns
 {Mixed} - string/numeric
@@ -214,10 +200,13 @@ PB.$('#element').getStyle('opacity'); //=> 1.0 float
 
 ### morph
 
-Morph/animate element to given styles.
+Morph current css styles to given css styles for every element in the set.
 
 > First argument of this method requires a object, the last arguments don't require a specific order.
+
 > At this moment the morph method only uses css transition, and there for using morph in an 'older' browser will have instant styles applied.
+
+> Relative values like jQuery does arre not supported. `{ width: '-400px' }`
 
 ###### Signature
 ```js
@@ -251,7 +240,7 @@ PB.$('#element').morph({
 
 ### hasClass
 
-Returns true if the element has the given class name.
+Returns true if the first element in the set has the given class name.
 
 ###### Signature
 ```js
@@ -267,11 +256,16 @@ PB.$('#element').hasClass('foo');
 
 ### addClass
 
-Add class to element
+Add class(es) to every element in the set.
+
+> Multiple classes can be added by specifiying a comma.
 
 ###### Signature
 ```js
 PB.$('#element').addClass('foo');
+
+// Add two classes to element, if already existing wont be added again
+PB.$('#element').addClass('foo bar');
 ```
 ###### Arguments
 {String} - classname
@@ -283,7 +277,7 @@ PB.$('#element').addClass('foo');
 
 ### removeClass
 
-Removes the class name from element
+Removes class(es) from every element in the set.
 
 ###### Signature
 ```js
@@ -409,6 +403,7 @@ Get position from offset element, if getXY(true) is given it will return positio
 
 > Development reminder, use [getBoundingClientRect](https://developer.mozilla.org/en-US/docs/DOM/element.getBoundingClientRect)
 > Ideo to create two methods `PB.$('#element').xy()` and `PB.$('#element').xy()`. One for position to first offsetParent, second for the position in document. `offset` -> from offsetParent `position` -> from body.
+> Should consider scrollTop/Left..
 
 ###### Signature
 ```js
@@ -1008,6 +1003,8 @@ PB.$('#element').removeData('key');
 {Object} - this
 
 ---
+
+### serializeForm
 
 *Ideas*
 ### first
