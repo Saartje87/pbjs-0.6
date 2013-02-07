@@ -71,7 +71,7 @@ PB.$('#element').setAttr({
 ```
 
 ###### Arguments
-{String} - key  
+{String/Object} - key  
 {String} - value
 
 ###### Returns
@@ -202,11 +202,11 @@ PB.$('#element').getStyle('opacity'); //=> 1.0 float
 
 Morph current css styles to given css styles for every element in the set.
 
-> First argument of this method requires a object, the last arguments don't require a specific order.
+> First argument of this method requires a object, the other arguments don't require a specific order.
 
-> At this moment the morph method only uses css transition, and there for using morph in an 'older' browser will have instant styles applied.
+> At this moment the morph method only uses css transition, and therefor using morph in an 'older' browser will have instant styles applied.
 
-> Relative values like jQuery does arre not supported. `{ width: '-400px' }`
+> Relative values like jQuery does arre not supported. `{ width: '-=400px' }`
 
 ###### Signature
 ```js
@@ -230,7 +230,7 @@ PB.$('#element').morph({
 ###### Arguments
 {Object} - styles  
 {Numeric} - duration in seconds  
-{String} - transition function  
+{String} - transition function (Bezier curve is supported for modern browsers)  
 {Function} - called when animation has finished
 
 ###### Returns
@@ -258,17 +258,17 @@ PB.$('#element').hasClass('foo');
 
 Add class(es) to every element in the set.
 
-> Multiple classes can be added by specifiying a comma.
+> Multiple classes can be added by specifiying a whitespace.
 
 ###### Signature
 ```js
 PB.$('#element').addClass('foo');
 
-// Add two classes to element, if already existing wont be added again
+// Add multiple classes
 PB.$('#element').addClass('foo bar');
 ```
 ###### Arguments
-{String} - classname
+{String} - classname(s)
 
 ###### Returns
 {Object} - this
@@ -282,6 +282,8 @@ Removes class(es) from every element in the set.
 ###### Signature
 ```js
 PB.$('#element').removeClass('foo');
+
+PB.$('#element').removeClass('foo bar');
 ```
 ###### Arguments
 {String} - classname
@@ -293,9 +295,9 @@ PB.$('#element').removeClass('foo');
 
 ### show
 
-Shows the element(s)
+Shows every element in the set.
 
-> Using css display property
+> Show will only alter the css display property.
 
 ###### Signature
 ```js
@@ -309,9 +311,9 @@ PB.$('#element').show();
 
 ### hide
 
-Hides the element(s)
+Hides every element in the set.
 
-> Using css display property
+> Hide uses `display: none`.
 
 ###### Signature
 ```js
@@ -325,7 +327,7 @@ PB.$('#element').hide()
 
 ### isVisible
 
-Checks whether the element is visible or not
+Returns true if every element in the set is visible, false otherwise.
 
 ###### Signature
 ```js
@@ -345,9 +347,9 @@ PB.$('#element').isVisible();
 
 ### width
 
-Get width measured in pixels.
+Retrieve width from the first element in the set.
 
-> Todo: Descripe width
+> Width is the element width without margins and borders. (padding?)
 
 ###### Signature
 ```js
@@ -361,9 +363,9 @@ PB.$('#element').width();
 
 ### innerWidth
 
-Get inner width measured in pixels.
+Retrieve inner width from the first element in the set.
 
-> Todo: Descripe width
+> Inner width is the width + padding.
 
 ###### Signature
 ```js
@@ -377,9 +379,9 @@ PB.$('#element').innerWidth();
 
 ### outerWidth
 
-Get outer width measured in pixels.
+Retrieve outer width from the first element in the set.
 
-> Todo: Descripe width
+> Inner width is the width + border.
 
 ###### Signature
 ```js
@@ -424,6 +426,8 @@ PB.$('#element').getXY(true);
 
 ### setScroll
 
+Set scroll for every element in the set.
+
 ###### Signature
 ```js
 // Position from offset parent
@@ -450,6 +454,8 @@ PB.$('#element').setScroll({
 
 ### getScroll
 
+Get scroll from te first element in the set.
+
 ###### Signature
 ```js
 // Position from offset parent
@@ -465,7 +471,7 @@ PB.$('#element').getScroll();
 
 ### parent
 
-Returns the parent node of the first element in the collection.
+Returns the parent node of the first element in the set.
 
 ###### Signature
 ```javascript
@@ -479,7 +485,9 @@ PB.$('#element').parent();
 
 ### childeren
 
-Returns all childeren of all elements in the collection.
+Returns the childeren for the first element in the set.
+
+> Should this be for the first or all? Performance wise only first one would be nice..
 
 ###### Signature
 ```javascript
@@ -487,13 +495,13 @@ PB.$('#element').childeren();
 ```
 
 ###### Returns
-{Object} - Collection containing all childeren
+{Object} - Collection containing childeren
 
 ---
 
 ### firstChild
 
-Returns the first child element
+Returns the first child from the first element in the set.
 
 ###### Signature
 ```javascript
@@ -507,7 +515,7 @@ PB.$('#element').firstChild();
 
 ### lastChild
 
-Returns the last child element
+Returns the last child from the first element in the set.
 
 ###### Signature
 ```javascript
@@ -521,7 +529,7 @@ PB.$('#element').lastChild();
 
 ### next
 
-Returns the next sibling of the first element in our collection
+Returns the next sibling of the first element in this set.
 
 ###### Signature
 ```javascript
@@ -535,7 +543,7 @@ PB.$('#element').next();
 
 ### prev
 
-Returns the previous sibling of the first element in our collection
+Returns the previous sibling of the first element in this set.
 
 ###### Signature
 ```javascript
@@ -548,6 +556,8 @@ PB.$('#element').prev();
 ---
 
 ### closest
+
+Matches self and then the parent nodes trough a CSS expresion until the expresion matches, body or the max iterations (second argument) is reached.
 
 Bubbles up the dom three for a max iterations or when it matches the given selector.
 Returns element if found null otherwise.
