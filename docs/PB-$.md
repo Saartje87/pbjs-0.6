@@ -557,10 +557,9 @@ PB.$('#element').prev();
 
 ### closest
 
-Matches self and then the parent nodes trough a CSS expresion until the expresion matches, body or the max iterations (second argument) is reached.
+Matches self and then the parent nodes for the given CSS expression until the expression matches the parent, body or the max iterations (second argument) is reached.
 
-Bubbles up the dom three for a max iterations or when it matches the given selector.
-Returns element if found null otherwise.
+> When a match is found the matched element will be returned.
 
 ###### Signature
 ```javascript
@@ -570,17 +569,17 @@ PB.$('#element').closest('div.match-me');
 PB.$('#element').closest('div.match-me', 5);
 ```
 ###### Arguments
-{String} - CSS selector
+{String} - CSS expression
 {Number} - Max iterations (Default 50)
 
 ###### Returns
-{Object} - Collection containing the previous sibling
+{Object/Null} - matched node or null when none matched
 
 ---
 
 ### find
 
-Find elements trough CSS selector. Searching from context. Will return a new collection.
+Returns all matched elements by CSS expression for every element in the set.
 
 > For CSS selectors we use [Qwery](https://www.google.com) - The Tiny Selector Engine
 
@@ -589,7 +588,7 @@ Find elements trough CSS selector. Searching from context. Will return a new col
 PB.$('#element').find('div.find-me');
 ```
 ###### Arguments
-{String} - CSS selector
+{String} - CSS expression
 
 ###### Returns
 {Object} - New collection containing the matched elements.
@@ -598,7 +597,9 @@ PB.$('#element').find('div.find-me');
 
 ### remove
 
-Remove element from document and removes cached entries.
+Remove every element in the set.
+
+> Will clear internal cache etc..
 
 ###### Signature
 ```javascript
