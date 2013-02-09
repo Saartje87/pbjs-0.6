@@ -615,7 +615,7 @@ PB.$('#element').remove();
 
 ### append
 
-Append target element to element.
+Append every element in set to the given target.
 
 ###### Signature
 ```javascript
@@ -631,7 +631,7 @@ PB.$('#element').append( '#target-element' );
 
 ### appendTo
 
-Append element to target element.
+Append every element in the set to the target element.
 
 ###### Signature
 ```javascript
@@ -647,7 +647,7 @@ PB.$('#element').appendTo( '#target-element' );
 
 ### insertBefore
 
-Insert element before target element.
+Insert every element in the set before target element.
 
 ###### Signature
 ```javascript
@@ -663,7 +663,7 @@ PB.$('#element').insertBefore( '#target-element' );
 
 ### insertAfter
 
-Insert element after target element.
+Insert every element in the set after the target element.
 
 ###### Signature
 ```javascript
@@ -679,7 +679,7 @@ PB.$('#element').insertBefore( '#target-element' );
 
 ### prepend
 
-Insert target element as first child element to the element.
+Insert target element as first child element to the first element in the set.
 
 ###### Signature
 ```javascript
@@ -695,7 +695,7 @@ PB.$('#element').prepend( '#target-element' );
 
 ### prependTo
 
-Insert element as first child element to the target element.
+Insert first element in the set as first child element to the target element.
 
 ###### Signature
 ```javascript
@@ -729,7 +729,7 @@ PB.$('#element').replace( '#target-element' );
 
 ### on
 
-Add event(s) to element. Can assign callback to multiple event types.
+Add event(s) to every element in the set. Multiple event types can be given seperated by a whitespace.
 
 > mouseenter / mouseleave support  
 > normalized event for older browsers (tested on ie 7/8)  
@@ -774,7 +774,7 @@ PB.$('#element').on('mouseenter mouseleave', function () {
 
 ### off
 
-Remove event from element.
+Remove event from every element in the set.
 
 > context is not considered in removing event  
 > Should we support the removal of multiple event types?
@@ -801,7 +801,7 @@ PB.$('#element').off();
 
 ### once
 
-Add event to element, when triggered the event is removed.
+Add event to every element in the set, when the event is triggered the callback is removed.
 
 > Method works the same as PB.$.on <-- link
 
@@ -825,7 +825,7 @@ PB.$('#element').once('click', function () {
 
 ### emit
 
-Trigger the given event
+Trigger the given event to every element in the set.
 
 ###### Signature
 ```javascript
@@ -842,7 +842,7 @@ PB.$('#element').emit('click');
 
 ### empty
 
-Empty the element. 
+Empty `innerHTML` for every element in the set.
 
 > Short for PB.$('#element').setHtml('').
 
@@ -858,9 +858,10 @@ PB.$('#element').empty();
 
 ### clone
 
-Clone element, add true  to argument when childs should be cloned to. 
+Clone first element in the set, add `true` as first argument when childs should be cloned too.
 
 > Method should also clone events and data?
+> Should clear id attribute.
 
 ###### Signature
 ```javascript
@@ -880,9 +881,10 @@ PB.$('#element').clone(true);
 
 ### setHtml
 
-Set the `innerHTML` of element
+Set the `innerHTML` for every element in the set.
 
-> Note, inserting html in table element is buggy on IE, this should be fixed.
+> Note, inserting html in table element is buggy on IE/NokiaN9, this should be fixed.
+> *Idea* `PB.$.hook('setHtml.table', htmlFixFunction), PB.$.hook('setHtml.tbody', htmlFixFunction), PB.$.hook('setHtml.tr', htmlFixFunction)`
 
 ###### Signature
 ```javascript
@@ -898,7 +900,7 @@ PB.$('#element').setHtml('<h1>Hello World!</h1>');
 
 ### getHtml
 
-Get the `innerHTML` of element
+Get the `innerHTML` of first element in the set.
 
 ###### Signature
 ```javascript
@@ -912,7 +914,7 @@ PB.$('#element').getHtml(); //=> <h1>Hello World!</h1>
 
 ### setText
 
-Set the `text` of element
+Set `text` for every element in the set.
 
 ###### Signature
 ```javascript
@@ -928,7 +930,7 @@ PB.$('#element').setText('Hello world!');
 
 ### getText
 
-Get the `text` of element
+Get `text` of first element in the set.
 
 ###### Signature
 ```javascript
@@ -942,7 +944,7 @@ PB.$('#element').getText(); //=> 'Hello world!'
 
 ### contains
 
-Check if given element is descendant of this.
+Check if given element is descendant of first element in the set.
 
 ###### Signature
 ```javascript
@@ -962,7 +964,7 @@ PB.$('#element').contains(document.body);
 
 ### setData
 
-Set data.
+Set data for every element in the set.
 
 ###### Signature
 ```javascript
@@ -985,7 +987,9 @@ PB.$('#element').setData({
 
 ### getData
 
-Get data from attibute, will first look in memory then will chech data- attribute.
+Get data from first element in the set.
+
+> First checks in memory for data if not there checks the data- attibute.
 
 ###### Signature
 ```javascript
@@ -1001,7 +1005,7 @@ PB.$('#element').getData('key'); //=> 'value'
 
 ### removeData
 
-Remove data.
+Remove data for every element in the set.
 
 ###### Signature
 ```javascript
