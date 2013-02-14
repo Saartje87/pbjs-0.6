@@ -8,7 +8,7 @@
 
 ## PB.Request
 
-PB.Reuest our OOP style of doing a request
+PB.Request our OOP style of doing a request
 
 ###### Signature
 ~~~js
@@ -33,6 +33,7 @@ var request = new PB.Request({
 	timeout: 0,
 });
 
+// Option 1. 
 request.on('error success end', function ( event, request, code ) {
 	
 	event.type;
@@ -42,6 +43,7 @@ request.on('error success end', function ( event, request, code ) {
 	request.responseJSON;
 });
 
+// Option 2. Event object
 request.on('error success end', function ( event ) {
 	
 	// Data is our request object
@@ -75,11 +77,11 @@ PB.get({
 	headers: {},
 	encoding: 'UTF-8',
 	timeout: {},
-	onSuccess: function ( transport ) {
+	onSuccess: function ( request, code ) {
 		
 		transport.responseJSON;
 	},
-	onFailure: function () {
+	onError: function ( request, code ) {
 		
 		
 	}
