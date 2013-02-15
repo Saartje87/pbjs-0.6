@@ -124,7 +124,15 @@ request.on('error success end abort', function ( event ) {
 
 ### off
 
+Remove event listener from request object. See *Link to observer* for more details.
+
+---
+
 ### emit
+
+Only usefull for internal usage..?
+
+---
 
 ### set
 
@@ -152,6 +160,34 @@ request.set({
 
 ###### Returns
 {Object} - this
+
+---
+
+### Options
+
+* url
+	* {String} - url / uri
+* method
+	* {String} - Default GET
+	* GET / POST / PUT / DELETE
+	* Possible to specify own method, will always be send in uppercase
+* json
+	* {Boolean} - Default false, true if server response is in JSON and you want responseJSON set.
+	* Not needed when server serves the right headers :) *application/json*
+* xml - Do we need XML boolean??
+* data
+	* {Object/String} - 
+	* Data to be sent to server
+	* We encourige objects so we can build a valid query string for you!
+* auth
+	* {Object} - { user: 'name', pass: 'secret' }
+* headers
+	* {Object} - 
+	* Headers will be merged with pbjs default request headers. These headers can be overwriten.
+* encoding
+	* {String} - Default UTF-8
+* timeout
+	- {Number} - Timeout in seconds, 0 for no timeout
 
 ---
 
