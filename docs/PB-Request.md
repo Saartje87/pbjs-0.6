@@ -34,31 +34,6 @@ var request = new PB.Request({
 	encoding: 'UTF-8',
 	timeout: 0,
 });
-
-// Option 1. 
-request.on('error success end', function ( event, request, code ) {
-	
-	event.type;
-	
-	code;
-	
-	request.responseJSON;
-});
-
-// Option 2. Event object
-request.on('error success end', function ( event ) {
-	
-	// Data is our request object
-	event.data.responseJSON;
-	
-	// HTTP status code
-	event.code;
-	
-	// Event type
-	event.type;
-});
-
-request.send();
 ~~~
 
 ###### Arguments
