@@ -87,20 +87,7 @@ Attach event listener to our `request` object.
 
 ###### Signature
 ~~~js
-// Option 1. 
-request.on('error success end abort', function ( event, request, code ) {
-	
-	// Our request object
-	request.responseJSON;
-	
-	// Event type
-	event.type;
-	
-	// HTTP status code
-	code;
-});
-
-// Option 2. Event object
+// Event object
 request.on('error success end abort', function ( event ) {
 	
 	// Data is our request object
