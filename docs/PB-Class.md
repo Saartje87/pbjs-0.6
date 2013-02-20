@@ -1,6 +1,8 @@
-# Class
+# PB.Class
 
-*PB.Class([parentClass], classDefenition);*
+Class creation in pbjs.
+
+*PB.Class([parentClass,] classDefenition);*
 
 ~~~js
 var Foo = PB.Class({
@@ -14,7 +16,7 @@ var Foo = PB.Class({
 new Foo();
 ~~~
 
-## Inheretence
+## Inheritance
 
 ~~~js
 var Parent = PB.Class({
@@ -24,9 +26,9 @@ var Parent = PB.Class({
 		console.log('Parent constructed');
 	},
 	
-	say: funtion ( txt ) {
+	say: funtion ( msg ) {
 		
-		console.log( 'Parent says: '+txt );
+		console.log( 'Parent says: '+msg );
 	}
 });
 
@@ -38,6 +40,6 @@ var Child = PB.Class(Parent, {
 	}
 });
 
-var child = new Child();
-child.say('Hello World!');
+var child = new Child(); //=>'Parent constructed'
+child.say('Hello World!'); //=> 'Parent says: Hello World!'
 ~~~
