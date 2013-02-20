@@ -83,21 +83,23 @@ request.abort();
 
 Attach event listener to our `request` object.
 
-> Below are two options desciped, we must choose one :)
-
 ###### Signature
 ~~~js
-// Event object
-request.on('error success end abort', function ( event ) {
+// We could listen to all events
+request.on('error success end abort', function ( request, code, type ) {
 	
-	// Data is our request object
-	event.request.responseJSON;
+	// Request object
+	request;
+	
+	// Retrieve data from request
+	request.responseText;
+	request.responseXML;
+	request.responseJSON;
 	
 	// HTTP status code
-	event.code;
-	
-	// Event type
-	event.type;
+	code;
+
+	console.log(type); //=>'error/success/end/abort'
 });
 ~~~
 
