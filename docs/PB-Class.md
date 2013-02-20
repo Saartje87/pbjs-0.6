@@ -41,5 +41,5 @@ var Child = PB.Class(Parent, {
 });
 
 var child = new Child(); //=>'Parent constructed'
-child.say('Hello World!'); //=> 'Parent says: Hello World!'
+child.say('Hello World!'); //=>'Parent says: Hello World!'
 ~~~
