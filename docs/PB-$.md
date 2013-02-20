@@ -738,19 +738,19 @@ Add event(s) to every element in the set. Multiple event types can be given sepe
 ###### Signature
 ```javascript
 // Basic event assignment
-PB.$('#element').on('click', function () {
+PB.$('#element').on('click', function ( e ) {
 	
 	// Stuff
 });
 
 // Context handling
-PB.$('#element').on('click', function () {
+PB.$('#element').on('click', function ( e ) {
 	
 	// Stuff
 }, this);
 
 // Handle multiple event types
-PB.$('#element').on('mouseenter mouseleave', function () {
+PB.$('#element').on('mouseenter mouseleave', function ( e ) {
 	
 	switch ( e.type ) {
 		
@@ -761,6 +761,18 @@ PB.$('#element').on('mouseenter mouseleave', function () {
 			break;
 	}
 });
+
+// Callbacks will always be unique trough event type and element.
+function myClickHandler ( e ) {
+	
+	console.log("myCliclHandler");
+}
+
+PB.$('#elemement').on('click', myClickHandler);
+PB.$('#elemement').on('click', myClickHandler);
+
+// In the console only one time 'myClickHandler' will be printed.
+PB.$('#elemement').emit('click');
 ```
 ###### Arguments
 {String} - event type(s)  
