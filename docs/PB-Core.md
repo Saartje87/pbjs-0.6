@@ -11,9 +11,9 @@ Overwrite target values with source values.
 Only add values when propertie does not exists
 *PB.extend( target, source )*
 
-### each
+### PB.each
 Loop trough object/array
 
-### toArray -> arrify
+### PB.toArray
 ### PB.type
-### exec -> PB.globalEval
+### PB.globalEval
