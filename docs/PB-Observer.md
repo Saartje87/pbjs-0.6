@@ -44,17 +44,25 @@ var Listener = PB.Class(PB.Observer, {
 
 ###### Signature
 ~~~js
+var observer = new PB.Observer;
+
 // Basic event assignment
-PB.$('#element').on('click', function ( e ) {
+observer.on('foo', function ( e ) {
 	
 	// Stuff
 });
 
 // Context handling
-PB.$('#element').on('click', function ( e ) {
+observer.on('foo', function ( e ) {
 	
 	// Stuff
 }, this);
+
+// Listen to all events - idea
+observer.on('*', function ( e ) {
+	
+	// Stuff
+});
 ~~~
 
 ###### Arguments
