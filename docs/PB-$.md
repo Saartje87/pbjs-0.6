@@ -483,9 +483,9 @@ PB.$('#element').parent();
 
 ---
 
-### childeren
+### children
 
-Returns the childeren for the first element in the set.
+Returns the children for the first element in the set.
 
 > Should this be for the first or all? Performance wise only first one would be nice..
 
