@@ -1,9 +1,9 @@
-# Net
+# Request
 
 ## Tools
 
-### PB.net.builQueryString
-### PB.net.parseQueryString
+### PB.Request.builQueryString
+### PB.Request.parseQueryString
 
 
 ## PB.Request
@@ -32,7 +32,7 @@ var request = new PB.Request({
 	},
 	headers: {},
 	encoding: 'UTF-8',
-	timeout: 0,
+	timeout: 0
 });
 ~~~
 

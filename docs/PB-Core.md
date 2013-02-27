@@ -16,4 +16,5 @@ Loop trough object/array
 
 ### PB.toArray
 ### PB.type
-### PB.globalEval
+### PB.globalEval -> Should be moved to $
+### PB.noConflict
