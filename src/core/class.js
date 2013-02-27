@@ -27,7 +27,7 @@ function createClassResponser ( method, parentMethod ) {
 PB.Class = function ( parentClass, base ) {
 
 	var constructor,
-		klass,
+        klass,
         name,
         ancestor,
         property,
