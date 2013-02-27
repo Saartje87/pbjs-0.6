@@ -33,7 +33,7 @@ PB.Class = function ( parentClass, base ) {
         property,
         parentPrototype;
 
-    // Handle arguments
+        // Handle arguments
 	if( !base ) {
 
 		base = parentClass;

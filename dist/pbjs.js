@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-02-27 11:02
+ * Build date 2013-02-27 23:02
  */
 
 (function ( name, context, definition ) {
@@ -241,13 +241,13 @@ function createClassResponser ( method, parentMethod ) {
 PB.Class = function ( parentClass, base ) {
 
 	var constructor,
-		klass,
+        klass,
         name,
         ancestor,
         property,
         parentPrototype;
 
-    // Handle arguments
+        // Handle arguments
 	if( !base ) {
 
 		base = parentClass;
@@ -452,24 +452,32 @@ PB.Observer = PB.Class({
 	}
 });
 
+/**
+ * pbjs request class
+ *
+ * OOP way to requesting file from server
+ */
 PB.Request = PB.Class(PB.Observer, {
 
+	// Supported states, note that not all states would be triggerd
+	// by the XMLHttpRequest object
 	stateTypes: 'unsent opened headers loading end'.split(' '),
+
+	// Transport, instance of window.XMLHttpRequest
+	transport: null,
 	
 	/**
 	 *
 	 */
 	construct: function ( options ) {
 
-		PB.overwrite(this, {
-
-			transport: null,
-			options: PB.clone(PB.Request.defaults)
-		});
+		// Set default options
+		this.options = PB.clone(PB.Request.defaults);
 		
 		// Init observer
 		this.parent();
 
+		// Overwrite default options
 		PB.overwrite(this.options, options);
 	},
 	
@@ -560,9 +568,9 @@ PB.Request = PB.Class(PB.Observer, {
 	 */
 	getTransport: function () {
 
-		// As far as I know, only IE7 can't reuse an xmlHttp object.. So in case of IE7 we return a new instance
-		// How could we detect this?.. In previous version we used the browser agent..
-		if( this.transport && this.canReuseRequest ) {		// PB.supported.reuseRequest
+		// As far as I know, only IE7 can't reuse an XMLHttpRequest object.. So in case of IE7 we return a new instance
+		// We check this by determine if the browser supports modern XMLHttpRequest object
+		if( this.transport && window.XMLHttpRequest ) {
 
 			return this.transport;
 		}
@@ -634,13 +642,16 @@ PB.Request = PB.Class(PB.Observer, {
 PB.Request.defaults = {
 
 	url: '',
+	// Default request method
 	method: 'GET',
 	// Force datatypes, only one could be true..
 	json: false,
-	// IE10 has somehing different in this..
+	// IE10 has somehing different in this.. find out and normalize! New framework so we can handle the latest stuff
+	// as default.
 	xml: false,
 	// {}
 	data: null,
+	// Todo: implement auth
 	// {user: 'xxx', pass: 'xxx'}
 	auth: null,
 	headers: {
@@ -649,6 +660,7 @@ PB.Request.defaults = {
 		'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
 	},
 	encoding: 'UTF-8',
+	// Todo: timeout
 	timeout: 0
 };
 
