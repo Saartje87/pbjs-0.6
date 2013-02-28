@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-02-27 23:02
+ * Build date 2013-03-01 00:03
  */
 
 (function ( name, context, definition ) {
@@ -463,11 +463,16 @@ PB.Request = PB.Class(PB.Observer, {
 	// by the XMLHttpRequest object
 	stateTypes: 'unsent opened headers loading end'.split(' '),
 
-	// Transport, instance of window.XMLHttpRequest
+	// Transport, instance of XMLHttpRequest
 	transport: null,
 	
 	/**
+	 * Construct new class instance
 	 *
+	 * Set request defaults
+	 *
+	 * @param {Object} options
+	 * @return this
 	 */
 	construct: function ( options ) {
 
@@ -483,6 +488,8 @@ PB.Request = PB.Class(PB.Observer, {
 	
 	/**
 	 * Send request
+	 *
+	 * @return this
 	 */
 	send: function () {
 		
@@ -491,13 +498,19 @@ PB.Request = PB.Class(PB.Observer, {
 			request = this.getTransport(),
 			url = options.url,
 			method = options.method.toUpperCase(),
-			params = options.data ? PB.Net.buildQueryString( options.data ) : null;
+			query = options.data || null; //(options.data && typeof options.data === 'string') ? options.data  : PB.Request.buildQueryString( options.data );
 
-		// Set query string
-		if( params !== null && method !== 'POST' && method !== 'PUT' ) {
+		// Parse object to query string
+		if( PB.type(query) === 'object' ) {
 
-			url += (url.indexOf('?') === -1 ? '?' : '&')+params;
-			params = null;
+			query = PB.Request.buildQueryString( query );
+		}
+
+		// Add query string to url for GET / DELETE request types
+		if( query && (method === 'GET' || method === 'PUT') ) {
+
+			url += (url.indexOf('?') === -1 ? '?' : '&')+query;
+			query = null;
 		}
 
 		// Attach onreadystatechange listener
@@ -525,7 +538,7 @@ PB.Request = PB.Class(PB.Observer, {
 		this.emit( 'send', this.transport, 0 );
 
 		// Send the request
-		request.send( params );
+		request.send( query );
 
 		// Handle synchrone callback
 		if( !async ) {
@@ -538,6 +551,8 @@ PB.Request = PB.Class(PB.Observer, {
 	
 	/**
 	 * Abort the request
+	 *
+	 * @return this
 	 */
 	abort: function () {
 		
@@ -549,7 +564,10 @@ PB.Request = PB.Class(PB.Observer, {
 	},
 	
 	/**
-	 * Set option
+	 * Set option, key value
+	 *
+	 * @param {String}
+	 * @param {String/Object/Array/Function/Number}
 	 */
 	set: function ( key, value ) {
 		
@@ -564,12 +582,12 @@ PB.Request = PB.Class(PB.Observer, {
 	},
 
 	/**
-	 *
+	 * Get new transport object
 	 */
 	getTransport: function () {
 
-		// As far as I know, only IE7 can't reuse an XMLHttpRequest object.. So in case of IE7 we return a new instance
-		// We check this by determine if the browser supports modern XMLHttpRequest object
+		// IE < 8 has troubles with a reusable xmlHttpRequest object
+		// In this case we always return a new xmlHttpRequest instance
 		if( this.transport && window.XMLHttpRequest ) {
 
 			return this.transport;
@@ -582,7 +600,7 @@ PB.Request = PB.Class(PB.Observer, {
 		// Older IE < 8
 		else {
 
-			// Abort previous request
+			// Abort previous request if any
 			if( this.transport ) {
 
 				this.transport.abort();
@@ -598,12 +616,13 @@ PB.Request = PB.Class(PB.Observer, {
 	},
 
 	/**
-	 *
+	 * Handle onreadystatechange event
 	 */
 	onreadystatechange: function () {
 
 		var transport = this.transport,
-			options = this.options;
+			options = this.options,
+			type = 'error';
 
 		// Request has finished
 		if( transport.readyState === 4 ) {
@@ -622,17 +641,20 @@ PB.Request = PB.Class(PB.Observer, {
 					} catch ( e ) {}
 				}
 
-				this.emit( 'success', transport, transport.status );
+				type = 'success';
 			}
-			// Not wanted status code from server, handle as error
-			else {
 
-				this.emit( 'error', transport, transport.status );
-			}
+			// Emit error or success
+			this.emit( type, transport, transport.status, type );
+
+			// Cleanup memory
+			this.transport.onreadystatechange = null;
 		}
 
-		// Emit every status
-		this.emit( this.stateTypes[transport.readyState], transport, transport.readyState === 4 ? transport.status : 0 );
+		type = this.stateTypes[transport.readyState];
+
+		// Emit state change
+		this.emit( type, transport, transport.readyState === 4 ? transport.status : 0, type );
 	}
 });
 
@@ -644,16 +666,18 @@ PB.Request.defaults = {
 	url: '',
 	// Default request method
 	method: 'GET',
+	// Default async requests
+	async: true,
 	// Force datatypes, only one could be true..
 	json: false,
-	// IE10 has somehing different in this.. find out and normalize! New framework so we can handle the latest stuff
-	// as default.
+	// IE10 has somehing different in this.. find out and normalize
 	xml: false,
 	// {}
 	data: null,
 	// Todo: implement auth
 	// {user: 'xxx', pass: 'xxx'}
 	auth: null,
+	// Default request headers
 	headers: {
 
 		'X-Requested-With': 'PBJS-'+PB.VERSION,
@@ -664,26 +688,106 @@ PB.Request.defaults = {
 	timeout: 0
 };
 
+// Declare methods, then assign to namespace
+// more or less an idea to create less annanomous functions.
+
+/**
+ * Translate object to query string
+ *
+ * @param {Object/Array}
+ * @param {String} for internal usage
+ * @return {String}
+ */
+function buildQueryString ( queryObject, prefix ) {
+
+	var query = '',
+		key,
+		value,
+		type = PB.type(queryObject);
+
+	// Validate 
+	if( type !== 'array' && type !=='object' ) {
+
+		throw new TypeError(type+' given.');
+	}
+
+	if( type === 'array' || type ==='object' ) {
+
+		for( key in queryObject ) {
+
+			if( queryObject.hasOwnProperty(key) ) {
+
+				value = queryObject[key];
+
+				if( value !== null && typeof value === 'object' ) {
+
+					query += buildQueryString( value, prefix ? prefix+'['+key+']' : key );
+				} else {
+
+					query += encodeURIComponent(prefix ? prefix+(type === 'array' ? '[]' : '['+key+']') : key)
+						+'='+encodeURIComponent( value )+'&';
+				}
+			}
+		}
+	}
+
+	return prefix ? query : query.replace(/&$/, '');
+}
+
+/**
+ * Translate query string to object
+ *
+ * Can handle url or query string
+ *
+ * @param {String}
+ * @return {Object}
+ */
+function parseQueryString ( str ) {
+
+	var parts = {},
+		part;
+	
+	str = str.indexOf('?') !== -1 ? str.substr( str.indexOf('?') + 1 ) : str;
+	
+	str.split('&').forEach(function ( entry ) {
+		
+		part = entry.split('=');
+		
+		parts[decodeURIComponent(part[0])] = decodeURIComponent(part[1]);
+	});
+	
+	return parts;
+}
+
 PB.overwrite(PB.Request, {
 	
-	builQueryString: function () {
-		
-		
-	},
-	
-	parseQueryString: function () {
-		
-		
-	}
+	buildQueryString: buildQueryString,
+	parseQueryString: parseQueryString
 });
 
+/*
 PB.each({get: 'GET', post: 'POST', put: 'PUT', del: 'DELETE'}, function ( key, value ) {
 	
-	PB[key] = function () {
+	// arguments -> url, data, success, error ?
+	PB[key] = function ( options ) {
 		
-		// ...
+		var request = new PB.Request(options),
+			success = options.onSuccess,
+			err = options.onError;
+
+		if( success ) {
+
+			request.on('success', success);
+		}
+
+		if( err ) {
+
+			request.on('error', err);
+		}
+
+		return request.send();
 	}
-});
+});*/
 
 return PB;
 });

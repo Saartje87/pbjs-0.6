@@ -13,7 +13,12 @@ PB.Request = PB.Class(PB.Observer, {
 	transport: null,
 	
 	/**
+	 * Construct new class instance
 	 *
+	 * Set request defaults
+	 *
+	 * @param {Object} options
+	 * @return this
 	 */
 	construct: function ( options ) {
 
@@ -29,6 +34,8 @@ PB.Request = PB.Class(PB.Observer, {
 	
 	/**
 	 * Send request
+	 *
+	 * @return this
 	 */
 	send: function () {
 		
@@ -37,13 +44,19 @@ PB.Request = PB.Class(PB.Observer, {
 			request = this.getTransport(),
 			url = options.url,
 			method = options.method.toUpperCase(),
-			params = options.data ? PB.Net.buildQueryString( options.data ) : null;
+			query = options.data || null; //(options.data && typeof options.data === 'string') ? options.data  : PB.Request.buildQueryString( options.data );
 
-		// Set query string
-		if( params !== null && method !== 'POST' && method !== 'PUT' ) {
+		// Parse object to query string
+		if( PB.type(query) === 'object' ) {
 
-			url += (url.indexOf('?') === -1 ? '?' : '&')+params;
-			params = null;
+			query = PB.Request.buildQueryString( query );
+		}
+
+		// Add query string to url for GET / DELETE request types
+		if( query && (method === 'GET' || method === 'PUT') ) {
+
+			url += (url.indexOf('?') === -1 ? '?' : '&')+query;
+			query = null;
 		}
 
 		// Attach onreadystatechange listener
@@ -71,7 +84,7 @@ PB.Request = PB.Class(PB.Observer, {
 		this.emit( 'send', this.transport, 0 );
 
 		// Send the request
-		request.send( params );
+		request.send( query );
 
 		// Handle synchrone callback
 		if( !async ) {
@@ -84,6 +97,8 @@ PB.Request = PB.Class(PB.Observer, {
 	
 	/**
 	 * Abort the request
+	 *
+	 * @return this
 	 */
 	abort: function () {
 		
@@ -95,7 +110,10 @@ PB.Request = PB.Class(PB.Observer, {
 	},
 	
 	/**
-	 * Set option
+	 * Set option, key value
+	 *
+	 * @param {String}
+	 * @param {String/Object/Array/Function/Number}
 	 */
 	set: function ( key, value ) {
 		
@@ -110,12 +128,12 @@ PB.Request = PB.Class(PB.Observer, {
 	},
 
 	/**
-	 *
+	 * Get new transport object
 	 */
 	getTransport: function () {
 
-		// As far as I know, only IE7 can't reuse an XMLHttpRequest object.. So in case of IE7 we return a new instance
-		// We check this by determine if the browser supports modern XMLHttpRequest object
+		// IE < 8 has troubles with a reusable xmlHttpRequest object
+		// In this case we always return a new xmlHttpRequest instance
 		if( this.transport && window.XMLHttpRequest ) {
 
 			return this.transport;
@@ -128,7 +146,7 @@ PB.Request = PB.Class(PB.Observer, {
 		// Older IE < 8
 		else {
 
-			// Abort previous request
+			// Abort previous request if any
 			if( this.transport ) {
 
 				this.transport.abort();
@@ -144,7 +162,7 @@ PB.Request = PB.Class(PB.Observer, {
 	},
 
 	/**
-	 *
+	 * Handle onreadystatechange event
 	 */
 	onreadystatechange: function () {
 
@@ -172,13 +190,16 @@ PB.Request = PB.Class(PB.Observer, {
 				type = 'success';
 			}
 
-			// Trigger error or success listeners
+			// Emit error or success
 			this.emit( type, transport, transport.status, type );
+
+			// Cleanup memory
+			this.transport.onreadystatechange = null;
 		}
 
 		type = this.stateTypes[transport.readyState];
 
-		// Emit every status
+		// Emit state change
 		this.emit( type, transport, transport.readyState === 4 ? transport.status : 0, type );
 	}
 });
@@ -191,16 +212,18 @@ PB.Request.defaults = {
 	url: '',
 	// Default request method
 	method: 'GET',
+	// Default async requests
+	async: true,
 	// Force datatypes, only one could be true..
 	json: false,
-	// IE10 has somehing different in this.. find out and normalize! New framework so we can handle the latest stuff
-	// as default.
+	// IE10 has somehing different in this.. find out and normalize
 	xml: false,
 	// {}
 	data: null,
 	// Todo: implement auth
 	// {user: 'xxx', pass: 'xxx'}
 	auth: null,
+	// Default request headers
 	headers: {
 
 		'X-Requested-With': 'PBJS-'+PB.VERSION,

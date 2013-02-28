@@ -18,6 +18,7 @@ var request = new PB.Request({
 	
 	url: '/file.json',
 	method: 'GET',
+	ayns: true,
 	// Force datatypes, only one could be true..
 	json: true,
 	xml: true,
@@ -160,6 +161,8 @@ request.set({
 	* {String} - Default GET
 	* GET / POST / PUT / DELETE
 	* Possible to specify own method, will always be send in uppercase
+* async
+	* {Boolean} - Default true
 * json
 	* {Boolean} - Default false, true if server response is in JSON and you want responseJSON set.
 	* Not needed when server serves the right headers :) *application/json*
