@@ -9,7 +9,7 @@ PB.Request = PB.Class(PB.Observer, {
 	// by the XMLHttpRequest object
 	stateTypes: 'unsent opened headers loading end'.split(' '),
 
-	// Transport, instance of window.XMLHttpRequest
+	// Transport, instance of XMLHttpRequest
 	transport: null,
 	
 	/**
@@ -149,7 +149,8 @@ PB.Request = PB.Class(PB.Observer, {
 	onreadystatechange: function () {
 
 		var transport = this.transport,
-			options = this.options;
+			options = this.options,
+			type = 'error';
 
 		// Request has finished
 		if( transport.readyState === 4 ) {
@@ -168,17 +169,17 @@ PB.Request = PB.Class(PB.Observer, {
 					} catch ( e ) {}
 				}
 
-				this.emit( 'success', transport, transport.status );
+				type = 'success';
 			}
-			// Not wanted status code from server, handle as error
-			else {
 
-				this.emit( 'error', transport, transport.status );
-			}
+			// Trigger error or success listeners
+			this.emit( type, transport, transport.status, type );
 		}
 
+		type = this.stateTypes[transport.readyState];
+
 		// Emit every status
-		this.emit( this.stateTypes[transport.readyState], transport, transport.readyState === 4 ? transport.status : 0 );
+		this.emit( type, transport, transport.readyState === 4 ? transport.status : 0, type );
 	}
 });
 
