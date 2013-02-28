@@ -498,13 +498,7 @@ PB.Request = PB.Class(PB.Observer, {
 			request = this.getTransport(),
 			url = options.url,
 			method = options.method.toUpperCase(),
-			query = options.data || null; //(options.data && typeof options.data === 'string') ? options.data  : PB.Request.buildQueryString( options.data );
-
-		// Parse object to query string
-		if( PB.type(query) === 'object' ) {
-
-			query = PB.Request.buildQueryString( query );
-		}
+			query = PB.type(options.data) === 'object' ? PB.Request.buildQueryString( options.data ) : options.data;
 
 		// Add query string to url for GET / DELETE request types
 		if( query && (method === 'GET' || method === 'PUT') ) {
@@ -538,7 +532,7 @@ PB.Request = PB.Class(PB.Observer, {
 		this.emit( 'send', this.transport, 0 );
 
 		// Send the request
-		request.send( query );
+		request.send( query || null );
 
 		// Handle synchrone callback
 		if( !async ) {
