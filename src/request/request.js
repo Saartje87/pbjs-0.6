@@ -1,7 +1,7 @@
 /**
- * pbjs request class
+ * Request class
  *
- * OOP way to requesting file from server
+ * 
  */
 PB.Request = PB.Class(PB.Observer, {
 

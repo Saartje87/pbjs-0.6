@@ -149,12 +149,14 @@ PB.$('#element').getValue(); //=> 'value'
 Set *inline* css style(s) for every element in the set.
 
 > Both camelcase (fontSize) and css case(font-size) are supported
-
 > Pixel values may be set as integers (not numeric strings!)
+> Css properties that have prefixes in the browsers are automatically handled in pbjs `PB.$('#id').setStyle('transform', '...')` will
+> automaticly be translated to -moz-/-webkit/etc transform
 
 ###### Signature
 ```js
-PB.$('#element').setStyle('color', 'green');
+// 2 argument style is not implemented (for now)
+// PB.$('#element').setStyle('color', 'green');
 
 PB.$('#element').setStyle({
 	
@@ -206,7 +208,7 @@ Morph current css styles to given css styles for every element in the set.
 
 > At this moment the morph method only uses css transition, and therefor using morph in an 'older' browser will have instant styles applied.
 
-> Relative values like jQuery does arre not supported. `{ width: '-=400px' }`
+> Relative values like jQuery does are not supported. `{ width: '-=400px' }`
 
 ###### Signature
 ```js
