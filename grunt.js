@@ -28,7 +28,8 @@ module.exports = function(grunt) {
         // Patterns
         'src/patterns/observer.js',
 
-        // DOM
+        // $ DOM
+        'src/$/core.js', 'src/$/hooks.js', 'src/$/style.js', 'src/$/stuff.js',
         
         // Request
         'src/request/request.js', 'src/request/utils.js',
