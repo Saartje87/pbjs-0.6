@@ -55,6 +55,9 @@ PB.$ = function ( selector ) {
 	return null;
 }
 
+// Element cache
+PB.$.cache = {};
+
 PB.$$ = function ( selector ) {
 
 	return new $(document).find(selector);
