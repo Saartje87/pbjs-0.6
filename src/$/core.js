@@ -55,12 +55,27 @@ PB.$ = function ( selector ) {
 	return null;
 }
 
-// Element cache
-PB.$.cache = {};
-
+/**
+ * Return collection by css selector
+ */
 PB.$$ = function ( selector ) {
 
 	return new $(document).find(selector);
+}
+
+// Element cache
+PB.$.cache = {};
+
+/**
+ * Get cache entry by element
+ *
+ * Will create new cache entry if not existing
+ */
+function getCacheEntry ( element ) {
+
+	var id = element.__PBID__ || (element.__PBID__ = PB.id());
+
+	return PB.$.cache[id] || (PB.$.cache[id] = {});
 }
 
 /**

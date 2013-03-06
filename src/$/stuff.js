@@ -120,16 +120,13 @@ PB.overwrite($.prototype, {
 	setData: function ( data ) {
 
 		var i = 0,
-			cache,
-			id;
+			cache;
 
 		data = argsToObject(arguments);
 
 		for( ; i < this.length; i++ ) {
 
-			id = this[i].__PBID__ || (this[i].__PBID__ = PB.id());
-
-			cache = PB.$.cache[id]|| (PB.$.cache[id] = {});
+			cache = getCacheEntry(this[i]);
 			cache.data = cache.data || {};
 
 			PB.overwrite(cache.data, data);
@@ -140,17 +137,19 @@ PB.overwrite($.prototype, {
 
 	/**
 	 * Get data from first element in the set.
+	 *
+	 * @todo if key is not given, return all data? Merge memory data with data- attibute? 
 	 */
 	getData: function ( key ) {
 
 		// Read 'data-' attribute
-		var id = this[0].__PBID__ || (this[0].__PBID__ = PB.id()),
+		var cache = getCacheEntry(this[0]),
 			data;
 
 		// Read from memory if set
-		if( PB.$.cache[id] && PB.$.cache[id].data ) {
+		if( cache.data ) {
 
-			data = PB.$.cache[id].data[key];
+			data = cache.data[key];
 		} 
 
 		// No data set yet, try from 'data-' attribute
@@ -233,28 +232,82 @@ PB.overwrite($.prototype, {
 		return this;
 	},
 
-	setValue: function () {
+	/**
+	 * Set the given value for every element in the set.
+	 */
+	setValue: function ( value ) {
 
+		var i = 0;
 
+		for( ; i < this.length; i++ ) {
+
+			this[i].value = value;
+		}
+
+		return this;
 	},
 
+	/**
+	 * Get the value from the first element in the set.
+	 */
 	getValue: function () {
 
-		
+		return this[0].value;
 	},
 
+	/**
+	 * Shows every element in the set.
+	 */
 	show: function () {
 
+		var style,
+			i = 0;
 
+		for( ; i < this.length; i++ ) {
+
+			style = this[i].style;
+
+			if( style.display === 'none' ) {
+
+				style.display = getCacheEntry(this[i])['css-display'] || 'block';
+			}
+		}
+
+		return this;
 	},
 
+	/**
+	 * Hides every element in the set.
+	 */
 	hide: function () {
 
-		
+		var style,
+			i = 0;
+
+		for( ; i < this.length; i++ ) {
+
+			style = this[i].style;
+
+			if( style.display !== 'none' ) {
+
+				// Store css display value
+				getCacheEntry(this[i])['css-display'] = PB.$(this[i]).getStyle('display');
+
+				// Hide element
+				style.display = 'none';
+			}
+		}
+
+		return this;
 	},
 
+	/**
+	 * Returns boolean whether the first element in the set is visible or not.
+	 */
 	isVisible: function () {
 
+		var element = PB.$(this[0]);
 
+		return element.getStyle('display') !== 'none' && element.getStyle('opacity') > 0;
 	}
 });
