@@ -15,7 +15,7 @@ module.exports = function(grunt) {
 		' * Copyright <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>\n' +
         ' * Licensed <%= pkg.license %>\n' +
 		' *\n' +
-		' * Build date <%= grunt.template.today("yyyy-mm-dd HH:mm") %>\n' +
+		' * Build date <%= grunt.template.today("yyyy-mm-dd HH:MM") %>\n' +
 		' */'
     },
 	concat: {

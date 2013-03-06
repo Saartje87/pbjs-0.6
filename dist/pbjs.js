@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-03-06 10:03
+ * Build date 2013-03-06 20:54
  */
 
 (function ( name, context, definition ) {
@@ -698,7 +698,7 @@ PB.overwrite($.prototype, {
 
 		if( calculated || !value || value === 'auto' ) {
 
-			value = doc.defaultView.getComputedStyle( this[0], null ).getPropertyValue(styleName);
+			value = doc.defaultView.getComputedStyle( this[0], null )[styleName];
 		}
 
 		if( styleName === 'opacity' ) {
@@ -863,7 +863,10 @@ PB.overwrite($.prototype, {
 		if( PB.$.cache[id] && PB.$.cache[id].data ) {
 
 			data = PB.$.cache[id].data[key];
-		} else {
+		} 
+
+		// No data set yet, try from 'data-' attribute
+		if( data === undefined ) {
 
 			data = this[0].getAttribute('data-'+key);
 		}
