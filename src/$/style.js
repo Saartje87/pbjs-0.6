@@ -1,6 +1,3 @@
-// Tmp declaration
-PB.$.hooks = {};
-
 	// Used for tests
 var div = document.createElement('div'),
 	// Vendor prefixes
@@ -52,6 +49,7 @@ PB.each(stylesUsingPrefix, function ( i, prop ) {
 	}
 });
 
+// Free memory
 div = null;
 
 /**
@@ -102,7 +100,7 @@ PB.overwrite($.prototype, {
 				else {
 
 					// Add px when value is a number and property is a px value
-					if( typeof value === 'number' && !cssSkipUnits[prop] ) {
+					if( typeof value === 'number' && !skipUnits[prop] ) {
 						
 						value += 'px';
 					}
