@@ -115,7 +115,7 @@ PB.$('#element').removeAttr('key');
 
 ### setValue
 
-Set the given value for every element in the set. Hellpfull for form elements.
+Set the given value for every element in the set.
 
 ###### Signature
 ```js
@@ -329,7 +329,7 @@ PB.$('#element').hide()
 
 ### isVisible
 
-Returns true if every element in the set is visible, false otherwise.
+Returns boolean whether the first element in the set is visible or not.
 
 ###### Signature
 ```js
