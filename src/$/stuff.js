@@ -151,7 +151,10 @@ PB.overwrite($.prototype, {
 		if( PB.$.cache[id] && PB.$.cache[id].data ) {
 
 			data = PB.$.cache[id].data[key];
-		} else {
+		} 
+
+		// No data set yet, try from 'data-' attribute
+		if( data === undefined ) {
 
 			data = this[0].getAttribute('data-'+key);
 		}
