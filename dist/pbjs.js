@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-03-07 09:44
+ * Build date 2013-03-08 00:24
  */
 
 (function ( name, context, definition ) {
@@ -525,7 +525,7 @@ PB.$.cache = {};
  *
  * Will create new cache entry if not existing
  */
-function getCacheEntry ( element ) {
+function domGetStorage ( element ) {
 
 	var id = element.__PBID__ || (element.__PBID__ = PB.id());
 
@@ -614,7 +614,8 @@ PB.each(stylesUsingPrefix, function ( i, prop ) {
 	// Browser support property without prefix
 	if( prop in div.style ) {
 
-		return;
+		// Add normal property to prefixStyles, so we know the browers supports the css property
+		return prefixStyles[prop] = prop;
 	}
 
 	translateProp = prop.charAt(0).toUpperCase()+prop.substr(1);
@@ -725,7 +726,213 @@ PB.overwrite($.prototype, {
 		return /^-?[\d.]+px$/i.test( value ) ? parseInt(value, 10) : value;
 	}
 });
+/**
+ * Convert arguments to ordered object
+ */
+function morphArgsToObject ( args ) {
+
+	// Default options
+	var options = {
+		
+		duration: .4,
+		effect: 'ease'
+	};
+	
+	// Loop trough args
+	for( var i = 1 ; i < args.length; i++ ) {
+
+		switch( typeof args[i] ) {
+			
+			case 'function':
+				options.fn = args[i];
+				break;
+
+			case 'number':
+				options.duration = args[i];
+				break;
+		
+			case 'string':
+				options.effect = PB.String.decamelize(args[i]);
+				break;
+		}
+	}
+	
+	return options;
+}
+
+// Detect browser feature
+$.prototype.morph = !!prefixStyles.transition ?
+/**
+ * Morph current css styles to given css styles for every element in the set.
+ */
+function ( properties ) {
+
+	// Normalize arguments
+	var options = morphArgsToObject( arguments );
+
+	return this.each(function () {
+
+		var element = PB.$(this),
+			data = element.getData('morph') || {},
+			currentStyles = {
+
+				transition: 'all '+options.duration+'s '+options.effect+' 0s'
+			};
+
+		// Stop current animation, will stop animating with current styles
+		if( data.running ) {
+
+			element.stop(false);
+		}
+
+		// Store 
+		data.end = properties;
+		data.fn = options.fn;
+		data.running = true;
+
+		// Calculate current styles
+		PB.each(properties, function ( property ) {
+			
+			currentStyles[property] = element.getStyle( property, true );
+		});
+
+		// Set the current styles inline
+		element.setStyle(currentStyles);
+
+		// Force computation, some browsers (atleast firefox) need to calculate the current styles
+		// before it will apply the end styles.
+		doc.defaultView.getComputedStyle( this );
+
+		/* if doc.defaultView.getComputedStyle( this ); doest not work, use the this
+		PB.each(properties, function ( property ) {
+			
+			element.getStyle( property, true );
+		});*/
+
+		// Start transition
+		element.setStyle(properties);
+
+		// Our callback is handles with timeout, an easy crossbrowser solution.
+		// Todo: could this lead to a memory leak? Timer (closure that leads to the parent function..)
+		data.timer = setTimeout(function () {
+
+			// Make sure the element still exists
+			if( !element[0] ) {
+
+				return;
+			}
+
+			//
+			data.running = false;
+
+			// Remove transition
+			element.setStyle({
+				
+				transition: ''
+			});
+
+			// Trigger callback
+			if( data.fn ) {
+				
+				data.fn( element );
+			}
+		}, (options.duration*1000)+60);	// Add a small delay, so the animation is realy finished
+
+		// Store morph data
+		element.setData('morph', data);
+	});
+} :
+/**
+ * Set styles directly for every element. This is used when the
+ * browser does not support css transitions.
+ */
+function ( properties ) {
+
+	// Normalize arguments
+	var options = morphArgsToObject( arguments ),
+		i = 0;
+
+	// Set css styles
+	this.setStyle(properties);
+
+	// Trigger callbacks, if given
+	if( options.fn ) {
+		
+		for( ; i < this.length; i++ ) {
+
+			options.fn( PB.$(this[i]) );
+		}
+	}
+}
+
+$.prototype.stop = function ( gotoEnd ) {
+
+	return this.each(function () {
+
+		var element = PB.$(this),
+			data = element.getData('morph');
+
+		if( !data || !data.running ) {
+			
+			return;
+		}
+
+		// Assign default value
+		gotoEnd = (gotoEnd === undefined) ? true : !!gotoEnd;
+
+		// Not running anymore
+		data.running = false;
+
+		// Clear the callback
+		clearTimeout( data.timer );
+
+		// Clear transition
+		data.end.transition = '';
+
+		// Stop animation
+		if( gotoEnd ) {
+
+			// Some browsers (firefox) has real trouble stopping a transition. So reset
+			// all styles and force style re-calculation by the browser.
+			PB.each(data.end, function ( property ) {
+				
+				element
+					.setStyle(property, '')
+					.getStyle(property, true);
+			});
+		} else {
+
+			// Get current styles to 'pause' our transition
+			PB.each(data.end, function ( property ) {
+
+				data.end[property] = element.getStyle(property, true);
+			});
+		}
+
+		// Set ending styles
+		element.setStyle(data.end);
+		
+		// Trigger callback
+		if( gotoEnd && data.fn ) {
+			
+			data.fn( this );
+		}
+	});
+}
+
 PB.overwrite($.prototype, {
+
+	each: function ( fn ) {
+
+		var _args = slice.call( arguments, 1 );
+
+		for( var i = 0; i < this.length; i++ ) {
+
+			fn.apply(this[i], _args);
+		}
+
+		return this;
+	},
 
 	/*
 	addClass: function ( classNames ) {
@@ -853,7 +1060,7 @@ PB.overwrite($.prototype, {
 
 		for( ; i < this.length; i++ ) {
 
-			cache = getCacheEntry(this[i]);
+			cache = domGetStorage(this[i]);
 			cache.data = cache.data || {};
 
 			PB.overwrite(cache.data, data);
@@ -870,7 +1077,7 @@ PB.overwrite($.prototype, {
 	getData: function ( key ) {
 
 		// Read 'data-' attribute
-		var cache = getCacheEntry(this[0]),
+		var cache = domGetStorage(this[0]),
 			data;
 
 		// Read from memory if set
@@ -996,7 +1203,7 @@ PB.overwrite($.prototype, {
 
 			if( style.display === 'none' ) {
 
-				style.display = getCacheEntry(this[i])['css-display'] || 'block';
+				style.display = domGetStorage(this[i])['css-display'] || 'block';
 			}
 		}
 
@@ -1018,7 +1225,7 @@ PB.overwrite($.prototype, {
 			if( style.display !== 'none' ) {
 
 				// Store css display value
-				getCacheEntry(this[i])['css-display'] = PB.$(this[i]).getStyle('display');
+				domGetStorage(this[i])['css-display'] = PB.$(this[i]).getStyle('display');
 
 				// Hide element
 				style.display = 'none';
