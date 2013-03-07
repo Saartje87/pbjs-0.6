@@ -501,6 +501,35 @@ PB.$('#element').childeren();
 
 ---
 
+### first
+
+Returns the first element in the set.
+
+###### Signature
+```javascript
+PB.$('#element').childeren().first();
+```
+
+###### Returns
+{Object} - 
+
+---
+
+### last
+
+Returns the last element in the set.
+
+###### Signature
+```javascript
+PB.$('#element').childeren().last();
+```
+
+###### Returns
+{Object} - 
+
+---
+
+
 ### firstChild
 
 Returns the first child from the first element in the set.
@@ -1036,8 +1065,6 @@ PB.$('#element').removeData('key');
 ### serializeForm
 
 *Ideas*
-### first
-### last
 ### get
 ### push
 ### filter
