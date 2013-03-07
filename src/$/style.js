@@ -34,7 +34,8 @@ PB.each(stylesUsingPrefix, function ( i, prop ) {
 	// Browser support property without prefix
 	if( prop in div.style ) {
 
-		return;
+		// Add normal property to prefixStyles, so we know the browers supports the css property
+		return prefixStyles[prop] = prop;
 	}
 
 	translateProp = prop.charAt(0).toUpperCase()+prop.substr(1);
