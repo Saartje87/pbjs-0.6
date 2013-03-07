@@ -240,6 +240,27 @@ PB.$('#element').morph({
 
 ---
 
+### Stop
+
+Stop the current morph for every element in the set. Animation could be stopped at the current point.
+
+> 
+
+###### Signature
+```js
+// Skip to end of morph
+PB.$('#element').stop();
+
+// Skip animation at current point
+PB.$('#element').stop(true);
+```
+###### Arguments
+{Boolean} - Stop morph at current point, does not trigger animation end callback
+
+###### Returns
+{Object} - this
+
+---
 ### hasClass
 
 Returns true if the first element in the set has the given class name.
