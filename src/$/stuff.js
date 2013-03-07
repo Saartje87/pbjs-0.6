@@ -1,5 +1,17 @@
 PB.overwrite($.prototype, {
 
+	each: function ( fn ) {
+
+		var _args = slice.call( arguments, 1 );
+
+		for( var i = 0; i < this.length; i++ ) {
+
+			fn.apply(this[i], _args);
+		}
+
+		return this;
+	},
+
 	/*
 	addClass: function ( classNames ) {
 
@@ -126,7 +138,7 @@ PB.overwrite($.prototype, {
 
 		for( ; i < this.length; i++ ) {
 
-			cache = getCacheEntry(this[i]);
+			cache = domGetStorage(this[i]);
 			cache.data = cache.data || {};
 
 			PB.overwrite(cache.data, data);
@@ -143,7 +155,7 @@ PB.overwrite($.prototype, {
 	getData: function ( key ) {
 
 		// Read 'data-' attribute
-		var cache = getCacheEntry(this[0]),
+		var cache = domGetStorage(this[0]),
 			data;
 
 		// Read from memory if set
@@ -269,7 +281,7 @@ PB.overwrite($.prototype, {
 
 			if( style.display === 'none' ) {
 
-				style.display = getCacheEntry(this[i])['css-display'] || 'block';
+				style.display = domGetStorage(this[i])['css-display'] || 'block';
 			}
 		}
 
@@ -291,7 +303,7 @@ PB.overwrite($.prototype, {
 			if( style.display !== 'none' ) {
 
 				// Store css display value
-				getCacheEntry(this[i])['css-display'] = PB.$(this[i]).getStyle('display');
+				domGetStorage(this[i])['css-display'] = PB.$(this[i]).getStyle('display');
 
 				// Hide element
 				style.display = 'none';

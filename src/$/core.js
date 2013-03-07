@@ -71,7 +71,7 @@ PB.$.cache = {};
  *
  * Will create new cache entry if not existing
  */
-function getCacheEntry ( element ) {
+function domGetStorage ( element ) {
 
 	var id = element.__PBID__ || (element.__PBID__ = PB.id());
 
