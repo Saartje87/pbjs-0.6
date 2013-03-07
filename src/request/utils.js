@@ -59,6 +59,7 @@ function parseQueryString ( str ) {
 	
 	str = str.indexOf('?') !== -1 ? str.substr( str.indexOf('?') + 1 ) : str;
 	
+	// Remove forEach
 	str.split('&').forEach(function ( entry ) {
 		
 		part = entry.split('=');
