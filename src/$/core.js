@@ -97,7 +97,7 @@ $ = function ( collection ) {
 	}
 
 	this.length = i || 1;
-	this.context = this[0];
+	//this.context = this[0];
 }
 
 $.prototype.constructor = $;

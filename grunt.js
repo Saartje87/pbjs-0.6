@@ -30,6 +30,7 @@ module.exports = function(grunt) {
 
         // $ DOM
         'src/$/core.js', 'src/$/hooks.js', 'src/$/style.js', 'src/$/stuff.js',
+        'src/$/traversal.js',
         
         // Request
         'src/request/request.js', 'src/request/utils.js',
