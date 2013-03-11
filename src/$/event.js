@@ -168,8 +168,8 @@ function domAddEvent ( element, name, fn, context ) {
 		};
 	}
 
-	// Create responder
-	responder = eventResponder( fn, this, context );
+	// Create responder, pass element as PB.$ object
+	responder = eventResponder( fn, PB.$(element), context );
 
 	// Add cache entry
 	data[i] = {
