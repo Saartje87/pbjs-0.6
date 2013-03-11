@@ -12,40 +12,6 @@ PB.overwrite($.prototype, {
 		return this;
 	},
 
-	/*
-	addClass: function ( classNames ) {
-
-		classNames = classNames.split(' ');
-
-		return this.each(function () {
-
-			for( var i = 0; i < classNames.length; i++ ) {
-				
-				// Already exists
-				if( (' '+this.context.className+' ').indexOf(' '+classNames[i]+' ') >= 0 ) {
-				
-					continue;
-				}
-			
-				this.context.className += (this.context.className ? ' ' : '')+classNames[i];
-			}
-		});
-	},
-
-	each: function ( fn ) {
-
-		for( var i = 0; i < this.length; i++ ) {
-
-			this.context = this[i];
-
-			fn.apply(this, arguments);
-		}
-
-		this.context = this[0];
-
-		return this;
-	},*/
-
 	/**
 	 * Returns true if the first element in the set has the given class name.
 	 */
@@ -321,5 +287,122 @@ PB.overwrite($.prototype, {
 		var element = PB.$(this[0]);
 
 		return element.getStyle('display') !== 'none' && element.getStyle('opacity') > 0;
+	},
+
+	/**
+	 * Remove every element in the set.
+	 */
+	remove: function () {
+
+		var i = 0;
+
+		for( ; i < this.length; i++ ) {
+
+			// Remove data
+			delete PB.$.cache[this[i].__PBID__];
+
+			// Remove element
+			if( this[i].parentNode ) {
+
+				this[i].parentNode.removeChild( this[i] );
+			}
+
+			// Clear reference to element
+			delete this[i];
+		}
+
+		// Return null
+		return null;
+	},
+
+	empty: function () {
+
+		return this.setHtml('');
+	},
+
+	clone: function ( deep ) {
+
+		var ret = [],
+			children,
+			i = 0,
+			l;
+
+		// 
+		for( ; i < this.length; i++ ) {
+
+			// Clone element, and add to collection
+			ret[i] = this[i].cloneNode( deep );
+			
+			// Remove id and __PBID__ attribute / expando
+			ret[i].removeAttribute('id');
+			ret[i].removeAttribute('__PBID__');
+
+			// When cloning children make sure all id and __PBID__ attributes / expandos are removed.
+			if( deep ) {
+
+				children = PB.$(ret[i]).find('*');
+
+				for ( ; i < length; i++) {
+
+					children[i].removeAttribute('id');
+					children[i].removeAttribute('__PBID__');
+				}
+			}
+		}
+
+		return new this.constructor(ret);
+	},
+
+	/**
+	 * Set the `HTML` for every element in the set.
+	 */
+	// Should we make an option to parse script tags?
+	setHtml: function ( value ) {
+
+		var i = 0;
+
+		for( ; i < this.length; i++ ) {
+
+			this[i].innerHTML = value;
+
+			// There are some browser (IE,NokiaBrowser) that do not support innerHTML on table elements, in this case we should use
+			// appendChild. Use a try / catch ? And use catch to append the data?
+		}
+
+		// Return null
+		return null;
+	},
+
+	/**
+	 * Get the `HTML` of first element in the set.
+	 */
+	getHtml: function () {
+
+		return this[0].innerHTML;
+	},
+
+	setText: function ( value ) {
+
+		var i = 0,
+			textNode = doc.createTextNode(value);
+
+		// Empty elements
+		this.setHtml('');
+
+		// Append text to every element
+		for( ; i < this.length; i++ ) {
+
+			this[i].appendChild(textNode.clone(true));
+		}
+
+		// Free memory
+		textNode = null;
+
+		return this;
+	},
+
+	getText: function () {
+
+		return this[0].textContent || this[0].nodeValue;
 	}
 });

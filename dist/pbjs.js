@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-03-08 00:24
+ * Build date 2013-03-11 18:33
  */
 
 (function ( name, context, definition ) {
@@ -334,7 +334,7 @@ PB.Observer = PB.Class({
 	/**
 	 * Use constructor to declare class properties
 	 *
-	 * Childs with own contruct method should call the parent method `this.parent()`
+	 * Child with own contruct method should call the parent method `this.parent()`
 	 */
 	construct: function () {
 		
@@ -517,21 +517,6 @@ PB.$$ = function ( selector ) {
 	return new $(document).find(selector);
 }
 
-// Element cache
-PB.$.cache = {};
-
-/**
- * Get cache entry by element
- *
- * Will create new cache entry if not existing
- */
-function domGetStorage ( element ) {
-
-	var id = element.__PBID__ || (element.__PBID__ = PB.id());
-
-	return PB.$.cache[id] || (PB.$.cache[id] = {});
-}
-
 /**
  * $ constructor
  */
@@ -558,6 +543,41 @@ $.prototype.constructor = $;
 
 // For extending PB.$ methods
 PB.$.fn = $.prototype;
+
+// Element cache
+PB.$.cache = {};
+
+/**
+ * Get cache entry by element
+ *
+ * Will create new cache entry if not existing
+ */
+function domGetStorage ( element ) {
+
+	var id = element.__PBID__ || (element.__PBID__ = PB.id());
+
+	return PB.$.cache[id] || (PB.$.cache[id] = {});
+}
+
+/**
+ * Merges first 2 values to a single object
+ *
+ * @param {Object} arguments
+ * @return {Object}
+ */
+function argsToObject ( args ) {
+
+	var obj;
+
+	// Force arguments to object
+	if( args.length === 2 ) {
+
+		obj = {};
+		obj[args[0]] = args[1];
+	}
+
+	return obj || args[0];
+}
 
 // Hook storage
 PB.$.hooks = {};
@@ -633,26 +653,6 @@ PB.each(stylesUsingPrefix, function ( i, prop ) {
 // Free memory
 div = null;
 
-/**
- * Merges first 2 values to a single object
- *
- * @param {Object} arguments
- * @return {Object}
- */
-function argsToObject ( args ) {
-
-	var obj;
-
-	// Force arguments to object
-	if( args.length === 2 ) {
-
-		obj = {};
-		obj[args[0]] = args[1];
-	}
-
-	return obj || args[0];
-}
-
 PB.overwrite($.prototype, {
 
 	/**
@@ -726,6 +726,7 @@ PB.overwrite($.prototype, {
 		return /^-?[\d.]+px$/i.test( value ) ? parseInt(value, 10) : value;
 	}
 });
+
 /**
  * Convert arguments to ordered object
  */
@@ -814,10 +815,11 @@ function ( properties ) {
 
 		// Our callback is handles with timeout, an easy crossbrowser solution.
 		// Todo: could this lead to a memory leak? Timer (closure that leads to the parent function..)
+		// Maybe use the correct event
 		data.timer = setTimeout(function () {
 
 			// Make sure the element still exists
-			if( !element[0] ) {
+			if( !element[0].parentNode ) {
 
 				return;
 			}
@@ -921,6 +923,51 @@ $.prototype.stop = function ( gotoEnd ) {
 }
 
 PB.overwrite($.prototype, {
+	
+	append: function ( target ) {
+
+		target = PB.$(target);
+
+		this[0].appendChild(target[0]);
+
+		return this;
+	},
+
+	appendTo: function ( target ) {
+
+		target = PB.$(target);
+
+		target[0].appendChild(this[0]);
+
+		return this;
+	},
+
+	prepend: function () {
+
+
+	},
+
+	prependTo: function () {
+
+
+	},
+
+	insertBefore: function () {
+
+
+	},
+
+	insertAfter: function () {
+
+
+	},
+
+	replace: function () {
+
+
+	}
+});
+PB.overwrite($.prototype, {
 
 	each: function ( fn ) {
 
@@ -933,40 +980,6 @@ PB.overwrite($.prototype, {
 
 		return this;
 	},
-
-	/*
-	addClass: function ( classNames ) {
-
-		classNames = classNames.split(' ');
-
-		return this.each(function () {
-
-			for( var i = 0; i < classNames.length; i++ ) {
-				
-				// Already exists
-				if( (' '+this.context.className+' ').indexOf(' '+classNames[i]+' ') >= 0 ) {
-				
-					continue;
-				}
-			
-				this.context.className += (this.context.className ? ' ' : '')+classNames[i];
-			}
-		});
-	},
-
-	each: function ( fn ) {
-
-		for( var i = 0; i < this.length; i++ ) {
-
-			this.context = this[i];
-
-			fn.apply(this, arguments);
-		}
-
-		this.context = this[0];
-
-		return this;
-	},*/
 
 	/**
 	 * Returns true if the first element in the set has the given class name.
@@ -1243,6 +1256,123 @@ PB.overwrite($.prototype, {
 		var element = PB.$(this[0]);
 
 		return element.getStyle('display') !== 'none' && element.getStyle('opacity') > 0;
+	},
+
+	/**
+	 * Remove every element in the set.
+	 */
+	remove: function () {
+
+		var i = 0;
+
+		for( ; i < this.length; i++ ) {
+
+			// Remove data
+			delete PB.$.cache[this[i].__PBID__];
+
+			// Remove element
+			if( this[i].parentNode ) {
+
+				this[i].parentNode.removeChild( this[i] );
+			}
+
+			// Clear reference to element
+			delete this[i];
+		}
+
+		// Return null
+		return null;
+	},
+
+	empty: function () {
+
+		return this.setHtml('');
+	},
+
+	clone: function ( deep ) {
+
+		var ret = [],
+			children,
+			i = 0,
+			l;
+
+		// 
+		for( ; i < this.length; i++ ) {
+
+			// Clone element, and add to collection
+			ret[i] = this[i].cloneNode( deep );
+			
+			// Remove id and __PBID__ attribute / expando
+			ret[i].removeAttribute('id');
+			ret[i].removeAttribute('__PBID__');
+
+			// When cloning children make sure all id and __PBID__ attributes / expandos are removed.
+			if( deep ) {
+
+				children = PB.$(ret[i]).find('*');
+
+				for ( ; i < length; i++) {
+
+					children[i].removeAttribute('id');
+					children[i].removeAttribute('__PBID__');
+				}
+			}
+		}
+
+		return new this.constructor(ret);
+	},
+
+	/**
+	 * Set the `HTML` for every element in the set.
+	 */
+	// Should we make an option to parse script tags?
+	setHtml: function ( value ) {
+
+		var i = 0;
+
+		for( ; i < this.length; i++ ) {
+
+			this[i].innerHTML = value;
+
+			// There are some browser (IE,NokiaBrowser) that do not support innerHTML on table elements, in this case we should use
+			// appendChild. Use a try / catch ? And use catch to append the data?
+		}
+
+		// Return null
+		return null;
+	},
+
+	/**
+	 * Get the `HTML` of first element in the set.
+	 */
+	getHtml: function () {
+
+		return this[0].innerHTML;
+	},
+
+	setText: function ( value ) {
+
+		var i = 0,
+			textNode = doc.createTextNode(value);
+
+		// Empty elements
+		this.setHtml('');
+
+		// Append text to every element
+		for( ; i < this.length; i++ ) {
+
+			this[i].appendChild(textNode.clone(true));
+		}
+
+		// Free memory
+		textNode = null;
+
+		return this;
+	},
+
+	getText: function () {
+
+		return this[0].textContent || this[0].nodeValue;
 	}
 });
 
@@ -1261,7 +1391,7 @@ PB.overwrite($.prototype, {
 	 */
 	children: function () {
 
-		var node = this[0].firstChild,
+		var node = this[0].firstElementChild || this[0].firstChild,
 			i = 0,
 			elements = [];
 
@@ -1282,28 +1412,15 @@ PB.overwrite($.prototype, {
 	 */
 	firstChild: function () {
 
-		var node = this[0].firstElementChild || this[0].firstChild;
-
-		// Find first element node
-		while( node && node.nodeType !== 1 ) {
-
-			node = node.nextSibling;
-		}
-
-		return PB.$(node);
+		return PB.$(this[0].firstElementChild || this[0].firstChild);
 	},
 
+	/**
+	 * Returns the first child from the first element in the set.
+	 */
 	lastChild: function () {
 
-		var node = this[0].lastElementChild || this[0].lastChild;
-
-		// Find first element node
-		while( node && node.nodeType !== 1 ) {
-
-			node = node.previousSibling;
-		}
-
-		return PB.$(node);
+		return PB.$(this[0].lastElementChild || this[0].lastChild);
 	},
 
 	/**
@@ -1333,6 +1450,11 @@ PB.overwrite($.prototype, {
 	},
 
 	closest: function () {
+
+
+	},
+
+	contains: function () {
 
 
 	},
@@ -1664,6 +1786,7 @@ function parseQueryString ( str ) {
 	
 	str = str.indexOf('?') !== -1 ? str.substr( str.indexOf('?') + 1 ) : str;
 	
+	// Remove forEach
 	str.split('&').forEach(function ( entry ) {
 		
 		part = entry.split('=');
