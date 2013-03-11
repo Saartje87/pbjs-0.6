@@ -136,6 +136,8 @@ function ( properties ) {
 			options.fn( PB.$(this[i]) );
 		}
 	}
+
+	return this;
 }
 
 $.prototype.stop = function ( gotoEnd ) {
