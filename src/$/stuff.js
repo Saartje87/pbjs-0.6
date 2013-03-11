@@ -98,16 +98,16 @@ PB.overwrite($.prototype, {
 	setData: function ( data ) {
 
 		var i = 0,
-			cache;
+			storage;
 
 		data = argsToObject(arguments);
 
 		for( ; i < this.length; i++ ) {
 
-			cache = domGetStorage(this[i]);
-			cache.data = cache.data || {};
+			storage = domGetStorage(this[i]);
+			storage.data = storage.data || {};
 
-			PB.overwrite(cache.data, data);
+			PB.overwrite(storage.data, data);
 		}
 
 		return this;
@@ -121,13 +121,13 @@ PB.overwrite($.prototype, {
 	getData: function ( key ) {
 
 		// Read 'data-' attribute
-		var cache = domGetStorage(this[0]),
+		var storage = domGetStorage(this[0]),
 			data;
 
 		// Read from memory if set
-		if( cache.data ) {
+		if( storage.data ) {
 
-			data = cache.data[key];
+			data = storage.data[key];
 		} 
 
 		// No data set yet, try from 'data-' attribute
@@ -145,7 +145,6 @@ PB.overwrite($.prototype, {
 	removeData: function ( key ) {
 
 		var i = 0,
-			cache,
 			id;
 
 		for( ; i < this.length; i++ ) {
@@ -153,14 +152,13 @@ PB.overwrite($.prototype, {
 			this[i].removeAttribute('data-'+key);
 
 			id = this[i].__PBID__;
-			cache = PB.$.cache[id];
 
-			if( !cache || !cache.data ) {
+			if( !id || !PB.$.cache[id] ) {
 
 				continue;
 			}
 
-			delete cache.data[key];
+			delete PB.$.cache[id].data[key];
 		}
 
 		return this;
@@ -363,14 +361,39 @@ PB.overwrite($.prototype, {
 
 		for( ; i < this.length; i++ ) {
 
-			this[i].innerHTML = value;
-
 			// There are some browser (IE,NokiaBrowser) that do not support innerHTML on table elements, in this case we should use
-			// appendChild. Use a try / catch ? And use catch to append the data?
+			// appendChild.
+			try {
+
+				this[i].innerHTML = value;
+			} catch (e) {
+
+				// Remove all childs
+				PB.$(this[i]).children().remove();
+
+				// Check for certain node names, in case of tbody|tr|td we have to use a 'special' approach
+				// in which we create the element with a wrapper.
+				// Should we put this code 'PB.$.buildFragment' ? 
+				if( /^<tbody/i.test(value) ) {
+
+					PB.$('<table>'+value+'</table>').firstChild()
+						.appendTo(this[i]);
+				} else if ( /^<tr/i.test(value) ) {
+
+					PB.$('<table><tbody>'+value+'<tbody></table>').firstChild().children()
+						.appendTo(this[i]);
+				} else if ( /^<td/i.test(value) ) {
+
+					PB.$('<table><tbody><tr>'+value+'</tr><tbody></table>').firstChild().firstChild().children()
+						.appendTo(this[i]);
+				} else {
+
+					PB.$(value).appendTo(this[i]);
+				}
+			}
 		}
 
-		// Return null
-		return null;
+		return this;
 	},
 
 	/**
@@ -383,8 +406,7 @@ PB.overwrite($.prototype, {
 
 	setText: function ( value ) {
 
-		var i = 0,
-			textNode = doc.createTextNode(value);
+		var i = 0;
 
 		// Empty elements
 		this.setHtml('');
@@ -392,11 +414,8 @@ PB.overwrite($.prototype, {
 		// Append text to every element
 		for( ; i < this.length; i++ ) {
 
-			this[i].appendChild(textNode.clone(true));
+			this[i].appendChild(doc.createTextNode(value));
 		}
-
-		// Free memory
-		textNode = null;
 
 		return this;
 	},
