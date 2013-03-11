@@ -3,7 +3,7 @@ PB.Observer = PB.Class({
 	/**
 	 * Use constructor to declare class properties
 	 *
-	 * Childs with own contruct method should call the parent method `this.parent()`
+	 * Child with own contruct method should call the parent method `this.parent()`
 	 */
 	construct: function () {
 		
