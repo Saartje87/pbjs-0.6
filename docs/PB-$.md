@@ -922,30 +922,29 @@ PB.$('#element').empty();
 
 ### clone
 
-Clone first element in the set, add `true` as first argument when childs should be cloned too.
+Clone every element in the set. It's possible to clone all child element by added true as method argument.
 
 > Method should also clone events and data?
-> Should clear id attribute.
 
 ###### Signature
 ```javascript
-// Only clone element
+// Clones every element in the collection
 PB.$('#element').clone();
 
-// Clone element and childs
+// Clones elements and children
 PB.$('#element').clone(true);
 ```
 ###### Arguments
-{Boolean} - true if childs should be cloned
+{Boolean} - true if children should be cloned
 
 ###### Returns
-{Object} - the cloned element
+{Object} - PB.$ collection with the newly cloned element
 
 ---
 
 ### setHtml
 
-Set the `innerHTML` for every element in the set.
+Set the `HTML` for every element in the set.
 
 > Note, inserting html in table element is buggy on IE/NokiaN9, this should be fixed.
 > *Idea* `PB.$.hook('setHtml.table', htmlFixFunction), PB.$.hook('setHtml.tbody', htmlFixFunction), PB.$.hook('setHtml.tr', htmlFixFunction)`
@@ -964,7 +963,7 @@ PB.$('#element').setHtml('<h1>Hello World!</h1>');
 
 ### getHtml
 
-Get the `innerHTML` of first element in the set.
+Get the `HTML` of first element in the set.
 
 ###### Signature
 ```javascript
@@ -1087,6 +1086,7 @@ PB.$('#element').removeData('key');
 
 *Ideas*
 ### get
-### push
 ### filter
 ### forEach
+### wrap
+### unwrap
