@@ -840,8 +840,7 @@ PB.$('#elemement').emit('click');
 
 Remove event from every element in the set.
 
-> context is not considered in removing event  
-> Should we support the removal of multiple event types?
+> context is not considered in removing event
 
 ###### Signature
 ```javascript
