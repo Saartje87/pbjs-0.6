@@ -53,26 +53,6 @@ PB.each(stylesUsingPrefix, function ( i, prop ) {
 // Free memory
 div = null;
 
-/**
- * Merges first 2 values to a single object
- *
- * @param {Object} arguments
- * @return {Object}
- */
-function argsToObject ( args ) {
-
-	var obj;
-
-	// Force arguments to object
-	if( args.length === 2 ) {
-
-		obj = {};
-		obj[args[0]] = args[1];
-	}
-
-	return obj || args[0];
-}
-
 PB.overwrite($.prototype, {
 
 	/**

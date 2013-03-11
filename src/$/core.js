@@ -63,21 +63,6 @@ PB.$$ = function ( selector ) {
 	return new $(document).find(selector);
 }
 
-// Element cache
-PB.$.cache = {};
-
-/**
- * Get cache entry by element
- *
- * Will create new cache entry if not existing
- */
-function domGetStorage ( element ) {
-
-	var id = element.__PBID__ || (element.__PBID__ = PB.id());
-
-	return PB.$.cache[id] || (PB.$.cache[id] = {});
-}
-
 /**
  * $ constructor
  */
