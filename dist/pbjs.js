@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-03-11 22:14
+ * Build date 2013-03-11 23:12
  */
 
 (function ( name, context, definition ) {
@@ -496,6 +496,7 @@ PB.$ = function ( selector ) {
 		else if ( selector.charAt(0) === '<' && selector.charAt(selector.length - 1) === '>' ) {
 
 			// Create element
+			return PB.$.buildFragment(selector);
 		}
 	}
 
@@ -928,18 +929,28 @@ PB.overwrite($.prototype, {
 	
 	append: function ( target ) {
 
+		var i = 0;
+
 		target = PB.$(target);
 
-		this[0].appendChild(target[0]);
+		for( ; i < target.length; i++ ) {
+
+			this[0].appendChild(target[i]);
+		}
 
 		return this;
 	},
 
 	appendTo: function ( target ) {
 
+		var i = 0;
+
 		target = PB.$(target);
 
-		target[0].appendChild(this[0]);
+		for( ; i < this.length; i++ ) {
+
+			target[0].appendChild(this[i]);
+		}
 
 		return this;
 	},
@@ -1339,35 +1350,32 @@ PB.overwrite($.prototype, {
 				this[i].innerHTML = value;
 			} catch (e) {
 
-				// Stuck in here..
-				// How to fix IE readonly elements..?
-
-				var div = document.createElement('div'),
-					map = {
-
-						'TABLE': '<table>',
-						'TBODY': '<table>',
-						'TR': '<table><tr>'
-					};
-
 				// Remove all childs
-				this[i].children().remove();
+				PB.$(this[i]).children().remove();
 
-				console.log( map[this[i].nodeName]+value );
-				div.innerHTML = map[this[i].nodeName]+value;
+				// Check for certain node names, in case of tbody|tr|td we have to use a 'special' approach
+				// in which we create the element with a wrapper.
+				// Should we put this code 'PB.$.buildFragment' ? 
+				if( /^<tbody/i.test(value) ) {
 
-				console.log( div.firstChild.nodeName );
+					PB.$('<table>'+value+'</table>').firstChild()
+						.appendTo(this[i]);
+				} else if ( /^<tr/i.test(value) ) {
 
-				this[i].parentNode.replaceChild(div.firstChild, this[i]);
+					PB.$('<table><tbody>'+value+'<tbody></table>').firstChild().children()
+						.appendTo(this[i]);
+				} else if ( /^<td/i.test(value) ) {
 
-				//this[i].appendChild( div.firstChild );
+					PB.$('<table><tbody><tr>'+value+'</tr><tbody></table>').firstChild().firstChild().children()
+						.appendTo(this[i]);
+				} else {
 
-				div = null;
+					PB.$(value).appendTo(this[i]);
+				}
 			}
 		}
 
-		// Return null
-		return null;
+		return this;
 	},
 
 	/**
@@ -1688,8 +1696,8 @@ function domAddEvent ( element, name, fn, context ) {
 		};
 	}
 
-	// Create responder
-	responder = eventResponder( fn, this, context );
+	// Create responder, pass element as PB.$ object
+	responder = eventResponder( fn, PB.$(element), context );
 
 	// Add cache entry
 	data[i] = {
@@ -1899,6 +1907,20 @@ PB.overwrite($.prototype, {
 		return this;
 	}
 });
+PB.$.buildFragment = function ( html ) {
+	
+	var fragment = doc.createElement('div'),
+		children;
+
+	fragment.innerHTML = html;
+
+	children = PB.$(fragment).children();
+
+	fragment = null;
+
+	return children;
+}
+
 /**
  * Request class
  *

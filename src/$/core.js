@@ -42,6 +42,7 @@ PB.$ = function ( selector ) {
 		else if ( selector.charAt(0) === '<' && selector.charAt(selector.length - 1) === '>' ) {
 
 			// Create element
+			return PB.$.buildFragment(selector);
 		}
 	}
 

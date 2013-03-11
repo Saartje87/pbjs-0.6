@@ -671,7 +671,7 @@ Append every element in set to the given target.
 
 ###### Signature
 ```javascript
-PB.$('#element').append( '#target-element' );
+PB.$('#element').append( '<div>Append me</div>' );
 ```
 ###### Arguments
 {Mixed} - Target element, can handle everything the PB.$ constructor can
@@ -687,7 +687,7 @@ Append every element in the set to the target element.
 
 ###### Signature
 ```javascript
-PB.$('#element').appendTo( '#target-element' );
+PB.$('<div>Append me</div>').appendTo( '#element' );
 ```
 ###### Arguments
 {Mixed} - Target element, can handle everything the PB.$ constructor can
