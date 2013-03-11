@@ -13,7 +13,7 @@ PB.overwrite($.prototype, {
 	 */
 	children: function () {
 
-		var node = this[0].firstChild,
+		var node = this[0].firstElementChild || this[0].firstChild,
 			i = 0,
 			elements = [];
 
@@ -34,28 +34,15 @@ PB.overwrite($.prototype, {
 	 */
 	firstChild: function () {
 
-		var node = this[0].firstElementChild || this[0].firstChild;
-
-		// Find first element node
-		while( node && node.nodeType !== 1 ) {
-
-			node = node.nextSibling;
-		}
-
-		return PB.$(node);
+		return PB.$(this[0].firstElementChild || this[0].firstChild);
 	},
 
+	/**
+	 * Returns the first child from the first element in the set.
+	 */
 	lastChild: function () {
 
-		var node = this[0].lastElementChild || this[0].lastChild;
-
-		// Find first element node
-		while( node && node.nodeType !== 1 ) {
-
-			node = node.previousSibling;
-		}
-
-		return PB.$(node);
+		return PB.$(this[0].lastElementChild || this[0].lastChild);
 	},
 
 	/**
@@ -85,6 +72,11 @@ PB.overwrite($.prototype, {
 	},
 
 	closest: function () {
+
+
+	},
+
+	contains: function () {
 
 
 	},
