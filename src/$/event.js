@@ -38,7 +38,7 @@ PB.$.Event = {
 var domEvent = {
 
 	// Browser using old event model
-	legacy: !!(window.attachEvent && !window.addEventListener),
+	isLegacy: !!(window.attachEvent && !window.addEventListener),
 
 	// Regexp to detect mousewheel event
 	rmousescroll: /DOMMouseScroll|mousewheel|wheel/,
@@ -54,6 +54,34 @@ var domEvent = {
 };
 
 /**
+ * Detect legacy browser (ie 7/8 supported)
+ *
+ * Opera implemented both event systems but isn't a legacy browser so
+ * checking for addEventListener
+ */
+if( domEvent.isLegacy ) {
+	
+	PB.overwrite(PB.$.Event, {
+		
+		/**
+		 * Prevents further propagation of the current event.
+		 */
+		stopPropagation: function () {
+			
+			this.cancelBubble = true;
+		},
+		
+		/**
+		 * Cancels the event if it is cancelable, without stopping further propagation of the event.
+		 */
+		preventDefault: function () {
+			
+			this.returnValue = false;
+		}
+	});
+}
+
+/**
  * Extend event object at runtime
  *
  * For older browsers (IE7/8) we normalize the event object
@@ -61,6 +89,41 @@ var domEvent = {
 function domExtendEvent ( event, element ) {
 
 	PB.overwrite(event, PB.Event);
+
+	// Enough extending for modern browsers
+	if( !domEvent.isLegacy ) {
+
+		return event;
+	}
+
+	// Add target
+	event.target = event.srcElement || element;
+
+	// Add currentTarget
+	event.currentTarget = element;
+
+	// set relatedTarget
+	if( event.type === 'mouseover' || event.type === 'mouseenter' ) {
+	
+		event.relatedTarget = event.fromElement;
+	} else if ( event.type === 'mouseout' || event.type === 'mouseleave' ) {
+	
+		event.relatedTarget = event.toElement;
+	}
+
+	// Set pageX/pageY
+	if( event.pageX === undefined ) {
+
+		event.pageX = event.clientX + (docElement.scrollLeft || body.scrollLeft) - (docElement.clientLeft || 0);
+		event.pageY = event.clientY + (docElement.scrollTop || body.scrollTop) - (docElement.clientTop || 0);
+	}
+
+	// Set which
+	event.which = (event.keyCode === undefined) ? event.charCode : event.keyCode;
+
+	// Normalize mousebutton codes to W3C standards
+	// Left: 0, Middle: 1, Right: 2
+	event.which = (event.which === 0 ? 1 : (event.which === 4 ? 2: (event.which === 2 ? 3 : event.which)));
 
 	return event;
 }
@@ -81,7 +144,7 @@ function eventResponder ( fn, element, context ) {
 }
 
 /**
- *
+ * Attach event to element
  */
 function domAddEvent ( element, name, fn, context ) {
 
@@ -126,7 +189,7 @@ function domAddEvent ( element, name, fn, context ) {
 }
 
 /**
- *
+ * Remove event from element
  */
 function domRemoveEvent ( element, name, fn ) {
 
@@ -162,11 +225,9 @@ function domRemoveEvent ( element, name, fn ) {
 }
 
 /**
- *
+ * Purge all events from element
  */
 function domPurgeEvents ( element ) {
-
-	console.log('domPurgeEvents');
 
 	var storage = domGetStorage(element),
 		data = storage.eventData,
