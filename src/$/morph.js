@@ -86,10 +86,11 @@ function ( properties ) {
 
 		// Our callback is handles with timeout, an easy crossbrowser solution.
 		// Todo: could this lead to a memory leak? Timer (closure that leads to the parent function..)
+		// Maybe use the correct event
 		data.timer = setTimeout(function () {
 
 			// Make sure the element still exists
-			if( !element[0] ) {
+			if( !element[0].parentNode ) {
 
 				return;
 			}
