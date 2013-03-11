@@ -33,6 +33,7 @@ module.exports = function(grunt) {
         'src/$/style.js', 'src/$/morph.js', 'src/$/manipulation.js',
         'src/$/stuff.js',
         'src/$/traversal.js',
+        'src/$/event.js',
         
         // Request
         'src/request/request.js', 'src/request/utils.js',
