@@ -1,5 +1,8 @@
 PB.overwrite($.prototype, {
 	
+	/**
+	 * PB.$('#element').append('<div>Append me</div>');
+	 */
 	append: function ( target ) {
 
 		var i = 0;
@@ -14,6 +17,9 @@ PB.overwrite($.prototype, {
 		return this;
 	},
 
+	/**
+	 * PB.$('<div>Append me</div>').appendTo('#element');
+	 */
 	appendTo: function ( target ) {
 
 		var i = 0;
@@ -52,6 +58,9 @@ PB.overwrite($.prototype, {
 		return this;
 	},
 
+	/**
+	 * PB.$('<div>Prepend me</div>').prependTo('#element');
+	 */
 	prependTo: function ( target ) {
 
 		var i = 0,
@@ -74,6 +83,9 @@ PB.overwrite($.prototype, {
 		return this;
 	},
 
+	/**
+	 * PB.$('<div>Append me</div>').insertBefore('#element');
+	 */
 	insertBefore: function ( target ) {
 
 		var i = 0;
@@ -88,6 +100,9 @@ PB.overwrite($.prototype, {
 		return this;
 	},
 
+	/**
+	 * PB.$('<div>Append me</div>').insertAfter('#element');
+	 */
 	insertAfter: function ( target ) {
 
 		var i = 0,
@@ -110,8 +125,19 @@ PB.overwrite($.prototype, {
 		return this;
 	},
 
-	replace: function () {
+	/**
+	 * PB.$('<div>Replacement</div>').replace('#element');
+	 */
+	replace: function ( target ) {
 
-		// document.getElementById("myList").replaceChild(newnode,oldnode);
+		target = PB.$(target);
+
+		// Insert collection
+		this.insertBefore(target);
+
+		// Remove target
+		target.remove();
+
+		return this;
 	}
 });
