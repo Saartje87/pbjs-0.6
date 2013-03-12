@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-03-11 23:12
+ * Build date 2013-03-12 09:20
  */
 
 (function ( name, context, definition ) {
@@ -469,8 +469,9 @@ PB.$ = function ( selector ) {
 		return null;
 	}
 
-	// If already a node, return new $
-	if( selector.nodeType ) {
+	// If already a node, return new $ instance
+	// element and document nodes are valid
+	if( selector.nodeType === 1 || selector.nodeType === 9 ) {
 
 		return new $( selector );
 	}
@@ -955,29 +956,91 @@ PB.overwrite($.prototype, {
 		return this;
 	},
 
-	prepend: function () {
+	/**
+	 * PB.$('#element').prepend('<div>Prepend me</div>');
+	 */
+	prepend: function ( target ) {
 
+		var i = 0,
+			firstChild = this[0].firstElementChild || this[0].firstChild;
 
+		target = PB.$(target);
+
+		for( ; i < target.length; i++ ) {
+
+			if( firstChild ) {
+
+				this[0].insertBefore(target[i], firstChild);
+			} else {
+
+				this[0].appendChild(target[i]);
+			}
+		}
+
+		return this;
 	},
 
-	prependTo: function () {
+	prependTo: function ( target ) {
 
+		var i = 0,
+			firstChild;
 
+		target = PB.$(target);
+		firstChild = target[0].firstElementChild || target[0].firstChild;
+
+		for( ; i < this.length; i++ ) {
+
+			if( firstChild ) {
+
+				target[0].insertBefore(this[i], firstChild);
+			} else {
+
+				target[0].appendChild(this[i]);
+			}
+		}
+
+		return this;
 	},
 
-	insertBefore: function () {
+	insertBefore: function ( target ) {
 
+		var i = 0;
 
+		target = PB.$(target);
+
+		for( ; i < this.length; i++ ) {
+
+			target[0].parentNode.insertBefore(this[i], target[0]);
+		}
+
+		return this;
 	},
 
-	insertAfter: function () {
+	insertAfter: function ( target ) {
 
+		var i = 0,
+			next;
 
+		target = PB.$(target);
+		next = target[0].nextElementSibling || target[0].nextSibling;
+
+		for( ; i < this.length; i++ ) {
+
+			if( next ) {
+
+				target[0].parentNode.insertBefore(this[i], next);
+			} else {
+
+				target[0].appendChild(this[i]);
+			}
+		}
+
+		return this;
 	},
 
 	replace: function () {
 
-
+		// document.getElementById("myList").replaceChild(newnode,oldnode);
 	}
 });
 PB.overwrite($.prototype, {
@@ -1473,12 +1536,12 @@ PB.overwrite($.prototype, {
 
 	next: function () {
 
-
+		// nextElementSibling
 	},
 
 	prev: function () {
 
-
+		// prevElementSibling
 	},
 
 	closest: function () {
