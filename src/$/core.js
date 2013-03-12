@@ -15,6 +15,12 @@ PB.$ = function ( selector ) {
 		return null;
 	}
 
+	// Already extended
+	if( selector instanceof $ ) {
+
+		return selector;
+	}
+
 	// If already a node, return new $ instance
 	// element and document nodes are valid
 	if( selector.nodeType === 1 || selector.nodeType === 9 ) {
