@@ -15,8 +15,9 @@ PB.$ = function ( selector ) {
 		return null;
 	}
 
-	// If already a node, return new $
-	if( selector.nodeType ) {
+	// If already a node, return new $ instance
+	// element and document nodes are valid
+	if( selector.nodeType === 1 || selector.nodeType === 9 ) {
 
 		return new $( selector );
 	}
