@@ -427,7 +427,7 @@ PB.$('#element').outerWidth();
 Get position from offset element, if getXY(true) is given it will return position from body.
 
 > Development reminder, use [getBoundingClientRect](https://developer.mozilla.org/en-US/docs/DOM/element.getBoundingClientRect)
-> Ideo to create two methods `PB.$('#element').xy()` and `PB.$('#element').xy()`. One for position to first offsetParent, second for the position in document. `offset` -> from offsetParent `position` -> from body.
+> Idea to create two methods `PB.$('#element').xy()` and `PB.$('#element').xy()`. One for position to first offsetParent, second for the position in document. `offset` -> from offsetParent `position` -> from body.
 > Should consider scrollTop/Left..
 
 ###### Signature
@@ -735,7 +735,7 @@ Insert target element as first child element to the first element in the set.
 
 ###### Signature
 ```javascript
-PB.$('#element').prepend( '#target-element' );
+PB.$('#element').prepend('<div>Prepend me</div>');
 ```
 ###### Arguments
 {Mixed} - Target element, can handle everything the PB.$ constructor can
@@ -751,7 +751,7 @@ Insert first element in the set as first child element to the target element.
 
 ###### Signature
 ```javascript
-PB.$('#element').prependTo( '#target-element' );
+PB.$('<div>Prepend me</div>').prependTo('#element');
 ```
 ###### Arguments
 {Mixed} - Target element, can handle everything the PB.$ constructor can
