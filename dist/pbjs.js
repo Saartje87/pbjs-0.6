@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-03-12 09:20
+ * Build date 2013-03-13 09:39
  */
 
 (function ( name, context, definition ) {
@@ -121,7 +121,7 @@ PB.clone = function ( source ) {
  * @param object
  * @return void
  */
-PB.each = function ( collection, fn, scope ) {
+PB.each = function ( collection, fn, context ) {
 
 	var prop;
 
@@ -132,7 +132,7 @@ PB.each = function ( collection, fn, scope ) {
 
 	for( prop in collection ) {
 
-		if( collection.hasOwnProperty(prop) && fn.call(scope, prop, collection[prop], collection) === true ) {
+		if( collection.hasOwnProperty(prop) && fn.call(context, prop, collection[prop], collection) === true ) {
 
 			return;
 		}
@@ -467,6 +467,12 @@ PB.$ = function ( selector ) {
 	if( !selector ) {
 
 		return null;
+	}
+
+	// Already extended
+	if( selector instanceof $ ) {
+
+		return selector;
 	}
 
 	// If already a node, return new $ instance
@@ -928,6 +934,9 @@ $.prototype.stop = function ( gotoEnd ) {
 
 PB.overwrite($.prototype, {
 	
+	/**
+	 * PB.$('#element').append('<div>Append me</div>');
+	 */
 	append: function ( target ) {
 
 		var i = 0;
@@ -942,6 +951,9 @@ PB.overwrite($.prototype, {
 		return this;
 	},
 
+	/**
+	 * PB.$('<div>Append me</div>').appendTo('#element');
+	 */
 	appendTo: function ( target ) {
 
 		var i = 0;
@@ -980,6 +992,9 @@ PB.overwrite($.prototype, {
 		return this;
 	},
 
+	/**
+	 * PB.$('<div>Prepend me</div>').prependTo('#element');
+	 */
 	prependTo: function ( target ) {
 
 		var i = 0,
@@ -1002,6 +1017,9 @@ PB.overwrite($.prototype, {
 		return this;
 	},
 
+	/**
+	 * PB.$('<div>Append me</div>').insertBefore('#element');
+	 */
 	insertBefore: function ( target ) {
 
 		var i = 0;
@@ -1016,6 +1034,9 @@ PB.overwrite($.prototype, {
 		return this;
 	},
 
+	/**
+	 * PB.$('<div>Append me</div>').insertAfter('#element');
+	 */
 	insertAfter: function ( target ) {
 
 		var i = 0,
@@ -1038,9 +1059,128 @@ PB.overwrite($.prototype, {
 		return this;
 	},
 
-	replace: function () {
+	/**
+	 * PB.$('<div>Replacement</div>').replace('#element');
+	 */
+	replace: function ( target ) {
 
-		// document.getElementById("myList").replaceChild(newnode,oldnode);
+		target = PB.$(target);
+
+		// Insert collection
+		this.insertBefore(target);
+
+		// Remove target
+		target.remove();
+
+		return this;
+	}
+});
+PB.overwrite($.prototype, {
+
+	width: function () {
+
+		return this.getStyle('width', true);
+	},
+
+	innerWidth: function () {
+
+		return this.getStyle('width', true) + this.getStyle('paddingLeft', true) + this.getStyle('paddingRight', true);
+	},
+
+	outerWidth: function () {
+
+		return this.innerWidth() + this.getStyle('borderLeftWidth', true) + this.getStyle('borderRightWidth', true);
+	},
+
+	scrollWidth: function () {
+
+		return this[0].scrollWidth;
+	},
+
+	height: function () {
+
+		return this.getStyle('height', true);
+	},
+
+	innerHeight: function () {
+
+		return this.getStyle('height', true) + this.getStyle('paddingTop', true) + this.getStyle('paddingBottom', true);
+	},
+
+	outerHeight: function () {
+
+		return this.innerHeight() + this.getStyle('borderTopWidth', true) + this.getStyle('borderBottomWidth', true);
+	},
+
+	scrollHeight: function () {
+
+		return this[0].scrollHeight;
+	},
+
+	setScroll: function ( position ) {
+
+		var i = 0;
+
+		for( ; i < this.length; i++ ) {
+
+			if( position.top !== undefined ) {
+
+				this[i].scrollTop = position.top;
+			}
+
+			if( position.left !== undefined ) {
+
+				this[i].scrollLeft = position.left;
+			}
+		}
+
+		return this;
+	},
+
+	getScroll: function () {
+
+		return {
+
+			top: this[0].scrollTop,
+			left: this[0].scrollLeft
+		};
+	},
+
+	// position
+	position: function () {
+
+		var box = this[0].getBoundingClientRect();
+
+		return {
+
+			top: box.top + (window.scrollY || window.pageYOffset),
+			left: box.left + (window.scrollX || window.pageXOffset)
+		}
+	},
+
+	offset: function () {
+
+		var element = this[0],
+			box = {
+
+				top: 0,
+				left: 0
+			};
+
+		while( element ) {
+
+			box.top += element.offsetTop;
+			box.left += element.offsetLeft;
+
+			element = element.offsetParent;
+
+			if( !element || PB.$(element).getStyle('position') !== 'static' ) {
+
+				break;
+			}
+		}
+
+		return box;
 	}
 });
 PB.overwrite($.prototype, {
