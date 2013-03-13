@@ -1,3 +1,10 @@
+/*
+this.queueAdd
+this.queueClear
+this.queueRunNext
+this.delay
+ */
+
 /**
  * Convert arguments to ordered object
  */
@@ -71,15 +78,8 @@ function ( properties ) {
 		// Set the current styles inline
 		element.setStyle(currentStyles);
 
-		// Force computation, some browsers (atleast firefox) need to calculate the current styles
-		// before it will apply the end styles.
-		doc.defaultView.getComputedStyle( this );
-
-		/* if doc.defaultView.getComputedStyle( this ); doest not work, use the this
-		PB.each(properties, function ( property ) {
-			
-			element.getStyle( property, true );
-		});*/
+		// Force redraw, for some browsers (atleast firefox). Otherwise there will be no animation
+		this.offsetHeight;
 
 		// Start transition
 		element.setStyle(properties);
@@ -109,7 +109,7 @@ function ( properties ) {
 				
 				data.fn( element );
 			}
-		}, (options.duration*1000)+60);	// Add a small delay, so the animation is realy finished
+		}, (options.duration*1000)+50);	// Add a small delay, so the animation is realy finished
 
 		// Store morph data
 		element.setData('morph', data);
@@ -162,20 +162,10 @@ $.prototype.stop = function ( gotoEnd ) {
 		clearTimeout( data.timer );
 
 		// Clear transition
-		data.end.transition = '';
+		data.end.transition = 'none 0s ease 0s';
 
 		// Stop animation
-		if( gotoEnd ) {
-
-			// Some browsers (firefox) has real trouble stopping a transition. So reset
-			// all styles and force style re-calculation by the browser.
-			PB.each(data.end, function ( property ) {
-				
-				element
-					.setStyle(property, '')
-					.getStyle(property, true);
-			});
-		} else {
+		if( !gotoEnd ) {
 
 			// Get current styles to 'pause' our transition
 			PB.each(data.end, function ( property ) {
@@ -186,7 +176,7 @@ $.prototype.stop = function ( gotoEnd ) {
 
 		// Set ending styles
 		element.setStyle(data.end);
-		
+
 		// Trigger callback
 		if( gotoEnd && data.fn ) {
 			
