@@ -105,23 +105,18 @@ PB.each = function ( collection, fn, context ) {
 /**
  * 
  */
-PB.toArray = function ( collection ) {
+PB.toArray = function ( arr ) {
 
-	if( toString.call(collection) === '[object Object]' && collection.length ) {
+	var i = 0,
+		result = [],
+		length = arr.length;
 
-		var result = [],
-			length = collection.length,
-			i = 0;
+	for( ; i < length; i++ ) {
 
-		for( ; i < length; i++ ) {
-
-			result[i] = collection[i];
-		}
-
-		return result;
+		result[i] = arr[i];
 	}
 
-	return slice.call(collection);
+	return result;
 }
 
 /**
