@@ -84,7 +84,7 @@ PB.clone = function ( source ) {
  * @param object
  * @return void
  */
-PB.each = function ( collection, fn, scope ) {
+PB.each = function ( collection, fn, context ) {
 
 	var prop;
 
@@ -95,7 +95,7 @@ PB.each = function ( collection, fn, scope ) {
 
 	for( prop in collection ) {
 
-		if( collection.hasOwnProperty(prop) && fn.call(scope, prop, collection[prop], collection) === true ) {
+		if( collection.hasOwnProperty(prop) && fn.call(context, prop, collection[prop], collection) === true ) {
 
 			return;
 		}
