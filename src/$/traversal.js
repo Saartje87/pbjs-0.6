@@ -50,7 +50,7 @@ PB.overwrite($.prototype, {
 	 */
 	first: function () {
 
-		return new this.constructor(this[0]);
+		return PB.$(this[0]);
 	},
 
 	/**
@@ -58,17 +58,17 @@ PB.overwrite($.prototype, {
 	 */
 	last: function () {
 
-		return new this.constructor(this[this.length-1]);
+		return PB.$(this[this.length-1]);
 	},
 
 	next: function () {
 
-
+		return PB.$(this[0].nextElementSibling || this[0].nextSibling);
 	},
 
 	prev: function () {
 
-
+		return PB.$(this[0].previousElementSibling || this[0].previousSibling);
 	},
 
 	closest: function () {
@@ -96,10 +96,10 @@ PB.overwrite($.prototype, {
 			
 			if( i === 0 ) {
 				
-				elements = qwery(expression, this[i]);
+				elements = PB.$.selector.find(expression, this[i]);
 			} else {
 				
-				result = qwery(expression, this[i]);
+				result = PB.$.selector.find(expression, this[i]);
 				
 				for ( j = 0, k = elements.length, r = result.length; j < r; j++ ) {
 					
@@ -114,5 +114,24 @@ PB.overwrite($.prototype, {
 		
 		// we should return an unique set
 		return new this.constructor(elements);
+	},
+
+	/**
+	 *
+	 */
+	matches: function ( selector ) {
+
+		var i = 0;
+
+		for( ; i < this.length; i++ ) {
+
+			// Using qwery for selector validation
+			if( !PB.$.selector.matches(this[i], selector) ) {
+
+				return false;
+			}
+		}
+
+		return true;
 	}
 });

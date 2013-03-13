@@ -36,6 +36,7 @@ module.exports = function(grunt) {
         'src/$/traversal.js',
         'src/$/event.js',
         'src/$/buildfragment.js',
+        'src/$/selector.js',
         
         // Request
         'src/request/request.js', 'src/request/utils.js',

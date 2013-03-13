@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-03-13 09:39
+ * Build date 2013-03-13 22:59
  */
 
 (function ( name, context, definition ) {
@@ -142,23 +142,18 @@ PB.each = function ( collection, fn, context ) {
 /**
  * 
  */
-PB.toArray = function ( collection ) {
+PB.toArray = function ( arr ) {
 
-	if( toString.call(collection) === '[object Object]' && collection.length ) {
+	var i = 0,
+		result = [],
+		length = arr.length;
 
-		var result = [],
-			length = collection.length,
-			i = 0;
+	for( ; i < length; i++ ) {
 
-		for( ; i < length; i++ ) {
-
-			result[i] = collection[i];
-		}
-
-		return result;
+		result[i] = arr[i];
 	}
 
-	return slice.call(collection);
+	return result;
 }
 
 /**
@@ -562,6 +557,9 @@ PB.$.cache = {};
  */
 function domGetStorage ( element ) {
 
+	// http://msdn.microsoft.com/en-us/library/ie/ms534704%28v=vs.85%29.aspx
+	// object.uniqueID
+
 	var id = element.__PBID__ || (element.__PBID__ = PB.id());
 
 	return PB.$.cache[id] || (PB.$.cache[id] = {});
@@ -735,6 +733,13 @@ PB.overwrite($.prototype, {
 	}
 });
 
+/*
+this.queueAdd
+this.queueClear
+this.queueRunNext
+this.delay
+ */
+
 /**
  * Convert arguments to ordered object
  */
@@ -846,7 +851,7 @@ function ( properties ) {
 				
 				data.fn( element );
 			}
-		}, (options.duration*1000)+60);	// Add a small delay, so the animation is realy finished
+		}, (options.duration*1000)+50);	// Add a small delay, so the animation is realy finished
 
 		// Store morph data
 		element.setData('morph', data);
@@ -1663,7 +1668,7 @@ PB.overwrite($.prototype, {
 	 */
 	first: function () {
 
-		return new this.constructor(this[0]);
+		return PB.$(this[0]);
 	},
 
 	/**
@@ -1671,17 +1676,17 @@ PB.overwrite($.prototype, {
 	 */
 	last: function () {
 
-		return new this.constructor(this[this.length-1]);
+		return PB.$(this[this.length-1]);
 	},
 
 	next: function () {
 
-		// nextElementSibling
+		return PB.$(this[0].nextElementSibling || this[0].nextSibling);
 	},
 
 	prev: function () {
 
-		// prevElementSibling
+		return PB.$(this[0].previousElementSibling || this[0].previousSibling);
 	},
 
 	closest: function () {
@@ -1709,10 +1714,10 @@ PB.overwrite($.prototype, {
 			
 			if( i === 0 ) {
 				
-				elements = qwery(expression, this[i]);
+				elements = PB.$.selector.find(expression, this[i]);
 			} else {
 				
-				result = qwery(expression, this[i]);
+				result = PB.$.selector.find(expression, this[i]);
 				
 				for ( j = 0, k = elements.length, r = result.length; j < r; j++ ) {
 					
@@ -1727,6 +1732,25 @@ PB.overwrite($.prototype, {
 		
 		// we should return an unique set
 		return new this.constructor(elements);
+	},
+
+	/**
+	 *
+	 */
+	matches: function ( selector ) {
+
+		var i = 0;
+
+		for( ; i < this.length; i++ ) {
+
+			// Using qwery for selector validation
+			if( !PB.$.selector.matches(this[i], selector) ) {
+
+				return false;
+			}
+		}
+
+		return true;
 	}
 });
 /**
@@ -2123,6 +2147,33 @@ PB.$.buildFragment = function ( html ) {
 
 	return children;
 }
+
+var matches = docElement.matchesSelector || docElement.mozMatchesSelector || docElement.webkitMatchesSelector || docElement.oMatchesSelector || docElement.msMatchesSelector;
+
+PB.$.selector = {
+	
+	/**
+	 * Native
+	 */
+	find: function ( selector, node ) {
+
+		return PB.toArray(node.querySelectorAll(selector));
+	},
+
+	/**
+	 * Compare node to selector
+	 */
+	matches: function ( node, selector ) {
+
+		return matches.apply(node, selector);
+	}
+};
+
+/*PB.$.selector = {
+	
+	find: qwery,
+	matches: qwery.is
+};*/
 
 /**
  * Request class
