@@ -631,7 +631,7 @@ PB.$('#element').closest('div.match-me', 5);
 
 ### find
 
-Returns all matched elements by CSS expression for every element in the set.
+Returns all matched elements by selector for every element in the set.
 
 > For CSS selectors we use [Qwery](https://www.google.com) - The Tiny Selector Engine
 
@@ -640,10 +640,28 @@ Returns all matched elements by CSS expression for every element in the set.
 PB.$('#element').find('div.find-me');
 ```
 ###### Arguments
-{String} - CSS expression
+{String} - selector
 
 ###### Returns
 {Object} - New collection containing the matched elements.
+
+---
+
+### matches
+
+Returns true if every element in the set matches the given selector
+
+> [Qwery](https://www.google.com) - The Tiny Selector Engine
+
+###### Signature
+```javascript
+PB.$('#element').matches('div.class');
+```
+###### Arguments
+{String} - selector
+
+###### Returns
+{Boolean} - 
 
 ---
 
