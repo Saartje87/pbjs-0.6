@@ -130,7 +130,7 @@ PB.overwrite($.prototype, {
 			data = storage.data[key];
 		} 
 
-		// No data set yet, try from 'data-' attribute
+		// No data found yet, try from 'data-' attribute
 		if( data === undefined ) {
 
 			data = this[0].getAttribute('data-'+key);
@@ -140,7 +140,7 @@ PB.overwrite($.prototype, {
 	},
 
 	/**
-	 * Remove data for every element in the set.
+	 * Remove data from every element in the set.
 	 */
 	removeData: function ( key ) {
 
