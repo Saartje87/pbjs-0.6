@@ -76,7 +76,7 @@ PB.$$ = function ( selector ) {
  */
 $ = function ( collection ) {
 
-	var i = 0;
+	var i = 1;
 
 	if( collection.length ) {
 
@@ -89,8 +89,7 @@ $ = function ( collection ) {
 		this[0] = collection;
 	}
 
-	this.length = i || 1;
-	//this.context = this[0];
+	this.length = i;
 }
 
 $.prototype.constructor = $;
