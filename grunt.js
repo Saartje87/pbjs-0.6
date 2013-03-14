@@ -37,6 +37,8 @@ module.exports = function(grunt) {
         'src/$/event.js',
         'src/$/buildfragment.js',
         'src/$/selector.js',
+
+        'src/$/legacy.js',
         
         // Request
         'src/request/request.js', 'src/request/utils.js',
