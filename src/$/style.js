@@ -108,13 +108,19 @@ PB.overwrite($.prototype, {
 
 		var value;
 
+		// If a hook is specified use the hook
+		if( PB.$.hooks['setStyle.'+styleName] ) {
+
+			return PB.$.hooks['getStyle.'+styleName]( this[0] );
+		}
+
 		// Need prefix?
 		styleName = prefixStyles[styleName] || styleName;
 		value = this[0].style[styleName];
 
 		if( calculated || !value || value === 'auto' ) {
 
-			value = doc.defaultView.getComputedStyle( this[0], null )[styleName];
+			value = window.getComputedStyle( this[0], null )[styleName];
 		}
 
 		if( styleName === 'opacity' ) {
