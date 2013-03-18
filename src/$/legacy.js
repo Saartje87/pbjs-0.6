@@ -60,6 +60,10 @@
 		 *
 		 * IE's currentStyle wont return calculated values so we also calculate non
 		 * pixel values.
+		 *
+		 * @param {String} style
+		 * @param {Boolean} 
+		 * @return {String/Number} 
 		 */
 		PB.$.fn.getStyle = function ( styleName, calculated ) {
 
