@@ -2,13 +2,10 @@
  * pbjs JavaScript Framework v0.6.0
  * http://saartje87.github.com/pbjs
  *
- * Includes Qwery
- * https://github.com/ded/qwery
- *
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-03-14 20:55
+ * Build date 2013-03-18 09:21
  */
 
 (function ( name, context, definition ) {
@@ -447,6 +444,68 @@ PB.Observer = PB.Class({
 	}
 });
 
+PB.Queue = PB.Class(PB.Observer, {
+	
+	construct: function () {
+
+		var self = this; 
+
+		// Constuct Observer
+		this.parent();
+
+		// 
+		this._queue = [];
+
+		// Wrap run for next callback
+		this.next = function () {
+
+			self.run();
+		};
+
+		return this;
+	},
+
+	queue: function ( fn, context ) {
+
+		this._queue.push({
+
+			fn: fn,
+			context: context
+		});
+
+		return this;
+	},
+
+	run: function () {
+
+		var item = this._queue.shift(),
+			self = this;
+
+		if( !item ) {
+
+			return;
+		}
+
+		item.fn.call(item.fn.context, this.next);
+
+		return this;
+	},
+
+	stop: function () {
+
+		this._queue.unshift(undefined);
+
+		return this;
+	},
+
+	clear: function () {
+
+		this._queue.length = 0;
+
+		return this;
+	}
+});
+
 var $,
 	window = context,
 	doc = window.document,
@@ -525,9 +584,9 @@ PB.$$ = function ( selector ) {
  */
 $ = function ( collection ) {
 
-	var i = 1;
+	var i = 0;
 
-	if( collection.length ) {
+	if( typeof collection.length === 'number' ) {
 
 		for( i = 0; i < collection.length; i++ ) {
 
@@ -536,6 +595,7 @@ $ = function ( collection ) {
 	} else {
 
 		this[0] = collection;
+		i = 1;
 	}
 
 	this.length = i;
@@ -2127,14 +2187,25 @@ PB.overwrite($.prototype, {
 		return this;
 	}
 });
+/**
+ * Convert string to html nodes
+ *
+ * @param {String} html
+ * @return {Object} PB.$
+ */
 PB.$.buildFragment = function ( html ) {
 	
 	var fragment = doc.createElement('div'),
 		children;
 
+	// Table elements should be created in an table
+	// html: '<td></td>' wrap with:
 	fragment.innerHTML = html;
 
+	// Return the childeren
 	children = PB.$(fragment).children();
+
+	//console.log( children, html );
 
 	fragment = null;
 
@@ -2230,6 +2301,10 @@ PB.$.selector = {
 		 *
 		 * IE's currentStyle wont return calculated values so we also calculate non
 		 * pixel values.
+		 *
+		 * @param {String} style
+		 * @param {Boolean} 
+		 * @return {String/Number} 
 		 */
 		PB.$.fn.getStyle = function ( styleName, calculated ) {
 
