@@ -76,9 +76,9 @@ PB.$$ = function ( selector ) {
  */
 $ = function ( collection ) {
 
-	var i = 1;
+	var i = 0;
 
-	if( collection.length ) {
+	if( typeof collection.length === 'number' ) {
 
 		for( i = 0; i < collection.length; i++ ) {
 
@@ -87,6 +87,7 @@ $ = function ( collection ) {
 	} else {
 
 		this[0] = collection;
+		i = 1;
 	}
 
 	this.length = i;
