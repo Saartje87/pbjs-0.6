@@ -23,7 +23,7 @@ PB.$ = function ( selector ) {
 
 	// If already a node, return new $ instance
 	// element and document nodes are valid
-	if( selector.nodeType === 1 || selector.nodeType === 9 ) {
+	if( selector.nodeType === 1 || selector.nodeType === 9 || selector === window ) {
 
 		return new $( selector );
 	}
@@ -78,16 +78,16 @@ $ = function ( collection ) {
 
 	var i = 0;
 
-	if( typeof collection.length === 'number' ) {
+	if( collection.nodeName || collection === window ) {
+
+		this[0] = collection;
+		i = 1;
+	} else if ( 'length' in collection ) {
 
 		for( i = 0; i < collection.length; i++ ) {
 
 			this[i] = collection[i];
 		}
-	} else {
-
-		this[0] = collection;
-		i = 1;
 	}
 
 	this.length = i;
