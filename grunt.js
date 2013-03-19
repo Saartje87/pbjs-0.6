@@ -8,10 +8,9 @@ module.exports = function(grunt) {
 		banner: '/*!\n' +
 		' * pbjs JavaScript Framework v<%= pkg.version %>\n' +
 		' * http://saartje87.github.com/pbjs\n' +
-// Not yet included
-//		' *\n' +
-//		' * Includes Qwery\n' +
-//		' * https://github.com/ded/qwery\n' +
+		' *\n' +
+		' * Includes Qwery\n' +
+		' * https://github.com/ded/qwery\n' +
 		' *\n' +
 		' * Copyright <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>\n' +
         ' * Licensed <%= pkg.license %>\n' +
@@ -51,10 +50,11 @@ module.exports = function(grunt) {
         // String
 
         // Outro
-				'src/outro.js'
+				'src/outro.js',
 
         // Qwery (submodule)
-				//'qwery/qwery.js'
+        'vendor/qwery/qwery.js',
+        'src/$/selector.js'
       ],
 			dest: 'dist/pbjs.js'
 		}

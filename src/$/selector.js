@@ -1,3 +1,4 @@
+// Native query selector
 var matches = docElement.matchesSelector || docElement.mozMatchesSelector || docElement.webkitMatchesSelector || docElement.oMatchesSelector || docElement.msMatchesSelector;
 
 PB.$.selector = {
@@ -18,9 +19,3 @@ PB.$.selector = {
 		return matches.call(node, selector);
 	}
 };
-
-/*PB.$.selector = {
-	
-	find: qwery,
-	matches: qwery.is
-};*/
