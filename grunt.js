@@ -8,9 +8,10 @@ module.exports = function(grunt) {
 		banner: '/*!\n' +
 		' * pbjs JavaScript Framework v<%= pkg.version %>\n' +
 		' * http://saartje87.github.com/pbjs\n' +
-		' *\n' +
-		' * Includes Qwery\n' +
-		' * https://github.com/ded/qwery\n' +
+// Not yet included
+//		' *\n' +
+//		' * Includes Qwery\n' +
+//		' * https://github.com/ded/qwery\n' +
 		' *\n' +
 		' * Copyright <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>\n' +
         ' * Licensed <%= pkg.license %>\n' +
@@ -27,6 +28,7 @@ module.exports = function(grunt) {
         
         // Patterns
         'src/patterns/observer.js',
+        'src/patterns/queue.js',
 
         // $ DOM
         'src/$/core.js', 'src/$/utils.js', 'src/$/hooks.js',
@@ -37,6 +39,7 @@ module.exports = function(grunt) {
         'src/$/event.js',
         'src/$/buildfragment.js',
         'src/$/selector.js',
+        'src/$/enumerable.js',
 
         'src/$/legacy.js',
         

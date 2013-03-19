@@ -5,7 +5,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-03-18 09:21
+ * Build date 2013-03-19 09:15
  */
 
 (function ( name, context, definition ) {
@@ -1665,7 +1665,7 @@ PB.overwrite($.prototype, {
 
 	getText: function () {
 
-		return this[0].textContent || this[0].nodeValue;
+		return this[0].textContent || this[0].nodeValue || '';
 	}
 });
 
@@ -2229,7 +2229,7 @@ PB.$.selector = {
 	 */
 	matches: function ( node, selector ) {
 
-		return matches.apply(node, selector);
+		return matches.call(node, selector);
 	}
 };
 
@@ -2238,6 +2238,36 @@ PB.$.selector = {
 	find: qwery,
 	matches: qwery.is
 };*/
+
+/**
+ *
+ */
+function domFilter ( filter ) {
+
+	var res = [],
+		i = 0;
+
+	for( ; i < this.length; i++ ) {
+
+		if( typeof filter === 'string' ) {
+
+			if( PB.$.selector.matches(this[i], filter) ) {
+
+				res.push(this[i]);
+			}
+		} else if ( filter.call(null, this[i]) === true ) {
+
+			res.push(this[i]);
+		}
+	}
+
+	return new this.constructor(res);
+}
+
+PB.overwrite(PB.$.fn, {
+
+	filter: domFilter
+});
 
 // Support for older browsers
 (function ( PB, undefined ) {
