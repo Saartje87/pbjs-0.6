@@ -422,6 +422,6 @@ PB.overwrite($.prototype, {
 
 	getText: function () {
 
-		return this[0].textContent || this[0].nodeValue;
+		return this[0].textContent || this[0].nodeValue || '';
 	}
 });
