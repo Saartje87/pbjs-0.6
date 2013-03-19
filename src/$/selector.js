@@ -15,7 +15,7 @@ PB.$.selector = {
 	 */
 	matches: function ( node, selector ) {
 
-		return matches.apply(node, selector);
+		return matches.call(node, selector);
 	}
 };
 
