@@ -5,7 +5,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-03-19 17:57
+ * Build date 2013-03-19 18:29
  */
 
 (function ( name, context, definition ) {
@@ -798,18 +798,6 @@ PB.overwrite($.prototype, {
 	}
 });
 
-/*
-this.queueAdd
-this.queueClear
-this.queueRunNext
-this.delay
-
-this.queueAdd(function ( next ) {
-	
-	animate();
-})
- */
-
 /**
  * Convert arguments to ordered object
  */
@@ -836,7 +824,11 @@ function morphArgsToObject ( args ) {
 				break;
 		
 			case 'string':
-				options.effect = PB.String.decamelize(args[i]);
+				// easeInOut -> ease-in-out
+				options.effect = args[i].replace(/[A-Z]/g, function ( chr ) {
+
+					return '-'+chr.toLowerCase();
+				});
 				break;
 		}
 	}

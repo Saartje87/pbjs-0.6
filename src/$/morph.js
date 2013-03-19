@@ -1,10 +1,3 @@
-/*
-this.queueAdd
-this.queueClear
-this.queueRunNext
-this.delay
- */
-
 /**
  * Convert arguments to ordered object
  */
@@ -31,7 +24,11 @@ function morphArgsToObject ( args ) {
 				break;
 		
 			case 'string':
-				options.effect = PB.String.decamelize(args[i]);
+				// easeInOut -> ease-in-out
+				options.effect = args[i].replace(/[A-Z]/g, function ( chr ) {
+
+					return '-'+chr.toLowerCase();
+				});
 				break;
 		}
 	}
