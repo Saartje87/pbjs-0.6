@@ -404,12 +404,19 @@ PB.$('#element').innerWidth();
 
 Retrieve outer width from the first element in the set.
 
-> Inner width is the width + border.
+> Outer width is the width + border. Or optionally width + border + margin. 
 
 ###### Signature
 ```js
+// Get width + border
 PB.$('#element').outerWidth();
+
+// Get width + border + margin
+PB.$('#element').outerWidth(true);
 ```
+
+###### Arguments
+{Boolean} - includeMargin
 
 ###### Returns
 {Number} - in pixels
@@ -419,7 +426,30 @@ PB.$('#element').outerWidth();
 ### scrollWidth
 ### height
 ### innerHeight
+
 ### outerHeight
+
+Retrieve outer height from the first element in the set.
+
+> Outer height is the height + border. Or optionally height + border + margin. 
+
+###### Signature
+```js
+// Get height + border
+PB.$('#element').outerHeight();
+
+// Get height + border + margin
+PB.$('#element').outerHeight(true);
+```
+
+###### Arguments
+{Boolean} - includeMargin
+
+###### Returns
+{Number} - in pixels
+
+---
+
 ### scrollHeight
 
 ### getXY -> returns position
