@@ -88,7 +88,7 @@ if( domEvent.isLegacy ) {
  */
 function domExtendEvent ( event, element ) {
 
-	PB.overwrite(event, PB.Event);
+	PB.overwrite(event, PB.$.Event);
 
 	// Enough extending for modern browsers
 	if( !domEvent.isLegacy ) {
