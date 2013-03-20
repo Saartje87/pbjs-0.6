@@ -10,7 +10,10 @@ PB.overwrite($.prototype, {
 		return this.getStyle('width', true) + this.getStyle('paddingLeft', true) + this.getStyle('paddingRight', true);
 	},
 
-	outerWidth: function () {
+	outerWidth: function ( includeMargin ) {
+
+		if( includeMargin )
+			return this.innerWidth() + this.getStyle('borderLeftWidth', true) + this.getStyle('borderRightWidth', true) + this.getStyle('marginLeft', true) + this.getStyle('marginRight', true);
 
 		return this.innerWidth() + this.getStyle('borderLeftWidth', true) + this.getStyle('borderRightWidth', true);
 	},
@@ -30,7 +33,10 @@ PB.overwrite($.prototype, {
 		return this.getStyle('height', true) + this.getStyle('paddingTop', true) + this.getStyle('paddingBottom', true);
 	},
 
-	outerHeight: function () {
+	outerHeight: function ( includeMargin ) {
+
+		if( includeMargin )
+			return this.innerHeight() + this.getStyle('borderTopWidth', true) + this.getStyle('borderBottomWidth', true) + this.getStyle('marginTop', true) + this.getStyle('marginBottom', true);
 
 		return this.innerHeight() + this.getStyle('borderTopWidth', true) + this.getStyle('borderBottomWidth', true);
 	},
