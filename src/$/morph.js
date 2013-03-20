@@ -25,10 +25,7 @@ function morphArgsToObject ( args ) {
 		
 			case 'string':
 				// easeInOut -> ease-in-out
-				options.effect = args[i].replace(/[A-Z]/g, function ( chr ) {
-
-					return '-'+chr.toLowerCase();
-				});
+				options.effect = args[i].replace(/([A-Z])/g, '-$1').toLowerCase();
 				break;
 		}
 	}
