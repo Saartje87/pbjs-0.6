@@ -1,6 +1,7 @@
 	// Used for tests
 var div = document.createElement('div'),
 	// Vendor prefixes
+	// We could probably drop ms :) http://www.impressivewebs.com/dropping-ms-vendor-prefixes-ie10/
 	vendorPrefixes = 'O ms Moz Webkit'.split(' '),
 	// Styles that could require a vendor prefix
 	stylesUsingPrefix = 'animationName transform transition transitionProperty transitionDuration transitionTimingFunction boxSizing backgroundSize boxReflect'.split(' '),
