@@ -39,6 +39,7 @@ module.exports = function(grunt) {
         'src/$/buildfragment.js',
         'src/$/selector.js',
         'src/$/enumerable.js',
+        'src/$/animation.js',
 
         'src/$/legacy.js',
         
