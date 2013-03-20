@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-03-19 20:33
+ * Build date 2013-03-20 22:56
  */
 
 (function ( name, context, definition ) {
@@ -666,6 +666,7 @@ PB.$.hook = function ( name, fn ) {
 	// Used for tests
 var div = document.createElement('div'),
 	// Vendor prefixes
+	// We could probably drop ms :) http://www.impressivewebs.com/dropping-ms-vendor-prefixes-ie10/
 	vendorPrefixes = 'O ms Moz Webkit'.split(' '),
 	// Styles that could require a vendor prefix
 	stylesUsingPrefix = 'animationName transform transition transitionProperty transitionDuration transitionTimingFunction boxSizing backgroundSize boxReflect'.split(' '),
@@ -825,10 +826,7 @@ function morphArgsToObject ( args ) {
 		
 			case 'string':
 				// easeInOut -> ease-in-out
-				options.effect = args[i].replace(/[A-Z]/g, function ( chr ) {
-
-					return '-'+chr.toLowerCase();
-				});
+				options.effect = args[i].replace(/([A-Z])/g, '-$1').toLowerCase();
 				break;
 		}
 	}
@@ -2254,6 +2252,106 @@ PB.overwrite(PB.$.fn, {
 	filter: domFilter
 });
 
+// Animation handler
+PB.Animation = function Animation ( options ) {
+
+	this.running = false;
+	this.startAt;
+	this.endAt;
+	this.timer;
+
+	this.duration = options.duration * 1000;
+	this.onTick = options.onTick || function () {};
+	this.timerFunction = PB.Animation.effects[options.effect] || PB.Animation.effects.ease;
+	this.data = options.data;
+}
+
+PB.overwrite(PB.Animation.prototype, {
+
+	start: function () {
+
+		this.startAt = +new Date;
+		this.endAt = this.startAt + this.duration;
+		this.running = true;
+
+		this.tick();
+	},
+
+	stop: function () {
+
+		clearTimeout(this.timer);
+
+		this.running = false;
+	},
+
+	tick: function () {
+
+		var time = +new Date,
+			self = this,
+			// Position in animation from 0.0 - 1.0
+			position = this.timerFunction(1 - ((this.endAt - time) / this.duration ));
+	
+		if( time >= this.endAt ) {
+		
+			this.onTick(1, this.data, this);
+			this.stop();
+		
+			return;
+		}
+
+		this.onTick(position, this.data, this);
+
+		this.timer = setTimeout(function () {
+
+			self.tick();
+		}, 1000 / 60);
+	}
+});
+
+//Should be reconsidered
+PB.Animation.effects = {
+
+	linear: function ( t ) {
+	
+		return t;
+	},
+
+	ease: function ( t ) {
+	
+		return t;
+	},
+
+	'ease-in': function ( t ) {
+	
+		return t*t;
+	},
+
+	'ease-out': function ( t ) {
+	
+		return -1*t*(t-2);
+	},
+
+	'ease-in-out': function ( t ) {
+	
+		return t;
+	},
+
+	bounce: function ( t ) {
+	
+		if (t < (1/2.75)) {
+		
+		      return (7.5625*t*t);
+		  } else if (t < (2/2.75)) {
+		
+		      return (7.5625*(t-=(1.5/2.75))*t + .75);
+		  } else if (t < (2.5/2.75)) {
+		
+		      return (7.5625*(t-=(2.25/2.75))*t + .9375);
+		  } else {
+		      return (7.5625*(t-=(2.625/2.75))*t + .984375);
+		  }
+	}
+};
 // Support for older browsers
 (function ( PB, undefined ) {
 
@@ -2390,6 +2488,87 @@ PB.overwrite(PB.$.fn, {
 
 			// Parse to int when value is a pixel value
 			return rpixel.test( value ) ? parseInt(value, 10) : value;
+		}
+	}
+
+	// Create a fallback for the morph method if transition are not supported
+	if( !('transition' in div.style) && !('MozTransition' in div.style) && !('WebkitTransition' in div.style) ) {
+
+		PB.$.fn.morph = function ( properties ) {
+
+			// Normalize arguments
+			var options = morphArgsToObject( arguments );
+
+			this.stop(false);
+
+			return this.each(function () {
+
+				var element = PB.$(this),
+					currentStyles = {},
+					styleValueDiff = {},
+					animation;
+
+				// Calculate current styles
+				PB.each(properties, function ( property ) {
+					
+					currentStyles[property] = element.getStyle( property, true );
+				});
+
+				// Calculate the difference between the given and current styles
+				PB.each(properties, function ( property ) {
+
+					var value = properties[property];
+
+					value = /^-?[\d.]+px$/i.test( value ) ? parseInt(value, 10) : value;
+					
+					styleValueDiff[property] = value - currentStyles[property];
+				});
+
+				animation = new PB.Animation({
+
+					duration: options.duration,
+					effect: options.effect,
+					onTick: function ( pos ) {
+
+						PB.each(styleValueDiff, function ( style, value ) {
+
+							element.setStyle(style, currentStyles[style]+(styleValueDiff[style]*pos));
+						});
+
+						if( pos === 1 && options.fn ) {
+
+							options.fn( element )
+						}
+					}
+				}).start();
+
+				element.setData('morph', animation);
+			});
+		};
+
+		PB.$.fn.stop = function ( gotoEnd ) {
+
+			return this.each(function () {
+
+				var element = PB.$(this),
+					animation = element.getData('morph');
+
+				if( !animation || !animation.running ) {
+					
+					return;
+				}
+
+				// Assign default value
+				gotoEnd = (gotoEnd === undefined) ? true : !!gotoEnd;
+
+				animation.stop();
+
+				// Trigger callback
+				if( gotoEnd && data.fn ) {
+					
+					data.fn( this );
+				}
+			});
 		}
 	}
 
