@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-03-20 23:37
+ * Build date 2013-03-21 09:04
  */
 
 (function ( name, context, definition ) {
@@ -2145,7 +2145,7 @@ PB.overwrite($.prototype, {
 			// Handle html events, see _Event.HTMLEvents
 			// Trigger direct trough node method for HTMLEvents and INPUT type
 			// Input check is done for FireFox, failes to trigger input[type=file] with click event
-			if( element.nodeName === 'INPUT' || domEvent.rhtmlevent.test(type) ) {
+			if( (element.nodeName === 'INPUT' && type === 'click') || domEvent.rhtmlevent.test(type) ) {
 
 				element[type]();
 			}
