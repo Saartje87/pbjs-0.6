@@ -71,9 +71,27 @@ PB.overwrite($.prototype, {
 		return PB.$(this[0].previousElementSibling || this[0].previousSibling);
 	},
 
-	closest: function () {
+	closest: function ( expression, maxDepth ) {
 
+		var node = this;
 
+		maxDepth = maxDepth || 50;
+
+		do {
+
+			if( PB.$.selector.matches( node.node, expression ) ) {
+
+				return node;
+			}
+
+			if( !--maxDepth ) {
+
+				break;
+			}
+
+		} while ( node = node.parent() );
+
+		return null;
 	},
 
 	contains: function () {
