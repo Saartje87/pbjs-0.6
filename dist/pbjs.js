@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-03-22 20:57
+ * Build date 2013-03-22 21:20
  */
 
 (function ( name, context, definition ) {
@@ -1759,6 +1759,28 @@ PB.overwrite($.prototype, {
 		} while ( node = node.parent() );
 
 		return null;
+	},
+
+	indexOf: function ( element ) {
+
+		var i = 0;
+
+		element = PB.$(element);
+
+		if( element === null ) {
+
+			return -1;
+		}
+
+		for( ; i < this.length; i++ ) {
+
+			if( this[i] === element[0] ) {
+
+				return i;
+			}
+		}
+
+		return -1;
 	},
 
 	contains: function () {

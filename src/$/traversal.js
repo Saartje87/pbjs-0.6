@@ -94,6 +94,28 @@ PB.overwrite($.prototype, {
 		return null;
 	},
 
+	indexOf: function ( element ) {
+
+		var i = 0;
+
+		element = PB.$(element);
+
+		if( element === null ) {
+
+			return -1;
+		}
+
+		for( ; i < this.length; i++ ) {
+
+			if( this[i] === element[0] ) {
+
+				return i;
+			}
+		}
+
+		return -1;
+	},
+
 	contains: function () {
 
 
