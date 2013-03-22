@@ -79,7 +79,7 @@ PB.overwrite($.prototype, {
 
 		do {
 
-			if( PB.$.selector.matches( node.node, expression ) ) {
+			if( PB.$.selector.matches( node[0], expression ) ) {
 
 				return node;
 			}
