@@ -55,7 +55,7 @@ module.exports = function(grunt) {
 
         // Qwery (submodule)
         'vendor/qwery/qwery.js',
-        'src/$/selector.js'
+        'src/$/qwery-selector.js'
       ],
 			dest: 'dist/pbjs.js'
 		}
