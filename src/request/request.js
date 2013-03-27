@@ -1,13 +1,12 @@
+var requestXMLHttpRequest = 'XMLHttpRequest' in context,
+	requestActiveXObject = 'ActiveXObject' in context;
+
 /**
  * Request class
  *
  * 
  */
 PB.Request = PB.Class(PB.Observer, {
-
-	// Supported states, note that not all states would be triggerd
-	// by the XMLHttpRequest object
-	stateTypes: 'unsent opened headers loading end'.split(' '),
 
 	// Transport, instance of XMLHttpRequest
 	transport: null,
@@ -38,7 +37,7 @@ PB.Request = PB.Class(PB.Observer, {
 	 * @return this
 	 */
 	send: function () {
-		
+
 		var options = this.options,
 			async = options.async,
 			request = this.getTransport(),
@@ -46,6 +45,9 @@ PB.Request = PB.Class(PB.Observer, {
 			method = options.method.toUpperCase(),
 			// Assign query string or null/false/undefined/empty string
 			query = PB.type(options.data) === 'object' ? PB.Request.buildQueryString( options.data ) : options.data;
+
+		// Clear previous abort timer
+		clearTimeout(this.abortTimer);
 
 		// Add query string to url for GET / DELETE request types
 		if( query && (method === 'GET' || method === 'PUT') ) {
@@ -81,6 +83,11 @@ PB.Request = PB.Class(PB.Observer, {
 		// Send the request
 		request.send( query || null );
 
+		if( options.timeout > 0 ) {
+
+			this.abortTimer = setTimeout(this.abort.bind(this), options.timeout*1000);
+		}
+
 		// Handle synchrone callback
 		if( !async ) {
 
@@ -96,6 +103,9 @@ PB.Request = PB.Class(PB.Observer, {
 	 * @return this
 	 */
 	abort: function () {
+
+		// Cleanup memory
+		this.transport.onreadystatechange = null;
 		
 		this.transport.abort();
 
@@ -115,9 +125,10 @@ PB.Request = PB.Class(PB.Observer, {
 		if( key.substr(0, 6) === 'header' ) {
 
 			PB.overwrite(this.options.headers, value);
-		}
+		} else {
 
-		this.options[key] = value;
+			this.options[key] = value;
+		}
 
 		return this;
 	},
@@ -129,31 +140,20 @@ PB.Request = PB.Class(PB.Observer, {
 
 		// IE < 8 has troubles with a reusable xmlHttpRequest object
 		// In this case we always return a new xmlHttpRequest instance
-		if( this.transport && window.XMLHttpRequest ) {
+		if( this.transport && requestXMLHttpRequest ) {
 
 			return this.transport;
 		}
 
-		if( window.XMLHttpRequest ) {
+		// Abort previous request if any
+		if( this.transport ) {
 
-			return this.transport = new XMLHttpRequest();
-		}
-		// Older IE < 8
-		else {
-
-			// Abort previous request if any
-			if( this.transport ) {
-
-				this.transport.abort();
-			}
-
-			try {
-
-	            return this.transport = new ActiveXObject('MSXML2.XMLHTTP.3.0');
-	        } catch(e) {}
+			this.transport.abort();
 		}
 
-		throw new Error('Browser doesn`t support XMLHttpRequest');
+		return this.transport = requestXMLHttpRequest
+			? new XMLHttpRequest()
+			: new ActiveXObject('Microsoft.XMLHTTP');
 	},
 
 	/**
@@ -163,39 +163,43 @@ PB.Request = PB.Class(PB.Observer, {
 
 		var transport = this.transport,
 			options = this.options,
-			type = 'error';
+			type;
 
 		// Request has finished
 		if( transport.readyState === 4 ) {
 
+			clearTimeout(this.abortTimer);
+
 			transport.responseJSON = null;
 
-			// Request successfull
-			if( transport.status >= 200 && transport.status < 300 ) {
+			switch ( transport.status ) {
 
-				// Handle JSON response
-				if( options.json || transport.getResponseHeader('Content-type').indexOf( 'application/json' ) >= 0 ) {
+				case 200:
+				case 201:
+				case 204:
+				case 304:
+					type = 'success';
 
-					try {
-						
-						transport.responseJSON = JSON.parse( transport.responseText );
-					} catch ( e ) {}
-				}
+					// If request is a json call then decode json response
+					if( options.json || transport.getResponseHeader('Content-type').indexOf( 'application/json' ) >= 0 ) {
 
-				type = 'success';
+						try {
+							
+							transport.responseJSON = JSON.parse( transport.responseText );
+						} catch ( e ) {}
+					}
+					break;
+				default:
+					type = 'error';
 			}
-
-			// Emit error or success
-			this.emit( type, transport, transport.status, type );
 
 			// Cleanup memory
 			this.transport.onreadystatechange = null;
+
+			// Emit error or success and end
+			this.emit(type, transport, transport.status);
+			this.emit('end', transport, transport.status);
 		}
-
-		type = this.stateTypes[transport.readyState];
-
-		// Emit state change
-		this.emit( type, transport, transport.readyState === 4 ? transport.status : 0, type );
 	}
 });
 
