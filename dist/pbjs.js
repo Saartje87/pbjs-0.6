@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-03-27 09:09
+ * Build date 2013-03-27 11:48
  */
 
 (function ( name, context, definition ) {
@@ -2443,7 +2443,7 @@ PB.Animation.effects = {
 			var filter = element.style.filter || element.currentStyle.filter,
 				match = filter && filter.match(ropacity);
 			
-			if( match[1] ) {
+			if( match && match[1] ) {
 
 				return parseFloat(match[1]) / 100;
 			}

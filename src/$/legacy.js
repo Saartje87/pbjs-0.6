@@ -43,7 +43,7 @@
 			var filter = element.style.filter || element.currentStyle.filter,
 				match = filter && filter.match(ropacity);
 			
-			if( match[1] ) {
+			if( match && match[1] ) {
 
 				return parseFloat(match[1]) / 100;
 			}
