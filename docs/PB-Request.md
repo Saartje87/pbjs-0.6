@@ -87,7 +87,7 @@ Attach event listener to our `request` object.
 ###### Signature
 ~~~js
 // We could listen to all events
-request.on('error success end abort', function ( request, code, type ) {
+request.on('send error success end abort', function ( request, code, type ) {
 	
 	// Request object
 	request;
