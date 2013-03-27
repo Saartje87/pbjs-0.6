@@ -105,7 +105,7 @@
 					div.style.cssText = 'visbility: hidden; position: absolute; line-height: 0;';
 
 					// 
-					if( value.lastIndexOf('%') > 0 ) {
+					if( value === 'auto' || value.lastIndexOf('%') > 0 ) {
 
 						targetNode = this[0].parentNode;
 						div.style.height = value;

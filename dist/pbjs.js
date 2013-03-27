@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-03-27 11:48
+ * Build date 2013-03-27 12:18
  */
 
 (function ( name, context, definition ) {
@@ -2505,7 +2505,7 @@ PB.Animation.effects = {
 					div.style.cssText = 'visbility: hidden; position: absolute; line-height: 0;';
 
 					// 
-					if( value.lastIndexOf('%') > 0 ) {
+					if( value === 'auto' || value.lastIndexOf('%') > 0 ) {
 
 						targetNode = this[0].parentNode;
 						div.style.height = value;
