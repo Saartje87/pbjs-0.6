@@ -1,6 +1,24 @@
 var requestXMLHttpRequest = 'XMLHttpRequest' in context,
 	requestActiveXObject = 'ActiveXObject' in context;
 
+/*
+PB.Request.defaultSend
+PB.Request.defaultSuccess
+PB.Request.defaultError
+PB.Request.defaultEnd
+PB.Request.defaultAbort
+
+PB.Request.default('success', function () {
+	
+})
+
+// Add callback for all PB.Request instances
+PB.Request.add('success', function () {});
+PB.Request.global('success', function () {});
+PB.Request.forAll('success', function () {});
+PB.Request.all('success', function () {});
+*/
+
 /**
  * Request class
  *
@@ -8,8 +26,8 @@ var requestXMLHttpRequest = 'XMLHttpRequest' in context,
  */
 PB.Request = PB.Class(PB.Observer, {
 
-	// Transport, instance of XMLHttpRequest
-	transport: null,
+	// Xhr, instance of XMLHttpRequest
+	xhr: null,
 	
 	/**
 	 * Construct new class instance
@@ -40,7 +58,7 @@ PB.Request = PB.Class(PB.Observer, {
 
 		var options = this.options,
 			async = options.async,
-			request = this.getTransport(),
+			xhr = this.getTransport(),
 			url = options.url,
 			method = options.method.toUpperCase(),
 			// Assign query string or null/false/undefined/empty string
@@ -59,29 +77,29 @@ PB.Request = PB.Class(PB.Observer, {
 		// Attach onreadystatechange listener
 		if( async ) {
 
-			request.onreadystatechange = this.onreadystatechange.bind(this);
+			xhr.onreadystatechange = this.onreadystatechange.bind(this);
 		}
 
 		// Open connection
-		request.open( method, url, async );
+		xhr.open( method, url, async );
 
 		// Set post / put header
 		if( method === 'POST' || method === 'PUT' ) {
 
-			request.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded; charset='+this.charset );
+			xhr.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded; charset='+this.charset );
 		}
 
 		// Set headers
 		PB.each(options.headers, function( name, val ){
 
-			request.setRequestHeader( name, val );
+			xhr.setRequestHeader( name, val );
 		});
 
 		// Emit send event
-		this.emit( 'send', this.transport, 0 );
+		this.emit( 'send', xhr, 0 );
 
 		// Send the request
-		request.send( query || null );
+		xhr.send( query || null );
 
 		if( options.timeout > 0 ) {
 
@@ -105,9 +123,9 @@ PB.Request = PB.Class(PB.Observer, {
 	abort: function () {
 
 		// Cleanup memory
-		this.transport.onreadystatechange = null;
+		this.xhr.onreadystatechange = null;
 		
-		this.transport.abort();
+		this.xhr.abort();
 
 		this.emit('abort');
 
@@ -140,18 +158,18 @@ PB.Request = PB.Class(PB.Observer, {
 
 		// IE < 8 has troubles with a reusable xmlHttpRequest object
 		// In this case we always return a new xmlHttpRequest instance
-		if( this.transport && requestXMLHttpRequest ) {
+		if( this.xhr && requestXMLHttpRequest ) {
 
-			return this.transport;
+			return this.xhr;
 		}
 
 		// Abort previous request if any
-		if( this.transport ) {
+		if( this.xhr ) {
 
-			this.transport.abort();
+			this.xhr.abort();
 		}
 
-		return this.transport = requestXMLHttpRequest
+		return this.xhr = requestXMLHttpRequest
 			? new XMLHttpRequest()
 			: new ActiveXObject('Microsoft.XMLHTTP');
 	},
@@ -161,18 +179,18 @@ PB.Request = PB.Class(PB.Observer, {
 	 */
 	onreadystatechange: function () {
 
-		var transport = this.transport,
+		var xhr = this.xhr,
 			options = this.options,
 			type;
 
 		// Request has finished
-		if( transport.readyState === 4 ) {
+		if( xhr.readyState === 4 ) {
 
 			clearTimeout(this.abortTimer);
 
-			transport.responseJSON = null;
+			xhr.responseJSON = null;
 
-			switch ( transport.status ) {
+			switch ( xhr.status ) {
 
 				case 200:
 				case 201:
@@ -181,11 +199,11 @@ PB.Request = PB.Class(PB.Observer, {
 					type = 'success';
 
 					// If request is a json call then decode json response
-					if( options.json || transport.getResponseHeader('Content-type').indexOf( 'application/json' ) >= 0 ) {
+					if( options.json || xhr.getResponseHeader('Content-type').indexOf( 'application/json' ) >= 0 ) {
 
 						try {
 							
-							transport.responseJSON = JSON.parse( transport.responseText );
+							xhr.responseJSON = JSON.parse( xhr.responseText );
 						} catch ( e ) {}
 					}
 					break;
@@ -194,11 +212,11 @@ PB.Request = PB.Class(PB.Observer, {
 			}
 
 			// Cleanup memory
-			this.transport.onreadystatechange = null;
+			this.xhr.onreadystatechange = null;
 
 			// Emit error or success and end
-			this.emit(type, transport, transport.status);
-			this.emit('end', transport, transport.status);
+			this.emit(type, xhr, xhr.status);
+			this.emit('end', xhr, xhr.status);
 		}
 	}
 });
