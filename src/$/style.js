@@ -122,6 +122,12 @@ PB.overwrite($.prototype, {
 		if( calculated || !value || value === 'auto' ) {
 
 			value = window.getComputedStyle( this[0], null )[styleName];
+
+			// IE 9 sometimes return auto.. In this case we force the value to 0
+			if( value === 'auto' ) {
+
+				value = 0;
+			}
 		}
 
 		if( styleName === 'opacity' ) {
