@@ -695,6 +695,35 @@ PB.$('#element').matches('div.class');
 
 ---
 
+### indexOf
+
+Finds the index of an element in the set.
+
+###### Signature
+
+```html
+<div id="parent">
+	<div id="one"></div>
+	<div id="two"></div>
+	<div id="three"></div>
+</div>
+```
+
+```js
+PB.$('#parent').children().indexOf('#one'); // returns 0
+PB.$('#parent').children().indexOf(PB.$('#two')); // returns 1
+PB.$('#parent').children().indexOf(document.getElementById('three')); // returns 2
+PB.$('#parent').children().indexOf('#four'); // element not found, returns -1
+```
+
+###### Arguments
+{Mixed} - string, DOM node, PBJS Node
+
+###### Returns
+{Number} - index of element or -1 if no element was found
+
+---
+
 ### remove
 
 Remove every element in the set.
