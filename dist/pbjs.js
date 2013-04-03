@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-03-29 14:27
+ * Build date 2013-04-03 18:14
  */
 
 (function ( name, context, definition ) {
@@ -1678,7 +1678,7 @@ PB.overwrite($.prototype, {
 	 */
 	parent: function () {
 
-		return new this.constructor(this[0].parentNode);
+		return PB.$(this[0].parentNode);
 	},
 
 	/**
@@ -1746,13 +1746,13 @@ PB.overwrite($.prototype, {
 
 	closest: function ( expression, maxDepth ) {
 
-		var node = this;
+		var node = this[0];
 
 		maxDepth = maxDepth || 50;
 
 		do {
 
-			if( PB.$.selector.matches( node[0], expression ) ) {
+			if( PB.$.selector.matches( node, expression ) ) {
 
 				return node;
 			}
@@ -1762,7 +1762,7 @@ PB.overwrite($.prototype, {
 				break;
 			}
 
-		} while ( node = node.parent() );
+		} while ( node = node.parentNode );
 
 		return null;
 	},
