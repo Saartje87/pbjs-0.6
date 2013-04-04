@@ -112,8 +112,10 @@ function register ( element, eventName, handler, context ) {
 		entry,
 		i;
 
+	// Store element
 	storage.element = element;
 
+	// Create event storage
 	if( !storage.eventData ) {
 
 		storage.eventData = {};
@@ -136,6 +138,7 @@ function register ( element, eventName, handler, context ) {
 		}
 	}
 
+	// Store handler and responder se we know wich event to remove when calling `off`
 	entry = {
 
 		handler: handler,
@@ -144,7 +147,7 @@ function register ( element, eventName, handler, context ) {
 
 	entries.push(entry);
 
-	// change mouseenter/mouseleave to mouseover/mousout
+	// [Chrome] Map to correct event name
 	if( !mouseenterleave && (eventName === 'mouseenter' || eventName === 'mouseleave') ) {
 
 		eventName = (eventName === 'mouseenter') ? 'mouseover' : 'mouseout';
@@ -252,11 +255,6 @@ function destroyCache () {
 	PB.$.cache = null;
 }
 
-if( window.attachEvent ) {
-
-	window.attachEvent('onunload', destroyCache);
-}
-
 // Export
 PB.overwrite(PB.$.fn, {
 
@@ -264,3 +262,5 @@ PB.overwrite(PB.$.fn, {
 	// off: removeEvent,
 	// emit: triggerEvent
 });
+
+PB.$(window).on('unload', destroyCache);
