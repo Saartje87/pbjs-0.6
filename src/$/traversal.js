@@ -100,7 +100,7 @@ PB.overwrite($.prototype, {
 
 		element = PB.$(element);
 
-		if( element === null ) {
+		if( !element ) {
 
 			return -1;
 		}
@@ -127,12 +127,11 @@ PB.overwrite($.prototype, {
 	find: function ( expression ) {
 
 		var i = 0,
-			l = this.length,
 			j, k, r,
 			result,
 			elements;
 		
-		for( ; i < l; i++ ) {
+		for( ; i < this.length; i++ ) {
 			
 			if( i === 0 ) {
 				
