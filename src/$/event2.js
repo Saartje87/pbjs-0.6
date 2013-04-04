@@ -67,16 +67,24 @@ if( legacy ) {
  * Add event listener to every element in the set
  *
  * @param {String} event name
+ * @param {String} *optional css expression
  * @param {Function} handler
  * @param {Object} handler context
  * @return 
  */
-function on ( eventName, handler, context ) {
+function on ( eventName, expression, handler, context ) {
 	
 	var types = eventName.split(' '),
 		l = types.length,
 		i = 0,
 		j;
+
+	if( typeof expression === 'function' ) {
+
+		context = handler;
+		handler = expression;
+		expression = null;
+	}
 
 	if( typeof handler !== 'function' ) {
 
@@ -90,7 +98,7 @@ function on ( eventName, handler, context ) {
 		for( j = 0; j < l; j++ ) {
 
 			//this[i].addEventListener(types[i], callback, false);
-			register(this[i], types[j], handler, context);
+			register(this[i], types[j], handler, context, expression);
 		}
 	}
 
@@ -104,8 +112,9 @@ function on ( eventName, handler, context ) {
  * @param {String} event name
  * @param {Function} handler
  * @param {Object} handler context
+ * @param {String} css expression
  */
-function register ( element, eventName, handler, context ) {
+function register ( element, eventName, handler, context, expression ) {
 
 	var storage = domGetStorage(element),
 		entries,
@@ -142,7 +151,7 @@ function register ( element, eventName, handler, context ) {
 	entry = {
 
 		handler: handler,
-		responder: createResponder(element.__PBID__, eventName, handler, context)
+		responder: eventResponder(element.__PBID__, eventName, handler, context, expression)
 	};
 
 	entries.push(entry);
@@ -166,18 +175,46 @@ function register ( element, eventName, handler, context ) {
 /**
  * Create a wrapper arround the original event
  *
- * @param {Number} element uid
+ * @param {Number} element pbid
  * @param {String} event name
- * @param {Function} 
+ * @param {Function} handler
+ * @param {Object} handler context
+ * @param {String} css expression
  */
-function createResponder ( pbid, eventName, handler, context ) {
+function eventResponder ( pbid, eventName, handler, context, expression ) {
 
 	return function ( event ) {
 
-		var element = PB.$.cache[pbid].element;
+		var element = PB.$.cache[pbid].element,
+			matchedElement = false,
+			target;
 		
 		// Extend event
 		event = extendEvent( event, element );
+
+		//matchedElement = expression && matchedElement = new $(target).closest(expression);
+
+		// If css expression is given and the expression does not matches the target or a parent
+		// stop the event.
+		if( expression ) {
+
+			target = event.target;
+
+			do {
+
+				if( PB.$.selector.matches(target, expression) ) {
+
+					matchedElement = true;
+					break;
+				}
+
+			} while ( target !== element && (target = target.parentNode) );
+
+			if( !matchedElement ) {
+
+				return;
+			}
+		}
 
 		// [Chrome] Workaround to support for mouseenter / mouseleave
 		if( !mouseenterleave && eventName === 'mouseleave' ) {
@@ -194,15 +231,13 @@ function createResponder ( pbid, eventName, handler, context ) {
 }
 
 /**
- * Normalize event object for crossbrowser compatibility
+ * Extend event functionality and normalize event object for crossbrowser compatibility
  *
  * @param {Object} event object
  * @param {Object} element node
  * @return {Object} event object
  */
 function extendEvent ( event, element ) {
-
-	console.log('extendEvent');
 
 	PB.overwrite(event, PB.$.Event);
 
