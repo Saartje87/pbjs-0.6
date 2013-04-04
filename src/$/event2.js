@@ -106,6 +106,64 @@ function on ( eventName, expression, handler, context ) {
 }
 
 /**
+ * Remove event listener(s) for every element in the set
+ *
+ * When `handler` is undefined all handlers attached to the event name are removed.
+ * When `eventName` is undefined all handlers for all types are removed
+ *
+ * @param {String} event name
+ * @param {Function} handler
+ * @return {Object} this
+ */
+function off ( eventName, handler ) {
+
+	var i = 0,
+		entries,
+		j;
+
+	for( ; i < this.length; i++ ) {
+
+		entries = domGetStorage(this[i]).eventData;
+
+		// No events
+		if( !entries && (eventName && !entries[eventName]) ) {
+
+			continue;
+		}
+
+		if( !eventName ) {
+
+			// Remove all event listeners
+			for( j in entries ) {
+
+				if( entries.hasOwnProperty(j) ) {
+
+					new $(this[i]).off(j);
+				}
+			}
+		}
+		else if ( !handler ) {
+
+			// Remove all event listeners for given event name
+			for( j = 0; j < entries[eventName].length; j++ ) {
+
+				unregister( this[i], eventName, entries[eventName][i].handler );
+			}
+
+			// Remove property
+			delete entries[name];
+		}
+		else {
+
+			// Remove event listener by event name and handler
+			unregister(this[i], eventName, handler);
+		}
+	}
+
+	return this;
+}
+
+/**
  * Register event
  *
  * @param {Object} element node
@@ -173,6 +231,54 @@ function register ( element, eventName, handler, context, expression ) {
 }
 
 /**
+ * Unregister event
+ *
+ * @param {Object} element node
+ * @param {String} event name
+ * @param {Function} handler
+ */
+function unregister ( element, eventName, handler ) {
+
+	var storage = domGetStorage(element),
+		entries = storage.eventData && storage.eventData[eventName],
+		entry,
+		i;
+
+	if( !entries ) {
+
+		return;
+	}
+
+	i = entries.length;
+
+	// Find cache entry
+	while ( i-- ) {
+		
+		if( entries[i].handler === handler ) {
+			
+			entry = entries[i];
+			entries.splice(i, 1);
+			break;
+		}
+	}
+
+	// No entry in cache
+	if( !entry ) {
+		
+		return;
+	}
+
+	// Remove event
+	if( window.removeEventListener ) {
+
+		element.removeEventListener(eventName, entry.responder, false);
+	} else {
+
+		element.detachEvent('on'+eventName, entry.responder);
+	}
+}
+
+/**
  * Create a wrapper arround the original event
  *
  * @param {Number} element pbid
@@ -210,6 +316,7 @@ function eventResponder ( pbid, eventName, handler, context, expression ) {
 
 			} while ( target !== element && (target = target.parentNode) );
 
+			// When no element matched, stop event
 			if( !matchedElement ) {
 
 				return;
@@ -294,7 +401,7 @@ function destroyCache () {
 PB.overwrite(PB.$.fn, {
 
 	on: on,
-	// off: removeEvent,
+	off: off,
 	// emit: triggerEvent
 });
 
