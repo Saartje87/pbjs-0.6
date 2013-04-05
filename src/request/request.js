@@ -140,6 +140,7 @@ PB.Request = PB.Class(PB.Observer, {
 	 */
 	set: function ( key, value ) {
 		
+		// Match header and headers
 		if( key.substr(0, 6) === 'header' ) {
 
 			PB.overwrite(this.options.headers, value);
@@ -153,6 +154,8 @@ PB.Request = PB.Class(PB.Observer, {
 
 	/**
 	 * Get new transport object
+	 *
+	 * @return {XmlHttpRequest}
 	 */
 	getTransport: function () {
 
