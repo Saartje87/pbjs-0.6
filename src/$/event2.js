@@ -446,8 +446,7 @@ PB.overwrite(PB.$.fn, {
 
 	on: on,
 	off: off,
-	emit: emit,
-	fire: emit
+	emit: emit
 });
 
 PB.$(window).on('unload', destroyCache);
