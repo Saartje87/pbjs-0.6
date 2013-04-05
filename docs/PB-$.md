@@ -863,6 +863,7 @@ Add event(s) to every element in the set. Multiple event types can be given sepe
 > mouseenter / mouseleave support  
 > normalized event for older browsers (tested on ie 7/8)  
 > normalized event properties/methods; currentTarget, preventDefault(), stopPropagation()
+> Custom events are not supported in pbjs, could use the PB.Obersver class tho
 
 ###### Signature
 ```javascript
@@ -878,20 +879,31 @@ PB.$('#element').on('click', function ( e ) {
 	// Stuff
 }, this);
 
+// Add css expression so event is only triggered when it's executed when the event matches
+// the css expression.
+PB.$('#element').on('click', '.match-me', function ( e ) {
+	
+	e.target;
+	e.currentTarget; //-> #element
+	e.selectorTarget; //-> .match-me
+});
+
 // Handle multiple event types
 PB.$('#element').on('mouseenter mouseleave', function ( e ) {
 	
 	switch ( e.type ) {
 		
+		case 'mouseover':	// Needed for chrome
 		case 'mouseenter':
 			break;
 		
+		case 'mosueout':	// Needed for chrome
 		case 'mouseleave':
 			break;
 	}
 });
 
-// Callbacks will always be unique trough event type and element.
+// Named callbacks will only be attached once
 function myClickHandler ( e ) {
 	
 	console.log("myCliclHandler");
@@ -900,11 +912,12 @@ function myClickHandler ( e ) {
 PB.$('#elemement').on('click', myClickHandler);
 PB.$('#elemement').on('click', myClickHandler);
 
-// In the console only one time 'myClickHandler' will be printed.
+// Console prints 'myClickHandler' once
 PB.$('#elemement').emit('click');
 ```
 ###### Arguments
 {String} - event type(s)  
+{String}* - Optional, css expression
 {Function} - callback  
 {Object}* - Optional, context
 
@@ -933,30 +946,6 @@ PB.$('#element').off();
 ###### Arguments
 {String} - event type(s)  
 {Function} - callback
-
-###### Returns
-{Object} - this
-
----
-
-### once
-
-Add event to every element in the set, when the event is triggered the callback is removed.
-
-> Method works the same as PB.$.on <-- link
-
-###### Signature
-```javascript
-// Basic event assignment
-PB.$('#element').once('click', function () {
-	
-	// Stuff
-});
-```
-###### Arguments
-{String} - event type(s)  
-{Function} - callback  
-{Object}* - Optional, context
 
 ###### Returns
 {Object} - this
