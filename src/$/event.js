@@ -439,6 +439,14 @@ function extendEvent ( event, element ) {
 function destroyCache () {
 
 	PB.$.cache = null;
+
+	window.detachEvent('onunload', destroyCache);
+}
+
+// Destroy cache in case of older IE browsers
+if( legacy ) {
+
+	window.attachEvent('onunload', destroyCache);
 }
 
 // Export
@@ -448,5 +456,3 @@ PB.overwrite(PB.$.fn, {
 	off: off,
 	emit: emit
 });
-
-PB.$(window).on('unload', destroyCache);
