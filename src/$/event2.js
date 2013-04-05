@@ -125,12 +125,13 @@ function off ( eventName, handler ) {
 
 		entries = domGetStorage(this[i]).eventData;
 
-		// No events
+		// No events stored
 		if( !entries && (eventName && !entries[eventName]) ) {
 
 			continue;
 		}
 
+		// When no event name is given destroy all events
 		if( !eventName ) {
 
 			// Remove all event listeners
@@ -138,21 +139,24 @@ function off ( eventName, handler ) {
 
 				if( entries.hasOwnProperty(j) ) {
 
+					// Remove events by event name
 					new $(this[i]).off(j);
 				}
 			}
 		}
+		// When no handler is given destoy all events attached to the event name
 		else if ( !handler ) {
 
 			// Remove all event listeners for given event name
 			for( j = 0; j < entries[eventName].length; j++ ) {
 
-				unregister( this[i], eventName, entries[eventName][i].handler );
+				unregister( this[i], eventName, entries[eventName][j].handler );
 			}
 
 			// Remove property
 			delete entries[name];
 		}
+		// Remove a single event, must match eventName and handler
 		else {
 
 			// Remove event listener by event name and handler
