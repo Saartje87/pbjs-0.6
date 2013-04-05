@@ -2,8 +2,10 @@
 var legacy = !!(window.attachEvent && !window.addEventListener),
 	// Does browser support mouseenter and mouseleave
 	mouseenterleave = 'onmouseenter' in docElement && 'onmouseleave' in docElement,
+	// Contains all event that should be triggered `manual` node.focus()
+	rmanualevent = /^(?:load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll)$/,
 	// Regexp to detect mousewheel event
-	rmousescroll = /DOMMouseScroll|mousewheel|wheel/;
+	rmousescroll = /^(?:DOMMouseScroll|mousewheel|wheel)$/;
 
 // Methods that extend the native event object
 PB.$.Event = {
@@ -401,12 +403,42 @@ function destroyCache () {
 	PB.$.cache = null;
 }
 
+/**
+ * 
+ */
+function emit ( eventName ) {
+
+	var i = 0,
+		manual = rmanualevent.test(eventName),
+		evt;
+
+	// translate mouseenter/mouseleave id needed
+
+	for( ; i < this.length; i++ ) {
+
+		if( manual || (this[i].nodeName === 'input' && eventName === 'click') ) {
+
+			this[i][eventName]();
+		}
+
+		// W3C
+		else if( doc.createEvent ) {
+
+			// Check beans / bonzo
+			evt = doc.createEvent('HTMLEvents');
+			evt.initEvent(eventName, true, true, window, 1);
+			this[i].dispatchEvent(evt);
+		}
+	}
+}
+
 // Export
 PB.overwrite(PB.$.fn, {
 
 	on: on,
 	off: off,
-	// emit: triggerEvent
+	emit: emit,
+	fire: emit
 });
 
 PB.$(window).on('unload', destroyCache);
