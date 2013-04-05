@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-04-03 18:14
+ * Build date 2013-04-05 18:51
  */
 
 (function ( name, context, definition ) {
@@ -1773,7 +1773,7 @@ PB.overwrite($.prototype, {
 
 		element = PB.$(element);
 
-		if( element === null ) {
+		if( !element ) {
 
 			return -1;
 		}
@@ -1800,12 +1800,11 @@ PB.overwrite($.prototype, {
 	find: function ( expression ) {
 
 		var i = 0,
-			l = this.length,
 			j, k, r,
 			result,
 			elements;
 		
-		for( ; i < l; i++ ) {
+		for( ; i < this.length; i++ ) {
 			
 			if( i === 0 ) {
 				
@@ -1848,11 +1847,16 @@ PB.overwrite($.prototype, {
 		return true;
 	}
 });
-/**
- * 'Extend the event object'
- *
- * Methods declared in here are later available trough the event object
- */
+	// Browser using an old event model
+var legacy = !!(window.attachEvent && !window.addEventListener),
+	// Does browser support mouseenter and mouseleave
+	mouseenterleave = 'onmouseenter' in docElement && 'onmouseleave' in docElement,
+	// Contains all event that should be triggered `manual` node.focus()
+	rmanualevent = /^(?:load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll)$/,
+	// Regexp to detect mousewheel event
+	rmousescroll = /^(?:DOMMouseScroll|mousewheel|wheel)$/;
+
+// Methods that extend the native event object
 PB.$.Event = {
 
 	/**
@@ -1873,7 +1877,7 @@ PB.$.Event = {
 	 */
 	getWheel: function () {
 		
-		if( pbEvent.rmousescroll.test(this.type) ) {
+		if( rmousescroll.test(this.type) ) {
 
 			return this.wheelDelta ? this.wheelDelta / 120 : -(this.detail || 0) / 3;
 		}
@@ -1883,33 +1887,12 @@ PB.$.Event = {
 };
 
 /**
- * Browser support
- */
-var domEvent = {
-
-	// Browser using old event model
-	isLegacy: !!(window.attachEvent && !window.addEventListener),
-
-	// Regexp to detect mousewheel event
-	rmousescroll: /DOMMouseScroll|mousewheel|wheel/,
-	
-	// Event types that should fired trough node.`type`()
-	rhtmlevent: /^(?:load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll)$/,
-
-	// Mouse events, used for emit detection
-	rmouseevent: /^(?:click|mouse(?:down|up|over|move|out))$/,
-	
-	// Support mouseenter/leave
-	supportmouseenterleave: 'onmouseenter' in docElement && 'onmouseleave' in docElement
-};
-
-/**
  * Detect legacy browser (ie 7/8 supported)
  *
  * Opera implemented both event systems but isn't a legacy browser so
  * checking for addEventListener
  */
-if( domEvent.isLegacy ) {
+if( legacy ) {
 	
 	PB.overwrite(PB.$.Event, {
 		
@@ -1932,16 +1915,334 @@ if( domEvent.isLegacy ) {
 }
 
 /**
- * Extend event object at runtime
+ * Add event listener to every element in the set
  *
- * For older browsers (IE7/8) we normalize the event object
+ * @param {String} event name
+ * @param {String} *optional css expression
+ * @param {Function} handler
+ * @param {Object} handler context
+ * @return 
  */
-function domExtendEvent ( event, element ) {
+function on ( eventName, expression, handler, context ) {
+	
+	var types = eventName.split(' '),
+		l = types.length,
+		i = 0,
+		j;
+
+	if( typeof expression === 'function' ) {
+
+		context = handler;
+		handler = expression;
+		expression = null;
+	}
+
+	if( typeof handler !== 'function' ) {
+
+		throw new TypeError();
+	}
+
+	// Loop trough every elements in set
+	for( ; i < this.length; i++ ) {
+
+		// For every element we get to bind the given event(s)
+		for( j = 0; j < l; j++ ) {
+
+			//this[i].addEventListener(types[i], callback, false);
+			register(this[i], types[j], handler, context, expression);
+		}
+	}
+
+	return this;
+}
+
+/**
+ * Remove event listener(s) for every element in the set
+ *
+ * When `handler` is undefined all handlers attached to the event name are removed.
+ * When `eventName` is undefined all handlers for all types are removed
+ *
+ * @param {String} event name
+ * @param {Function} handler
+ * @return {Object} this
+ */
+function off ( eventName, handler ) {
+
+	var i = 0,
+		entries,
+		j;
+
+	for( ; i < this.length; i++ ) {
+
+		entries = domGetStorage(this[i]).eventData;
+
+		// No events stored
+		if( !entries && (eventName && !entries[eventName]) ) {
+
+			continue;
+		}
+
+		// When no event name is given destroy all events
+		if( !eventName ) {
+
+			// Remove all event listeners
+			for( j in entries ) {
+
+				if( entries.hasOwnProperty(j) ) {
+
+					// Remove events by event name
+					new $(this[i]).off(j);
+				}
+			}
+		}
+		// When no handler is given destoy all events attached to the event name
+		else if ( !handler ) {
+
+			// Remove all event listeners for given event name
+			for( j = 0; j < entries[eventName].length; j++ ) {
+
+				unregister( this[i], eventName, entries[eventName][j].handler );
+			}
+
+			// Remove property
+			delete entries[name];
+		}
+		// Remove a single event, must match eventName and handler
+		else {
+
+			// Remove event listener by event name and handler
+			unregister(this[i], eventName, handler);
+		}
+	}
+
+	return this;
+}
+
+/**
+ * Trigger hmtl event
+ *
+ * @param {String} event name
+ * @return {Object} this
+ */
+function emit ( eventName ) {
+
+	var i = 0,
+		manual = rmanualevent.test(eventName),
+		evt;
+
+	// translate mouseenter/mouseleave if needed
+
+	for( ; i < this.length; i++ ) {
+
+		// Some events need manual trigger, like element.focus()
+		if( manual || (this[i].nodeName === 'input' && eventName === 'click') ) {
+
+			this[i][eventName]();
+		}
+		// W3C
+		else if( doc.createEvent ) {
+
+			// Check beans / bonzo
+			evt = doc.createEvent('HTMLEvents');
+			evt.initEvent(eventName, true, true, window, 1);
+			this[i].dispatchEvent(evt);
+		}
+		// IE
+		else {
+
+			element.fireEvent('on'+eventName, doc.createEventObject());
+		}
+	}
+
+	return this;
+}
+
+/**
+ * Register event
+ *
+ * @param {Object} element node
+ * @param {String} event name
+ * @param {Function} handler
+ * @param {Object} handler context
+ * @param {String} css expression
+ */
+function register ( element, eventName, handler, context, expression ) {
+
+	var storage = domGetStorage(element),
+		entries,
+		entry,
+		i;
+
+	// Store element
+	storage.element = element;
+
+	// Create event storage
+	if( !storage.eventData ) {
+
+		storage.eventData = {};
+	}
+
+	if( !storage.eventData[eventName] ) {
+
+		storage.eventData[eventName] = [];
+	}
+
+	entries = storage.eventData[eventName];
+	i = entries.length;
+
+	// Do not register same handler twice
+	while ( i-- ) {
+
+		if( entries.handler === handler ) {
+
+			return;
+		}
+	}
+
+	// Store handler and responder se we know wich event to remove when calling `off`
+	entry = {
+
+		handler: handler,
+		responder: eventResponder(element.__PBID__, eventName, handler, context, expression)
+	};
+
+	entries.push(entry);
+
+	// [Chrome] Map to correct event name
+	if( !mouseenterleave && (eventName === 'mouseenter' || eventName === 'mouseleave') ) {
+
+		eventName = (eventName === 'mouseenter') ? 'mouseover' : 'mouseout';
+	}
+
+	// Attach event
+	if( window.addEventListener ) {
+
+		element.addEventListener(eventName, entry.responder, false);
+	} else {
+
+		element.attachEvent('on'+eventName, entry.responder);
+	}
+}
+
+/**
+ * Unregister event
+ *
+ * @param {Object} element node
+ * @param {String} event name
+ * @param {Function} handler
+ */
+function unregister ( element, eventName, handler ) {
+
+	var storage = domGetStorage(element),
+		entries = storage.eventData && storage.eventData[eventName],
+		entry,
+		i;
+
+	if( !entries ) {
+
+		return;
+	}
+
+	i = entries.length;
+
+	// Find cache entry
+	while ( i-- ) {
+		
+		if( entries[i].handler === handler ) {
+			
+			entry = entries[i];
+			entries.splice(i, 1);
+			break;
+		}
+	}
+
+	// No entry in cache
+	if( !entry ) {
+		
+		return;
+	}
+
+	// Remove event
+	if( window.removeEventListener ) {
+
+		element.removeEventListener(eventName, entry.responder, false);
+	} else {
+
+		element.detachEvent('on'+eventName, entry.responder);
+	}
+}
+
+/**
+ * Create a wrapper arround the original event
+ *
+ * @param {Number} element pbid
+ * @param {String} event name
+ * @param {Function} handler
+ * @param {Object} handler context
+ * @param {String} css expression
+ */
+function eventResponder ( pbid, eventName, handler, context, expression ) {
+
+	return function ( event ) {
+
+		var element = PB.$.cache[pbid].element,
+			target;
+		
+		// Extend event
+		event = extendEvent( event, element );
+
+		event.selectorTarget = null;
+
+		// If css expression is given and the expression does not matches the target or a parent
+		// stop the event.
+		if( expression ) {
+
+			target = event.target;
+
+			do {
+
+				if( PB.$.selector.matches(target, expression) ) {
+
+					event.selectorTarget = target;
+					break;
+				}
+
+			} while ( target !== element && (target = target.parentNode) );
+
+			// When no element matched, stop event
+			if( !event.selectorTarget ) {
+
+				return;
+			}
+		}
+
+		// [Chrome] Workaround to support for mouseenter / mouseleave
+		if( !mouseenterleave && eventName === 'mouseleave' ) {
+
+			if( event.currentTarget.contains(event.relatedTarget) ) {
+
+				return;
+			}
+		}
+		
+		// Execute callback, use context as scope otherwise the given element
+		handler.call( context || element, event );
+	};
+}
+
+/**
+ * Extend event functionality and normalize event object for crossbrowser compatibility
+ *
+ * @param {Object} event object
+ * @param {Object} element node
+ * @return {Object} event object
+ */
+function extendEvent ( event, element ) {
 
 	PB.overwrite(event, PB.$.Event);
 
 	// Enough extending for modern browsers
-	if( !domEvent.isLegacy ) {
+	if( !legacy ) {
 
 		return event;
 	}
@@ -1979,256 +2280,32 @@ function domExtendEvent ( event, element ) {
 }
 
 /**
- * Return a function wrapper that handles the scope and event extending
+ * Destroy element cache
+ *
+ * We added element to cache entry so make sure there are no 
+ * references that could stick
  */
-function eventResponder ( fn, element, context ) {
-		
-	return function ( event ) {
-		
-		// Extend event
-		event = domExtendEvent( event, element );
-		
-		// Execute callback, use context as scope otherwise the given element
-		fn.call( context || element, event );
-	};
+function destroyCache () {
+
+	PB.$.cache = null;
+
+	window.detachEvent('onunload', destroyCache);
 }
 
-/**
- * Attach event to element
- */
-function domAddEvent ( element, name, fn, context ) {
+// Destroy cache in case of older IE browsers
+if( legacy ) {
 
-	var storage = domGetStorage(element),
-		i = 0,
-		data,
-		responder;
-
-	// Create storage entries if not defined
-	storage.eventData = storage.eventData || {};
-	storage.eventData[name] = storage.eventData[name] || [];
-
-	data = storage.eventData[name];
-
-	// If the callback is already registered, skip to next
-	for( ; i < data.length; i++ ) {
-
-		if( data[i].fn === fn ) {
-
-			return;
-		};
-	}
-
-	// Create responder, pass element as PB.$ object
-	responder = eventResponder( fn, PB.$(element), context );
-
-	// Add cache entry
-	data[i] = {
-
-		fn: fn,
-		responder: responder
-	};
-
-	// Favor addEventListener for event binding
-	if( window.addEventListener ) {
-
-		element.addEventListener(name, responder, false);
-	} else {
-
-		element.attachEvent('on'+name, responder);
-	}
+	window.attachEvent('onunload', destroyCache);
 }
 
-/**
- * Remove event from element
- */
-function domRemoveEvent ( element, name, fn ) {
+// Export
+PB.overwrite(PB.$.fn, {
 
-	var data = domGetStorage(element).eventData,
-		cachedEntry,
-		i = data[name].length;
-
-	// Find cache entry
-	while ( i-- ) {
-		
-		if( data[name][i].fn === fn ) {
-			
-			cachedEntry = data[name][i];
-			data[name].splice(i, 1);
-			break;
-		}
-	}
-
-	// No entry in cache
-	if( !cachedEntry ) {
-		
-		return;
-	}
-
-	// Remove event
-	if( window.removeEventListener ) {
-
-		element.removeEventListener(name, cachedEntry.responder, false);
-	} else {
-
-		element.detachEvent('on'+name, cachedEntry.responder);
-	}
-}
-
-/**
- * Purge all events from element
- */
-function domPurgeEvents ( element ) {
-
-	var storage = domGetStorage(element),
-		data = storage.eventData,
-		cachedEntry,
-		i;
-
-	// Get names from cache, click etc..
-	for( name in data ) {
-		
-		if( data.hasOwnProperty(name) ) {
-			
-			cachedEntry = data[name];
-			
-			for( i = 0; i < cachedEntry.length; i++ ) {
-				
-				domRemoveEvent( element, name, cachedEntry[i].fn );
-			}
-		}
-	}
-	
-	// Remove from eventCache
-	delete storage.eventData;
-}
-
-PB.overwrite($.prototype, {
-
-	/**
-	 * Add event(s) to every element in the set. Multiple event types can be given seperated by a whitespace.
-	 *
-	 * @param {String}
-	 * @param {Function}
-	 * @param {Object}
-	 * @return this
-	 */
-	on: function ( name, fn, context ) {
-
-		var i = 0,
-			names = name.split(' '),
-			l = names.length,
-			j;
-
-		for( ; i < this.length; i++ ) {
-
-			for( j = 0; j < l; j++ ) {
-
-				domAddEvent(this[i], names[j], fn, context);
-			}
-		}
-
-		return this;
-	},
-
-	once: function () {
-
-		
-	},
-
-	off: function ( name, fn ) {
-
-		var i = 0,
-			j,
-			data;
-
-		for( ; i < this.length; i++ ) {
-
-			data = domGetStorage(this[i]).eventData;
-
-			// No events
-			if( !data && (name && !data[name]) ) {
-
-				continue;
-			}
-
-			// Remove all events from element
-			if( !name && !fn ) {
-
-				domPurgeEvents( this[i] );
-			}
-			// Remove all listeners from given event name
-			else if ( !fn ) {
-
-				// Loop trough storage to get the original fn
-				for( j = 0; j < data[name].length; j++ ) {
-
-					domRemoveEvent( this[i], name, data[name][i].fn );
-				}
-
-				// Free memory
-				delete data[name];
-			}
-			// Remove 
-			else {
-
-				domRemoveEvent( this[i], name, fn );
-			}
-		}
-
-		return this;
-	},
-
-	emit: function ( type ) {
-
-		var i = 0,
-			element,
-			event;
-
-		for( ; i < this.length; i++ ) {
-
-			element = this[i];
-
-			// Handle html events, see _Event.HTMLEvents
-			// Trigger direct trough node method for HTMLEvents and INPUT type
-			// Input check is done for FireFox, failes to trigger input[type=file] with click event
-			if( (element.nodeName === 'INPUT' && type === 'click') || domEvent.rhtmlevent.test(type) ) {
-
-				element[type]();
-			}
-			// Dispatch trigger W3C event model
-			else if( doc.createEvent ) {
-
-				if ( domEvent.rmouseevent.test(type) ) {
-
-					event = doc.createEvent('MouseEvents');
-
-					event.initMouseEvent(
-						type, true, true, window,		// type, canBubble, cancelable, view,
-						0, 0, 0, 0, 0,					// detail, screenX, screenY, clientX, clientY,
-						false, false, false, false,		// ctrlKey, altKey, shiftKey, metaKey,
-						0, null);						// button, relatedTarget
-
-					element.dispatchEvent(event);
-				} else {
-
-					event = doc.createEvent('Events');
-
-					event.initEvent( type, true, true );
-
-					element.dispatchEvent(event);
-				}
-			}
-			// Dispatch trough legacy event model
-			else {
-
-				event = doc.createEventObject();
-				element.fireEvent('on'+type, event);
-			}
-		}
-
-		return this;
-	}
+	on: on,
+	off: off,
+	emit: emit
 });
+
 /**
  * Convert string to html nodes
  *
