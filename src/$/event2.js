@@ -170,6 +170,45 @@ function off ( eventName, handler ) {
 }
 
 /**
+ * Trigger hmtl event
+ *
+ * @param {String} event name
+ * @return {Object} this
+ */
+function emit ( eventName ) {
+
+	var i = 0,
+		manual = rmanualevent.test(eventName),
+		evt;
+
+	// translate mouseenter/mouseleave if needed
+
+	for( ; i < this.length; i++ ) {
+
+		// Some events need manual trigger, like element.focus()
+		if( manual || (this[i].nodeName === 'input' && eventName === 'click') ) {
+
+			this[i][eventName]();
+		}
+		// W3C
+		else if( doc.createEvent ) {
+
+			// Check beans / bonzo
+			evt = doc.createEvent('HTMLEvents');
+			evt.initEvent(eventName, true, true, window, 1);
+			this[i].dispatchEvent(evt);
+		}
+		// IE
+		else {
+
+			element.fireEvent('on'+eventName, doc.createEventObject());
+		}
+	}
+
+	return this;
+}
+
+/**
  * Register event
  *
  * @param {Object} element node
@@ -298,13 +337,12 @@ function eventResponder ( pbid, eventName, handler, context, expression ) {
 	return function ( event ) {
 
 		var element = PB.$.cache[pbid].element,
-			matchedElement = false,
 			target;
 		
 		// Extend event
 		event = extendEvent( event, element );
 
-		//matchedElement = expression && matchedElement = new $(target).closest(expression);
+		event.selectorTarget = null;
 
 		// If css expression is given and the expression does not matches the target or a parent
 		// stop the event.
@@ -316,14 +354,14 @@ function eventResponder ( pbid, eventName, handler, context, expression ) {
 
 				if( PB.$.selector.matches(target, expression) ) {
 
-					matchedElement = true;
+					event.selectorTarget = target;
 					break;
 				}
 
 			} while ( target !== element && (target = target.parentNode) );
 
 			// When no element matched, stop event
-			if( !matchedElement ) {
+			if( !event.selectorTarget ) {
 
 				return;
 			}
@@ -401,35 +439,6 @@ function extendEvent ( event, element ) {
 function destroyCache () {
 
 	PB.$.cache = null;
-}
-
-/**
- * 
- */
-function emit ( eventName ) {
-
-	var i = 0,
-		manual = rmanualevent.test(eventName),
-		evt;
-
-	// translate mouseenter/mouseleave id needed
-
-	for( ; i < this.length; i++ ) {
-
-		if( manual || (this[i].nodeName === 'input' && eventName === 'click') ) {
-
-			this[i][eventName]();
-		}
-
-		// W3C
-		else if( doc.createEvent ) {
-
-			// Check beans / bonzo
-			evt = doc.createEvent('HTMLEvents');
-			evt.initEvent(eventName, true, true, window, 1);
-			this[i].dispatchEvent(evt);
-		}
-	}
 }
 
 // Export
