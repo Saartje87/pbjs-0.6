@@ -12,10 +12,14 @@ PB.overwrite($.prototype, {
 
 	outerWidth: function ( includeMargin ) {
 
-		if( includeMargin )
-			return this.innerWidth() + this.getStyle('borderLeftWidth', true) + this.getStyle('borderRightWidth', true) + this.getStyle('marginLeft', true) + this.getStyle('marginRight', true);
+		var outerWidth = this.innerWidth() + this.getStyle('borderLeftWidth', true) + this.getStyle('borderRightWidth', true);
 
-		return this.innerWidth() + this.getStyle('borderLeftWidth', true) + this.getStyle('borderRightWidth', true);
+		if( includeMargin ) {
+
+			outerWidth += this.getStyle('marginLeft', true) + this.getStyle('marginRight', true);
+		}
+
+		return outerWidth;
 	},
 
 	scrollWidth: function () {
@@ -35,10 +39,14 @@ PB.overwrite($.prototype, {
 
 	outerHeight: function ( includeMargin ) {
 
-		if( includeMargin )
-			return this.innerHeight() + this.getStyle('borderTopWidth', true) + this.getStyle('borderBottomWidth', true) + this.getStyle('marginTop', true) + this.getStyle('marginBottom', true);
+		var outerHeight = this.innerHeight() + this.getStyle('borderTopWidth', true) + this.getStyle('borderBottomWidth', true);
 
-		return this.innerHeight() + this.getStyle('borderTopWidth', true) + this.getStyle('borderBottomWidth', true);
+		if( includeMargin ) {
+
+			outerHeight += this.getStyle('marginTop', true) + this.getStyle('marginBottom', true);
+		}
+
+		return outerHeight;
 	},
 
 	scrollHeight: function () {
@@ -84,7 +92,7 @@ PB.overwrite($.prototype, {
 
 			top: box.top + (window.scrollY || window.pageYOffset),
 			left: box.left + (window.scrollX || window.pageXOffset)
-		}
+		};
 	},
 
 	offset: function () {

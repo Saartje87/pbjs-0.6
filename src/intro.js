@@ -4,7 +4,7 @@
 
 })('PB', this, function ( context ) {
 
-"use strict";
+'use strict';
 
 var PB = {},
 
@@ -16,8 +16,7 @@ var PB = {},
 	
 	// References
 	slice = Array.prototype.slice,
-	toString = Object.prototype.toString,
-	undefined;
+	toString = Object.prototype.toString;
 
 // Define version
 PB.VERSION = '0.6.0';

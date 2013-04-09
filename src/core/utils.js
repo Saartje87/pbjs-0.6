@@ -6,7 +6,7 @@
 PB.id = function () {
 
 	return ++uid;
-}
+};
 
 /**
  * Overwrite properties or methods in target object
@@ -24,7 +24,7 @@ PB.overwrite = function ( target, source ) {
 	}
 
 	return target;
-}
+};
 
 /**
  * Extend object
@@ -44,7 +44,7 @@ PB.extend = function ( target, source ) {
 	}
 
 	return target;
-}
+};
 
 /**
  * Return a deep clone of the given object
@@ -70,7 +70,7 @@ PB.clone = function ( source ) {
 	}
 
 	return clone;
-}
+};
 
 /**
  * Walk trough object
@@ -100,7 +100,7 @@ PB.each = function ( collection, fn, context ) {
 			return;
 		}
 	}
-}
+};
 
 /**
  * 
@@ -117,7 +117,7 @@ PB.toArray = function ( arr ) {
 	}
 
 	return result;
-}
+};
 
 /**
  * Returns te primitive type of the given variable
@@ -134,7 +134,7 @@ PB.type = function ( mixed ) {
 	var type = toString.call(mixed);
 		
 	return type.substr(8, type.length - 9).toLowerCase();
-}
+};
 
 /** Move to PB.$
  * Executes script in global scope
@@ -168,4 +168,4 @@ PB.noConflict = function () {
 	}
 
 	return PB;
-}
+};

@@ -25,7 +25,7 @@ var div = document.createElement('div'),
  *
  * Example result:
  * prefixStyles = {
- * 	boxSizing: 'MozBoxSizing'
+ *     boxSizing: 'MozBoxSizing'
  * }
  */
 PB.each(stylesUsingPrefix, function ( i, prop ) {
@@ -71,28 +71,31 @@ PB.overwrite($.prototype, {
 
 			for( prop in styles ) {
 
-				value = styles[prop];
+				if( !styles.hasOwnProperty(prop) ) {
 
-				// Use hook
-				if( PB.$.hooks['setStyle.'+prop] ) {
+					value = styles[prop];
 
-					PB.$.hooks['setStyle.'+prop]( this[i], value );
-				}
-				// Use normal setter
-				else {
+					// Use hook
+					if( PB.$.hooks['setStyle.'+prop] ) {
 
-					// Add px when value is a number and property is a px value
-					if( typeof value === 'number' && !skipUnits[prop] ) {
-						
-						value += 'px';
+						PB.$.hooks['setStyle.'+prop]( this[i], value );
 					}
+					// Use normal setter
+					else {
 
-					// IE throws error when setting a non valid value
-					try {
+						// Add px when value is a number and property is a px value
+						if( typeof value === 'number' && !skipUnits[prop] ) {
+							
+							value += 'px';
+						}
 
-						// Make sure we use the correct style name
-						this[i].style[prefixStyles[prop] || prop] = value;
-					} catch (e) {}
+						// IE throws error when setting a non valid value
+						try {
+
+							// Make sure we use the correct style name
+							this[i].style[prefixStyles[prop] || prop] = value;
+						} catch (e) {}
+					}
 				}
 			}
 		}
@@ -136,6 +139,6 @@ PB.overwrite($.prototype, {
 		}
 
 		// Parse to int when value is a pixel value
-		return /^-?[\d.]+px$/i.test( value ) ? parseInt(value, 10) : value;
+		return (/^-?[\d.]+px$/i).test( value ) ? parseInt(value, 10) : value;
 	}
 });

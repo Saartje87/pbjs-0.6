@@ -61,7 +61,7 @@ PB.$ = function ( selector ) {
 	*/
 
 	return null;
-}
+};
 
 /**
  * Return collection by css selector
@@ -69,7 +69,7 @@ PB.$ = function ( selector ) {
 PB.$$ = function ( selector ) {
 
 	return new $(document).find(selector);
-}
+};
 
 /**
  * $ constructor
@@ -91,7 +91,7 @@ $ = function ( collection ) {
 	}
 
 	this.length = i;
-}
+};
 
 $.prototype.constructor = $;
 

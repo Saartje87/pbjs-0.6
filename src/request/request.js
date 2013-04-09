@@ -172,9 +172,11 @@ PB.Request = PB.Class(PB.Observer, {
 			this.xhr.abort();
 		}
 
-		return this.xhr = requestXMLHttpRequest
+		this.xhr = requestXMLHttpRequest
 			? new XMLHttpRequest()
 			: new ActiveXObject('Microsoft.XMLHTTP');
+
+		return this.xhr;
 	},
 
 	/**

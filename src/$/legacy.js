@@ -134,7 +134,7 @@
 
 			// Parse to int when value is a pixel value
 			return rpixel.test( value ) ? parseInt(value, 10) : value;
-		}
+		};
 	}
 
 	// Create a fallback for the morph method if transition are not supported
@@ -183,7 +183,7 @@
 
 						if( pos === 1 && options.fn ) {
 
-							options.fn( element )
+							options.fn( element );
 						}
 					}
 				}).start();
@@ -210,12 +210,12 @@
 				animation.stop();
 
 				// Trigger callback
-				if( gotoEnd && data.fn ) {
+				if( gotoEnd && animation.fn ) {
 					
-					data.fn( this );
+					animation.fn( this );
 				}
 			});
-		}
+		};
 	}
 
 	// Free memory

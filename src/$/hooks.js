@@ -15,4 +15,4 @@ PB.$.hook = function ( name, fn ) {
 	}
 
 	PB.$.hooks[name] = fn;
-}
+};

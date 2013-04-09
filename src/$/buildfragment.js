@@ -19,4 +19,4 @@ PB.$.buildFragment = function ( html ) {
 	fragment = null;
 
 	return children;
-}
+};

@@ -31,7 +31,8 @@ PB.Class = function ( parentClass, base ) {
         name,
         ancestor,
         property,
-        parentPrototype;
+        parentPrototype,
+        _parent;
 
         // Handle arguments
 	if( !base ) {
@@ -51,8 +52,6 @@ PB.Class = function ( parentClass, base ) {
 
         if( parentClass && parentPrototype.construct ) {
 
-            var _parent;
-
             klass = function () {
 
                 var _constructor = constructor;
@@ -66,7 +65,7 @@ PB.Class = function ( parentClass, base ) {
                     _constructor.apply( this, arguments );
 
                     this.parent = _parent;
-                }
+                };
 
                 if( typeof constructor === 'function' ) {
                     
@@ -78,33 +77,33 @@ PB.Class = function ( parentClass, base ) {
             klass = base.construct;
         }
     } else if ( parentClass && parentPrototype.construct ) {
-    	
-        klass = function () {
-        	
-        	parentPrototype.construct.apply( this, arguments );
-        };
+
+		klass = function () {
+
+			parentPrototype.construct.apply( this, arguments );
+		};
     } else {
 
-        klass = function () {};
+		klass = function () {};
     }
 
-    // Fill our prototype
-    for( name in base ) {
-    	
-        if( base.hasOwnProperty(name) ) {
+	// Fill our prototype
+	for( name in base ) {
+		
+		if( base.hasOwnProperty(name) ) {
 
-            property = base[name];
+			property = base[name];
 
-            ancestor = parentClass ? parentPrototype[name] : false;
+			ancestor = parentClass ? parentPrototype[name] : false;
 
-            if( typeof ancestor === 'function' && typeof property === 'function' ) {
+			if( typeof ancestor === 'function' && typeof property === 'function' ) {
 
-                property = createClassResponser( property, ancestor );
-            }
+				property = createClassResponser( property, ancestor );
+			}
 
-            klass.prototype[name] = property;
-        }
-    }
+			klass.prototype[name] = property;
+		}
+	}
     
     // For every parent method / property thats not added
     if( parentClass ) {

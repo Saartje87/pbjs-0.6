@@ -6,7 +6,7 @@ function morphArgsToObject ( args ) {
 	// Default options
 	var options = {
 		
-		duration: .4,
+		duration: 0.4,
 		effect: 'ease'
 	};
 	
@@ -132,7 +132,7 @@ function ( properties ) {
 	}
 
 	return this;
-}
+};
 
 $.prototype.stop = function ( gotoEnd ) {
 
@@ -177,4 +177,4 @@ $.prototype.stop = function ( gotoEnd ) {
 			data.fn( this );
 		}
 	});
-}
+};

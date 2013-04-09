@@ -16,7 +16,7 @@ PB.$.Event = {
 	stop: function stop () {
 		
 		this.preventDefault();
-	    this.stopPropagation();
+		this.stopPropagation();
 	},
 	
 	/**
@@ -63,149 +63,6 @@ if( legacy ) {
 			this.returnValue = false;
 		}
 	});
-}
-
-/**
- * Add event listener to every element in the set
- *
- * @param {String} event name
- * @param {String} *optional css expression
- * @param {Function} handler
- * @param {Object} handler context
- * @return 
- */
-function on ( eventName, expression, handler, context ) {
-	
-	var types = eventName.split(' '),
-		l = types.length,
-		i = 0,
-		j;
-
-	if( typeof expression === 'function' ) {
-
-		context = handler;
-		handler = expression;
-		expression = null;
-	}
-
-	if( typeof handler !== 'function' ) {
-
-		throw new TypeError();
-	}
-
-	// Loop trough every elements in set
-	for( ; i < this.length; i++ ) {
-
-		// For every element we get to bind the given event(s)
-		for( j = 0; j < l; j++ ) {
-
-			//this[i].addEventListener(types[i], callback, false);
-			register(this[i], types[j], handler, context, expression);
-		}
-	}
-
-	return this;
-}
-
-/**
- * Remove event listener(s) for every element in the set
- *
- * When `handler` is undefined all handlers attached to the event name are removed.
- * When `eventName` is undefined all handlers for all types are removed
- *
- * @param {String} event name
- * @param {Function} handler
- * @return {Object} this
- */
-function off ( eventName, handler ) {
-
-	var i = 0,
-		entries,
-		j;
-
-	for( ; i < this.length; i++ ) {
-
-		entries = domGetStorage(this[i]).eventData;
-
-		// No events stored
-		if( !entries && (eventName && !entries[eventName]) ) {
-
-			continue;
-		}
-
-		// When no event name is given destroy all events
-		if( !eventName ) {
-
-			// Remove all event listeners
-			for( j in entries ) {
-
-				if( entries.hasOwnProperty(j) ) {
-
-					// Remove events by event name
-					new $(this[i]).off(j);
-				}
-			}
-		}
-		// When no handler is given destoy all events attached to the event name
-		else if ( !handler ) {
-
-			// Remove all event listeners for given event name
-			for( j = 0; j < entries[eventName].length; j++ ) {
-
-				unregister( this[i], eventName, entries[eventName][j].handler );
-			}
-
-			// Remove property
-			delete entries[name];
-		}
-		// Remove a single event, must match eventName and handler
-		else {
-
-			// Remove event listener by event name and handler
-			unregister(this[i], eventName, handler);
-		}
-	}
-
-	return this;
-}
-
-/**
- * Trigger hmtl event
- *
- * @param {String} event name
- * @return {Object} this
- */
-function emit ( eventName ) {
-
-	var i = 0,
-		manual = rmanualevent.test(eventName),
-		evt;
-
-	// translate mouseenter/mouseleave if needed
-
-	for( ; i < this.length; i++ ) {
-
-		// Some events need manual trigger, like element.focus()
-		if( manual || (this[i].nodeName === 'input' && eventName === 'click') ) {
-
-			this[i][eventName]();
-		}
-		// W3C
-		else if( doc.createEvent ) {
-
-			// Check beans / bonzo
-			evt = doc.createEvent('HTMLEvents');
-			evt.initEvent(eventName, true, true, window, 1);
-			this[i].dispatchEvent(evt);
-		}
-		// IE
-		else {
-
-			element.fireEvent('on'+eventName, doc.createEventObject());
-		}
-	}
-
-	return this;
 }
 
 /**
@@ -447,6 +304,149 @@ function destroyCache () {
 if( legacy ) {
 
 	window.attachEvent('onunload', destroyCache);
+}
+
+/**
+ * Add event listener to every element in the set
+ *
+ * @param {String} event name
+ * @param {String} *optional css expression
+ * @param {Function} handler
+ * @param {Object} handler context
+ * @return 
+ */
+function on ( eventName, expression, handler, context ) {
+	
+	var types = eventName.split(' '),
+		l = types.length,
+		i = 0,
+		j;
+
+	if( typeof expression === 'function' ) {
+
+		context = handler;
+		handler = expression;
+		expression = null;
+	}
+
+	if( typeof handler !== 'function' ) {
+
+		throw new TypeError();
+	}
+
+	// Loop trough every elements in set
+	for( ; i < this.length; i++ ) {
+
+		// For every element we get to bind the given event(s)
+		for( j = 0; j < l; j++ ) {
+
+			//this[i].addEventListener(types[i], callback, false);
+			register(this[i], types[j], handler, context, expression);
+		}
+	}
+
+	return this;
+}
+
+/**
+ * Remove event listener(s) for every element in the set
+ *
+ * When `handler` is undefined all handlers attached to the event name are removed.
+ * When `eventName` is undefined all handlers for all types are removed
+ *
+ * @param {String} event name
+ * @param {Function} handler
+ * @return {Object} this
+ */
+function off ( eventName, handler ) {
+
+	var i = 0,
+		entries,
+		j;
+
+	for( ; i < this.length; i++ ) {
+
+		entries = domGetStorage(this[i]).eventData;
+
+		// No events stored
+		if( !entries && (eventName && !entries[eventName]) ) {
+
+			continue;
+		}
+
+		// When no event name is given destroy all events
+		if( !eventName ) {
+
+			// Remove all event listeners
+			for( j in entries ) {
+
+				if( entries.hasOwnProperty(j) ) {
+
+					// Remove events by event name
+					new $(this[i]).off(j);
+				}
+			}
+		}
+		// When no handler is given destoy all events attached to the event name
+		else if ( !handler ) {
+
+			// Remove all event listeners for given event name
+			for( j = 0; j < entries[eventName].length; j++ ) {
+
+				unregister( this[i], eventName, entries[eventName][j].handler );
+			}
+
+			// Remove property
+			delete entries[name];
+		}
+		// Remove a single event, must match eventName and handler
+		else {
+
+			// Remove event listener by event name and handler
+			unregister(this[i], eventName, handler);
+		}
+	}
+
+	return this;
+}
+
+/**
+ * Trigger hmtl event
+ *
+ * @param {String} event name
+ * @return {Object} this
+ */
+function emit ( eventName ) {
+
+	var i = 0,
+		manual = rmanualevent.test(eventName),
+		evt;
+
+	// translate mouseenter/mouseleave if needed
+
+	for( ; i < this.length; i++ ) {
+
+		// Some events need manual trigger, like element.focus()
+		if( manual || (this[i].nodeName === 'input' && eventName === 'click') ) {
+
+			this[i][eventName]();
+		}
+		// W3C
+		else if( doc.createEvent ) {
+
+			// Check beans / bonzo
+			evt = doc.createEvent('HTMLEvents');
+			evt.initEvent(eventName, true, true, window, 1);
+			this[i].dispatchEvent(evt);
+		}
+		// IE
+		else {
+
+			this[i].fireEvent('on'+eventName, doc.createEventObject());
+		}
+	}
+
+	return this;
 }
 
 // Export

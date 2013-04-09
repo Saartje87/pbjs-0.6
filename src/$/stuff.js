@@ -178,7 +178,10 @@ PB.overwrite($.prototype, {
 
 			for( key in data ) {
 
-				this[i].setAttribute(key, data[key]);
+				if( data.hasOwnProperty(key) ) {
+
+					this[i].setAttribute(key, data[key]);
+				}
 			}
 		}
 

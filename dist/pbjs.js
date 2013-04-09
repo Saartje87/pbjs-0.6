@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-04-05 18:51
+ * Build date 2013-04-09 15:59
  */
 
 (function ( name, context, definition ) {
@@ -17,7 +17,7 @@
 
 })('PB', this, function ( context ) {
 
-"use strict";
+'use strict';
 
 var PB = {},
 
@@ -29,8 +29,7 @@ var PB = {},
 	
 	// References
 	slice = Array.prototype.slice,
-	toString = Object.prototype.toString,
-	undefined;
+	toString = Object.prototype.toString;
 
 // Define version
 PB.VERSION = '0.6.0';
@@ -43,7 +42,7 @@ PB.VERSION = '0.6.0';
 PB.id = function () {
 
 	return ++uid;
-}
+};
 
 /**
  * Overwrite properties or methods in target object
@@ -61,7 +60,7 @@ PB.overwrite = function ( target, source ) {
 	}
 
 	return target;
-}
+};
 
 /**
  * Extend object
@@ -81,7 +80,7 @@ PB.extend = function ( target, source ) {
 	}
 
 	return target;
-}
+};
 
 /**
  * Return a deep clone of the given object
@@ -107,7 +106,7 @@ PB.clone = function ( source ) {
 	}
 
 	return clone;
-}
+};
 
 /**
  * Walk trough object
@@ -137,7 +136,7 @@ PB.each = function ( collection, fn, context ) {
 			return;
 		}
 	}
-}
+};
 
 /**
  * 
@@ -154,7 +153,7 @@ PB.toArray = function ( arr ) {
 	}
 
 	return result;
-}
+};
 
 /**
  * Returns te primitive type of the given variable
@@ -171,7 +170,7 @@ PB.type = function ( mixed ) {
 	var type = toString.call(mixed);
 		
 	return type.substr(8, type.length - 9).toLowerCase();
-}
+};
 
 /** Move to PB.$
  * Executes script in global scope
@@ -205,7 +204,7 @@ PB.noConflict = function () {
 	}
 
 	return PB;
-}
+};
 
 /**
  * Create a wrapper function that makes it possible to call the parent method
@@ -240,7 +239,8 @@ PB.Class = function ( parentClass, base ) {
         name,
         ancestor,
         property,
-        parentPrototype;
+        parentPrototype,
+        _parent;
 
         // Handle arguments
 	if( !base ) {
@@ -260,8 +260,6 @@ PB.Class = function ( parentClass, base ) {
 
         if( parentClass && parentPrototype.construct ) {
 
-            var _parent;
-
             klass = function () {
 
                 var _constructor = constructor;
@@ -275,7 +273,7 @@ PB.Class = function ( parentClass, base ) {
                     _constructor.apply( this, arguments );
 
                     this.parent = _parent;
-                }
+                };
 
                 if( typeof constructor === 'function' ) {
                     
@@ -287,33 +285,33 @@ PB.Class = function ( parentClass, base ) {
             klass = base.construct;
         }
     } else if ( parentClass && parentPrototype.construct ) {
-    	
-        klass = function () {
-        	
-        	parentPrototype.construct.apply( this, arguments );
-        };
+
+		klass = function () {
+
+			parentPrototype.construct.apply( this, arguments );
+		};
     } else {
 
-        klass = function () {};
+		klass = function () {};
     }
 
-    // Fill our prototype
-    for( name in base ) {
-    	
-        if( base.hasOwnProperty(name) ) {
+	// Fill our prototype
+	for( name in base ) {
+		
+		if( base.hasOwnProperty(name) ) {
 
-            property = base[name];
+			property = base[name];
 
-            ancestor = parentClass ? parentPrototype[name] : false;
+			ancestor = parentClass ? parentPrototype[name] : false;
 
-            if( typeof ancestor === 'function' && typeof property === 'function' ) {
+			if( typeof ancestor === 'function' && typeof property === 'function' ) {
 
-                property = createClassResponser( property, ancestor );
-            }
+				property = createClassResponser( property, ancestor );
+			}
 
-            klass.prototype[name] = property;
-        }
-    }
+			klass.prototype[name] = property;
+		}
+	}
     
     // For every parent method / property thats not added
     if( parentClass ) {
@@ -572,7 +570,7 @@ PB.$ = function ( selector ) {
 	*/
 
 	return null;
-}
+};
 
 /**
  * Return collection by css selector
@@ -580,7 +578,7 @@ PB.$ = function ( selector ) {
 PB.$$ = function ( selector ) {
 
 	return new $(document).find(selector);
-}
+};
 
 /**
  * $ constructor
@@ -602,7 +600,7 @@ $ = function ( collection ) {
 	}
 
 	this.length = i;
-}
+};
 
 $.prototype.constructor = $;
 
@@ -661,7 +659,7 @@ PB.$.hook = function ( name, fn ) {
 	}
 
 	PB.$.hooks[name] = fn;
-}
+};
 
 	// Used for tests
 var div = document.createElement('div'),
@@ -690,7 +688,7 @@ var div = document.createElement('div'),
  *
  * Example result:
  * prefixStyles = {
- * 	boxSizing: 'MozBoxSizing'
+ *     boxSizing: 'MozBoxSizing'
  * }
  */
 PB.each(stylesUsingPrefix, function ( i, prop ) {
@@ -736,28 +734,31 @@ PB.overwrite($.prototype, {
 
 			for( prop in styles ) {
 
-				value = styles[prop];
+				if( !styles.hasOwnProperty(prop) ) {
 
-				// Use hook
-				if( PB.$.hooks['setStyle.'+prop] ) {
+					value = styles[prop];
 
-					PB.$.hooks['setStyle.'+prop]( this[i], value );
-				}
-				// Use normal setter
-				else {
+					// Use hook
+					if( PB.$.hooks['setStyle.'+prop] ) {
 
-					// Add px when value is a number and property is a px value
-					if( typeof value === 'number' && !skipUnits[prop] ) {
-						
-						value += 'px';
+						PB.$.hooks['setStyle.'+prop]( this[i], value );
 					}
+					// Use normal setter
+					else {
 
-					// IE throws error when setting a non valid value
-					try {
+						// Add px when value is a number and property is a px value
+						if( typeof value === 'number' && !skipUnits[prop] ) {
+							
+							value += 'px';
+						}
 
-						// Make sure we use the correct style name
-						this[i].style[prefixStyles[prop] || prop] = value;
-					} catch (e) {}
+						// IE throws error when setting a non valid value
+						try {
+
+							// Make sure we use the correct style name
+							this[i].style[prefixStyles[prop] || prop] = value;
+						} catch (e) {}
+					}
 				}
 			}
 		}
@@ -801,7 +802,7 @@ PB.overwrite($.prototype, {
 		}
 
 		// Parse to int when value is a pixel value
-		return /^-?[\d.]+px$/i.test( value ) ? parseInt(value, 10) : value;
+		return (/^-?[\d.]+px$/i).test( value ) ? parseInt(value, 10) : value;
 	}
 });
 
@@ -813,7 +814,7 @@ function morphArgsToObject ( args ) {
 	// Default options
 	var options = {
 		
-		duration: .4,
+		duration: 0.4,
 		effect: 'ease'
 	};
 	
@@ -939,7 +940,7 @@ function ( properties ) {
 	}
 
 	return this;
-}
+};
 
 $.prototype.stop = function ( gotoEnd ) {
 
@@ -984,7 +985,7 @@ $.prototype.stop = function ( gotoEnd ) {
 			data.fn( this );
 		}
 	});
-}
+};
 
 PB.overwrite($.prototype, {
 	
@@ -1143,10 +1144,14 @@ PB.overwrite($.prototype, {
 
 	outerWidth: function ( includeMargin ) {
 
-		if( includeMargin )
-			return this.innerWidth() + this.getStyle('borderLeftWidth', true) + this.getStyle('borderRightWidth', true) + this.getStyle('marginLeft', true) + this.getStyle('marginRight', true);
+		var outerWidth = this.innerWidth() + this.getStyle('borderLeftWidth', true) + this.getStyle('borderRightWidth', true);
 
-		return this.innerWidth() + this.getStyle('borderLeftWidth', true) + this.getStyle('borderRightWidth', true);
+		if( includeMargin ) {
+
+			outerWidth += this.getStyle('marginLeft', true) + this.getStyle('marginRight', true);
+		}
+
+		return outerWidth;
 	},
 
 	scrollWidth: function () {
@@ -1166,10 +1171,14 @@ PB.overwrite($.prototype, {
 
 	outerHeight: function ( includeMargin ) {
 
-		if( includeMargin )
-			return this.innerHeight() + this.getStyle('borderTopWidth', true) + this.getStyle('borderBottomWidth', true) + this.getStyle('marginTop', true) + this.getStyle('marginBottom', true);
+		var outerHeight = this.innerHeight() + this.getStyle('borderTopWidth', true) + this.getStyle('borderBottomWidth', true);
 
-		return this.innerHeight() + this.getStyle('borderTopWidth', true) + this.getStyle('borderBottomWidth', true);
+		if( includeMargin ) {
+
+			outerHeight += this.getStyle('marginTop', true) + this.getStyle('marginBottom', true);
+		}
+
+		return outerHeight;
 	},
 
 	scrollHeight: function () {
@@ -1215,7 +1224,7 @@ PB.overwrite($.prototype, {
 
 			top: box.top + (window.scrollY || window.pageYOffset),
 			left: box.left + (window.scrollX || window.pageXOffset)
-		}
+		};
 	},
 
 	offset: function () {
@@ -1423,7 +1432,10 @@ PB.overwrite($.prototype, {
 
 			for( key in data ) {
 
-				this[i].setAttribute(key, data[key]);
+				if( data.hasOwnProperty(key) ) {
+
+					this[i].setAttribute(key, data[key]);
+				}
 			}
 		}
 
@@ -1865,7 +1877,7 @@ PB.$.Event = {
 	stop: function stop () {
 		
 		this.preventDefault();
-	    this.stopPropagation();
+		this.stopPropagation();
 	},
 	
 	/**
@@ -1912,149 +1924,6 @@ if( legacy ) {
 			this.returnValue = false;
 		}
 	});
-}
-
-/**
- * Add event listener to every element in the set
- *
- * @param {String} event name
- * @param {String} *optional css expression
- * @param {Function} handler
- * @param {Object} handler context
- * @return 
- */
-function on ( eventName, expression, handler, context ) {
-	
-	var types = eventName.split(' '),
-		l = types.length,
-		i = 0,
-		j;
-
-	if( typeof expression === 'function' ) {
-
-		context = handler;
-		handler = expression;
-		expression = null;
-	}
-
-	if( typeof handler !== 'function' ) {
-
-		throw new TypeError();
-	}
-
-	// Loop trough every elements in set
-	for( ; i < this.length; i++ ) {
-
-		// For every element we get to bind the given event(s)
-		for( j = 0; j < l; j++ ) {
-
-			//this[i].addEventListener(types[i], callback, false);
-			register(this[i], types[j], handler, context, expression);
-		}
-	}
-
-	return this;
-}
-
-/**
- * Remove event listener(s) for every element in the set
- *
- * When `handler` is undefined all handlers attached to the event name are removed.
- * When `eventName` is undefined all handlers for all types are removed
- *
- * @param {String} event name
- * @param {Function} handler
- * @return {Object} this
- */
-function off ( eventName, handler ) {
-
-	var i = 0,
-		entries,
-		j;
-
-	for( ; i < this.length; i++ ) {
-
-		entries = domGetStorage(this[i]).eventData;
-
-		// No events stored
-		if( !entries && (eventName && !entries[eventName]) ) {
-
-			continue;
-		}
-
-		// When no event name is given destroy all events
-		if( !eventName ) {
-
-			// Remove all event listeners
-			for( j in entries ) {
-
-				if( entries.hasOwnProperty(j) ) {
-
-					// Remove events by event name
-					new $(this[i]).off(j);
-				}
-			}
-		}
-		// When no handler is given destoy all events attached to the event name
-		else if ( !handler ) {
-
-			// Remove all event listeners for given event name
-			for( j = 0; j < entries[eventName].length; j++ ) {
-
-				unregister( this[i], eventName, entries[eventName][j].handler );
-			}
-
-			// Remove property
-			delete entries[name];
-		}
-		// Remove a single event, must match eventName and handler
-		else {
-
-			// Remove event listener by event name and handler
-			unregister(this[i], eventName, handler);
-		}
-	}
-
-	return this;
-}
-
-/**
- * Trigger hmtl event
- *
- * @param {String} event name
- * @return {Object} this
- */
-function emit ( eventName ) {
-
-	var i = 0,
-		manual = rmanualevent.test(eventName),
-		evt;
-
-	// translate mouseenter/mouseleave if needed
-
-	for( ; i < this.length; i++ ) {
-
-		// Some events need manual trigger, like element.focus()
-		if( manual || (this[i].nodeName === 'input' && eventName === 'click') ) {
-
-			this[i][eventName]();
-		}
-		// W3C
-		else if( doc.createEvent ) {
-
-			// Check beans / bonzo
-			evt = doc.createEvent('HTMLEvents');
-			evt.initEvent(eventName, true, true, window, 1);
-			this[i].dispatchEvent(evt);
-		}
-		// IE
-		else {
-
-			element.fireEvent('on'+eventName, doc.createEventObject());
-		}
-	}
-
-	return this;
 }
 
 /**
@@ -2298,6 +2167,149 @@ if( legacy ) {
 	window.attachEvent('onunload', destroyCache);
 }
 
+/**
+ * Add event listener to every element in the set
+ *
+ * @param {String} event name
+ * @param {String} *optional css expression
+ * @param {Function} handler
+ * @param {Object} handler context
+ * @return 
+ */
+function on ( eventName, expression, handler, context ) {
+	
+	var types = eventName.split(' '),
+		l = types.length,
+		i = 0,
+		j;
+
+	if( typeof expression === 'function' ) {
+
+		context = handler;
+		handler = expression;
+		expression = null;
+	}
+
+	if( typeof handler !== 'function' ) {
+
+		throw new TypeError();
+	}
+
+	// Loop trough every elements in set
+	for( ; i < this.length; i++ ) {
+
+		// For every element we get to bind the given event(s)
+		for( j = 0; j < l; j++ ) {
+
+			//this[i].addEventListener(types[i], callback, false);
+			register(this[i], types[j], handler, context, expression);
+		}
+	}
+
+	return this;
+}
+
+/**
+ * Remove event listener(s) for every element in the set
+ *
+ * When `handler` is undefined all handlers attached to the event name are removed.
+ * When `eventName` is undefined all handlers for all types are removed
+ *
+ * @param {String} event name
+ * @param {Function} handler
+ * @return {Object} this
+ */
+function off ( eventName, handler ) {
+
+	var i = 0,
+		entries,
+		j;
+
+	for( ; i < this.length; i++ ) {
+
+		entries = domGetStorage(this[i]).eventData;
+
+		// No events stored
+		if( !entries && (eventName && !entries[eventName]) ) {
+
+			continue;
+		}
+
+		// When no event name is given destroy all events
+		if( !eventName ) {
+
+			// Remove all event listeners
+			for( j in entries ) {
+
+				if( entries.hasOwnProperty(j) ) {
+
+					// Remove events by event name
+					new $(this[i]).off(j);
+				}
+			}
+		}
+		// When no handler is given destoy all events attached to the event name
+		else if ( !handler ) {
+
+			// Remove all event listeners for given event name
+			for( j = 0; j < entries[eventName].length; j++ ) {
+
+				unregister( this[i], eventName, entries[eventName][j].handler );
+			}
+
+			// Remove property
+			delete entries[name];
+		}
+		// Remove a single event, must match eventName and handler
+		else {
+
+			// Remove event listener by event name and handler
+			unregister(this[i], eventName, handler);
+		}
+	}
+
+	return this;
+}
+
+/**
+ * Trigger hmtl event
+ *
+ * @param {String} event name
+ * @return {Object} this
+ */
+function emit ( eventName ) {
+
+	var i = 0,
+		manual = rmanualevent.test(eventName),
+		evt;
+
+	// translate mouseenter/mouseleave if needed
+
+	for( ; i < this.length; i++ ) {
+
+		// Some events need manual trigger, like element.focus()
+		if( manual || (this[i].nodeName === 'input' && eventName === 'click') ) {
+
+			this[i][eventName]();
+		}
+		// W3C
+		else if( doc.createEvent ) {
+
+			// Check beans / bonzo
+			evt = doc.createEvent('HTMLEvents');
+			evt.initEvent(eventName, true, true, window, 1);
+			this[i].dispatchEvent(evt);
+		}
+		// IE
+		else {
+
+			this[i].fireEvent('on'+eventName, doc.createEventObject());
+		}
+	}
+
+	return this;
+}
+
 // Export
 PB.overwrite(PB.$.fn, {
 
@@ -2327,7 +2339,7 @@ PB.$.buildFragment = function ( html ) {
 	fragment = null;
 
 	return children;
-}
+};
 
 // Native query selector
 var matches = docElement.matchesSelector || docElement.mozMatchesSelector || docElement.webkitMatchesSelector || docElement.oMatchesSelector || docElement.msMatchesSelector;
@@ -2385,21 +2397,21 @@ PB.overwrite(PB.$.fn, {
 PB.Animation = function Animation ( options ) {
 
 	this.running = false;
-	this.startAt;
-	this.endAt;
-	this.timer;
+	// this.startAt;
+	// this.endAt;
+	// this.timer;
 
 	this.duration = options.duration * 1000;
 	this.onTick = options.onTick || function () {};
 	this.timerFunction = PB.Animation.effects[options.effect] || PB.Animation.effects.ease;
 	this.data = options.data;
-}
+};
 
 PB.overwrite(PB.Animation.prototype, {
 
 	start: function () {
 
-		this.startAt = +new Date;
+		this.startAt = +new Date();
 		this.endAt = this.startAt + this.duration;
 		this.running = true;
 
@@ -2415,7 +2427,7 @@ PB.overwrite(PB.Animation.prototype, {
 
 	tick: function () {
 
-		var time = +new Date,
+		var time = +new Date(),
 			self = this,
 			// Position in animation from 0.0 - 1.0
 			position = this.timerFunction(1 - ((this.endAt - time) / this.duration ));
@@ -2466,19 +2478,19 @@ PB.Animation.effects = {
 	},
 
 	bounce: function ( t ) {
-	
+
 		if (t < (1/2.75)) {
-		
-		      return (7.5625*t*t);
-		  } else if (t < (2/2.75)) {
-		
-		      return (7.5625*(t-=(1.5/2.75))*t + .75);
-		  } else if (t < (2.5/2.75)) {
-		
-		      return (7.5625*(t-=(2.25/2.75))*t + .9375);
-		  } else {
-		      return (7.5625*(t-=(2.625/2.75))*t + .984375);
-		  }
+
+			return (7.5625*t*t);
+		} else if (t < (2/2.75)) {
+
+			return (7.5625*(t-=(1.5/2.75))*t + 0.75);
+		} else if (t < (2.5/2.75)) {
+
+			return (7.5625*(t-=(2.25/2.75))*t + 0.9375);
+		} else {
+			return (7.5625*(t-=(2.625/2.75))*t + 0.984375);
+		}
 	}
 };
 // Support for older browsers
@@ -2617,7 +2629,7 @@ PB.Animation.effects = {
 
 			// Parse to int when value is a pixel value
 			return rpixel.test( value ) ? parseInt(value, 10) : value;
-		}
+		};
 	}
 
 	// Create a fallback for the morph method if transition are not supported
@@ -2666,7 +2678,7 @@ PB.Animation.effects = {
 
 						if( pos === 1 && options.fn ) {
 
-							options.fn( element )
+							options.fn( element );
 						}
 					}
 				}).start();
@@ -2693,12 +2705,12 @@ PB.Animation.effects = {
 				animation.stop();
 
 				// Trigger callback
-				if( gotoEnd && data.fn ) {
+				if( gotoEnd && animation.fn ) {
 					
-					data.fn( this );
+					animation.fn( this );
 				}
 			});
-		}
+		};
 	}
 
 	// Free memory
@@ -2847,6 +2859,7 @@ PB.Request = PB.Class(PB.Observer, {
 	 */
 	set: function ( key, value ) {
 		
+		// Match header and headers
 		if( key.substr(0, 6) === 'header' ) {
 
 			PB.overwrite(this.options.headers, value);
@@ -2860,6 +2873,8 @@ PB.Request = PB.Class(PB.Observer, {
 
 	/**
 	 * Get new transport object
+	 *
+	 * @return {XmlHttpRequest}
 	 */
 	getTransport: function () {
 
@@ -2876,9 +2891,11 @@ PB.Request = PB.Class(PB.Observer, {
 			this.xhr.abort();
 		}
 
-		return this.xhr = requestXMLHttpRequest
+		this.xhr = requestXMLHttpRequest
 			? new XMLHttpRequest()
 			: new ActiveXObject('Microsoft.XMLHTTP');
+
+		return this.xhr;
 	},
 
 	/**

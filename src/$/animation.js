@@ -2,21 +2,21 @@
 PB.Animation = function Animation ( options ) {
 
 	this.running = false;
-	this.startAt;
-	this.endAt;
-	this.timer;
+	// this.startAt;
+	// this.endAt;
+	// this.timer;
 
 	this.duration = options.duration * 1000;
 	this.onTick = options.onTick || function () {};
 	this.timerFunction = PB.Animation.effects[options.effect] || PB.Animation.effects.ease;
 	this.data = options.data;
-}
+};
 
 PB.overwrite(PB.Animation.prototype, {
 
 	start: function () {
 
-		this.startAt = +new Date;
+		this.startAt = +new Date();
 		this.endAt = this.startAt + this.duration;
 		this.running = true;
 
@@ -32,7 +32,7 @@ PB.overwrite(PB.Animation.prototype, {
 
 	tick: function () {
 
-		var time = +new Date,
+		var time = +new Date(),
 			self = this,
 			// Position in animation from 0.0 - 1.0
 			position = this.timerFunction(1 - ((this.endAt - time) / this.duration ));
@@ -83,18 +83,18 @@ PB.Animation.effects = {
 	},
 
 	bounce: function ( t ) {
-	
+
 		if (t < (1/2.75)) {
-		
-		      return (7.5625*t*t);
-		  } else if (t < (2/2.75)) {
-		
-		      return (7.5625*(t-=(1.5/2.75))*t + .75);
-		  } else if (t < (2.5/2.75)) {
-		
-		      return (7.5625*(t-=(2.25/2.75))*t + .9375);
-		  } else {
-		      return (7.5625*(t-=(2.625/2.75))*t + .984375);
-		  }
+
+			return (7.5625*t*t);
+		} else if (t < (2/2.75)) {
+
+			return (7.5625*(t-=(1.5/2.75))*t + 0.75);
+		} else if (t < (2.5/2.75)) {
+
+			return (7.5625*(t-=(2.25/2.75))*t + 0.9375);
+		} else {
+			return (7.5625*(t-=(2.625/2.75))*t + 0.984375);
+		}
 	}
 };
