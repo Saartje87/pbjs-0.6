@@ -30,18 +30,18 @@ module.exports = function(grunt) {
         'src/patterns/queue.js',
 
         // $ DOM
-        'src/$/core.js', 'src/$/utils.js', 'src/$/hooks.js',
-        'src/$/style.js', 'src/$/morph.js', 'src/$/manipulation.js',
-        'src/$/layout.js',
-        'src/$/stuff.js',
-        'src/$/traversal.js',
-        'src/$/event.js',
-        'src/$/buildfragment.js',
-        'src/$/selector.js',
-        'src/$/enumerable.js',
-        'src/$/animation.js',
+        'src/dom/core.js', 'src/dom/utils.js', 'src/dom/hooks.js',
+        'src/dom/style.js', 'src/dom/morph.js', 'src/dom/manipulation.js',
+        'src/dom/layout.js',
+        'src/dom/stuff.js',
+        'src/dom/traversal.js',
+        'src/dom/event.js',
+        'src/dom/buildfragment.js',
+        'src/dom/selector.js',
+        'src/dom/enumerable.js',
+        'src/dom/animation.js',
 
-        'src/$/legacy.js',
+        'src/dom/legacy.js',
         
         // Request
         'src/request/request.js', 'src/request/utils.js',
@@ -51,11 +51,11 @@ module.exports = function(grunt) {
         // String
 
         // Outro
-				'src/outro.js',
+				'src/outro.js'
 
         // Qwery (submodule)
-        'vendor/qwery/qwery.js',
-        'src/$/qwery-selector.js'
+        //'vendor/qwery/qwery.js',
+        //'src/dom/qwery-selector.js'
       ],
 			dest: 'dist/pbjs.js'
 		}
