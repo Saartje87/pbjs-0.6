@@ -1,5 +1,4 @@
-var requestXMLHttpRequest = 'XMLHttpRequest' in context,
-	requestActiveXObject = 'ActiveXObject' in context;
+var requestXMLHttpRequest = 'XMLHttpRequest' in context;
 
 /*
 PB.Request.defaultSend
@@ -172,9 +171,9 @@ PB.Request = PB.Class(PB.Observer, {
 			this.xhr.abort();
 		}
 
-		this.xhr = requestXMLHttpRequest
-			? new XMLHttpRequest()
-			: new ActiveXObject('Microsoft.XMLHTTP');
+		this.xhr = requestXMLHttpRequest ?
+			new XMLHttpRequest() :
+			new ActiveXObject('Microsoft.XMLHTTP');
 
 		return this.xhr;
 	},

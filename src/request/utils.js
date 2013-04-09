@@ -34,8 +34,8 @@ function buildQueryString ( queryObject, prefix ) {
 					query += buildQueryString( value, prefix ? prefix+'['+key+']' : key );
 				} else {
 
-					query += encodeURIComponent(prefix ? prefix+(type === 'array' ? '[]' : '['+key+']') : key)
-						+'='+encodeURIComponent( value )+'&';
+					query += encodeURIComponent(prefix ? prefix+(type === 'array' ? '[]' : '['+key+']') : key)+
+						'='+encodeURIComponent( value )+'&';
 				}
 			}
 		}
