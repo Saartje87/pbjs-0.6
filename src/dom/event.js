@@ -383,7 +383,7 @@ function off ( eventName, handler ) {
 				if( entries.hasOwnProperty(j) ) {
 
 					// Remove events by event name
-					new $(this[i]).off(j);
+					new Dom(this[i]).off(j);
 				}
 			}
 		}

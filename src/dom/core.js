@@ -1,5 +1,4 @@
-var $,
-	window = context,
+var window = context,
 	doc = window.document,
 	docElement = doc.documentElement,
 	body = doc.body;
@@ -16,16 +15,16 @@ PB.$ = function ( selector ) {
 	}
 
 	// Already extended
-	if( selector instanceof $ ) {
+	if( selector instanceof Dom ) {
 
 		return selector;
 	}
 
-	// If already a node, return new $ instance
+	// If already a node, return new Dom instance
 	// element and document nodes are valid
 	if( selector.nodeType === 1 || selector.nodeType === 9 || selector === window ) {
 
-		return new $( selector );
+		return new Dom( selector );
 	}
 
 	// Handle string argument
@@ -43,7 +42,7 @@ PB.$ = function ( selector ) {
 				return null;
 			}
 
-			return new $( selector );
+			return new Dom( selector );
 		}
 		// Create element
 		else if ( selector.charAt(0) === '<' && selector.charAt(selector.length - 1) === '>' ) {
@@ -56,7 +55,7 @@ PB.$ = function ( selector ) {
 	/* When doing this we should validate that only elements are parsed...
 	if( PB.type(selector) === 'array' ) {
 
-		return new $( selector );
+		return new Dom( selector );
 	}
 	*/
 
@@ -68,13 +67,13 @@ PB.$ = function ( selector ) {
  */
 PB.$$ = function ( selector ) {
 
-	return new $(document).find(selector);
+	return new Dom(document).find(selector);
 };
 
 /**
- * $ constructor
+ * Dom constructor
  */
-$ = function ( collection ) {
+function Dom ( collection ) {
 
 	var i = 0;
 
@@ -91,9 +90,9 @@ $ = function ( collection ) {
 	}
 
 	this.length = i;
-};
+}
 
-$.prototype.constructor = $;
+Dom.prototype.constructor = Dom;
 
 // For extending PB.$ methods
-PB.$.fn = $.prototype;
+PB.$.fn = Dom.prototype;

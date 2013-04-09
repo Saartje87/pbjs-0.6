@@ -1,10 +1,11 @@
-PB.overwrite($.prototype, {
+PB.overwrite(PB.$.fn, {
 
 	each: function ( fn ) {
 
-		var _args = slice.call( arguments, 1 );
+		var _args = slice.call( arguments, 1 ),
+			i = 0;
 
-		for( var i = 0; i < this.length; i++ ) {
+		for( ; i < this.length; i++ ) {
 
 			fn.apply(this[i], _args);
 		}
@@ -325,8 +326,7 @@ PB.overwrite($.prototype, {
 
 		var ret = [],
 			children,
-			i = 0,
-			l;
+			i = 0;
 
 		// 
 		for( ; i < this.length; i++ ) {

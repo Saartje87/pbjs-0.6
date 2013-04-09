@@ -1,4 +1,4 @@
-PB.overwrite($.prototype, {
+PB.overwrite(PB.$.fn, {
 	
 	/**
 	 * PB.$('#element').append('<div>Append me</div>');

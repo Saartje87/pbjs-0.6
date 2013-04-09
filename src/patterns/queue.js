@@ -32,8 +32,7 @@ PB.Queue = PB.Class(PB.Observer, {
 
 	run: function () {
 
-		var item = this._queue.shift(),
-			self = this;
+		var item = this._queue.shift();
 
 		if( !item ) {
 

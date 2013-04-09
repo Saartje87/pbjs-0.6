@@ -1,4 +1,4 @@
-PB.overwrite($.prototype, {
+PB.overwrite(PB.$.fn, {
 
 	width: function () {
 

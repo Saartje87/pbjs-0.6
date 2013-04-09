@@ -178,7 +178,7 @@
 
 						PB.each(styleValueDiff, function ( style, value ) {
 
-							element.setStyle(style, currentStyles[style]+(styleValueDiff[style]*pos));
+							element.setStyle(style, currentStyles[style]+(value*pos));
 						});
 
 						if( pos === 1 && options.fn ) {

@@ -34,7 +34,7 @@ function morphArgsToObject ( args ) {
 }
 
 // Detect browser feature
-$.prototype.morph = !!prefixStyles.transition ?
+PB.$.fn.morph = !!prefixStyles.transition ?
 /**
  * Morph current css styles to given css styles for every element in the set.
  */
@@ -134,7 +134,7 @@ function ( properties ) {
 	return this;
 };
 
-$.prototype.stop = function ( gotoEnd ) {
+PB.$.fn.stop = function ( gotoEnd ) {
 
 	return this.each(function () {
 

@@ -1,4 +1,4 @@
-PB.overwrite($.prototype, {
+PB.overwrite(PB.$.fn, {
 
 	/**
 	 * Returns the parent node of the first element in the set.

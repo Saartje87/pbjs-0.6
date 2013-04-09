@@ -36,7 +36,8 @@ PB.each(stylesUsingPrefix, function ( i, prop ) {
 	if( prop in div.style ) {
 
 		// Add normal property to prefixStyles, so we know the browers supports the css property
-		return prefixStyles[prop] = prop;
+		prefixStyles[prop] = prop;
+		return;
 	}
 
 	translateProp = prop.charAt(0).toUpperCase()+prop.substr(1);
@@ -46,7 +47,9 @@ PB.each(stylesUsingPrefix, function ( i, prop ) {
 
 		if( vendorPrefixes[i]+translateProp in div.style ) {
 
-			return prefixStyles[prop] = vendorPrefixes[i]+translateProp;
+			// Prefix found
+			prefixStyles[prop] = vendorPrefixes[i]+translateProp;
+			return;
 		}
 	}
 });
@@ -54,7 +57,7 @@ PB.each(stylesUsingPrefix, function ( i, prop ) {
 // Free memory
 div = null;
 
-PB.overwrite($.prototype, {
+PB.overwrite(PB.$.fn, {
 
 	/**
 	 * Set inline css style(s) for every element in the set.
