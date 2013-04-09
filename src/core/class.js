@@ -31,8 +31,7 @@ PB.Class = function ( parentClass, base ) {
         name,
         ancestor,
         property,
-        parentPrototype,
-        _parent;
+        parentPrototype;
 
         // Handle arguments
 	if( !base ) {
