@@ -17,7 +17,8 @@
 	"onevar": true,
 	"globals": {
 
-		"ActiveXObject": false
+		"ActiveXObject": false,
+		"console": false
 	},
 	"browser": true
 }

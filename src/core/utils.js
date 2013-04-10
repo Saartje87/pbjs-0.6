@@ -136,26 +136,20 @@ PB.type = function ( mixed ) {
 	return type.substr(8, type.length - 9).toLowerCase();
 };
 
-/** Move to PB.$
- * Executes script in global scope
- *
- * @param {String}
- * @return {Void}
- * /
-PB.globalEval = function ( text ) {
+/**
+ * Log given arguments in the browser console if existing, otherwise dispose the arguments
+ */
+PB.log = function () {
 
-	if( window.execScript ) {
+	if( typeof console !== 'undefined' && typeof console.log === 'function' ) {
 
-		window.execScript( text );
-	} else {
+		var args = PB.toArray(arguments);
 
-		var script = doc.createElement('script');
-		script.setAttribute('type', 'text/javascript');
-		script.text = text;
-		doc.head.appendChild(script);
-		doc.head.removeChild(script);
+		args.unshift('pbjs:');
+
+		console.log.apply(console, args);
 	}
-}*/
+};
 
 /**
  * 
@@ -164,7 +158,7 @@ PB.noConflict = function () {
 
 	if( window.PB === PB ) {
 
-		window.PB = _PB;
+		window.PB = OLD_PB;
 	}
 
 	return PB;

@@ -9,10 +9,10 @@
 var PB = {},
 
 	// Previous PB
-	_PB = context.PB,
+	OLD_PB = context.PB,
 	
 	// Unique id, fetch from previous PB or start from 0
-	uid = _PB ? _PB.id() : 0,
+	uid = OLD_PB ? OLD_PB.id() : 0,
 	
 	// References
 	slice = Array.prototype.slice,
