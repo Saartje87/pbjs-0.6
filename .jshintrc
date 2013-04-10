@@ -15,6 +15,9 @@
 	"trailing": false,
 	"maxdepth": 5,
 	"onevar": true,
+	"globals": {
 
+		"ActiveXObject": false
+	},
 	"browser": true
 }
