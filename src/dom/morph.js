@@ -4,14 +4,15 @@
 function morphArgsToObject ( args ) {
 
 	// Default options
-	var options = {
-		
-		duration: 0.4,
-		effect: 'ease'
-	};
+	var i = 1,
+		options = {
+			
+			duration: 0.4,
+			effect: 'ease'
+		};
 	
 	// Loop trough args
-	for( var i = 1 ; i < args.length; i++ ) {
+	for( ; i < args.length; i++ ) {
 
 		switch( typeof args[i] ) {
 			
