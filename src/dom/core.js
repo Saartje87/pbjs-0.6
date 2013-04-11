@@ -1,7 +1,6 @@
 var window = context,
 	doc = window.document,
-	docElement = doc.documentElement,
-	body = doc.body;
+	docElement = doc.documentElement;
 
 /**
  * Create PB.$ global
