@@ -1,25 +1,30 @@
 {
 	"name": "pbjs",
 	"version": "0.6.0",
+	"homepage": "http://pbjs.github.com/",
 	"author": {
 		
-		"name": "Niek Saarberg",
-		"url": ""
+		"name": "Niek Saarberg"
 	},
-	"description": "",
-	"contributors": [],
 	"repository": {
 	
 		"type": "git",
-		"url": "https://github.com/Saartje87/pbjs.git"
+		"url": "https://github.com/Saartje87/pbjs-0.6.git"
 	},
-	"bugs": {
-	
-		"url": "https://github.com/Saartje87/pbjs/issues"
+	"issues": {
+
+		"url": "http://github.com/Saartje87/pbjs-0.6/issues"
 	},
+	"description": "",
+	"contributors": [],
 	"keywords": ["pbjs", "dom", "ajax", "request", "oo"],
 	"license": "MIT",
 	"devDependencies": {
-		"grunt": "~0.3.9"
+		"grunt": "~0.4.1",
+		"grunt-cli": "~0.1.0",
+		"grunt-contrib-jshint": "~0.4.3",
+		"grunt-contrib-watch": "~0.3.1",
+		"grunt-contrib-uglify": "~0.2.0",
+		"grunt-contrib-concat": "~0.2.0"
 	}
 }
