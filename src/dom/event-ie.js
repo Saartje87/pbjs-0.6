@@ -43,8 +43,24 @@
 				// Left: 0, Middle: 1, Right: 2
 				event.which = (event.which === 0 ? 1 : (event.which === 4 ? 2: (event.which === 2 ? 3 : event.which)));
 			}
-		},
+		}
 	});
+
+	/**
+	 * Prevents further propagation of the current event.
+	 */
+	PB.$.Event.prototype.stopPropagation = function () {
+		
+		this.cancelBubble = true;
+	},
+	
+	/**
+	 * Cancels the event if it is cancelable, without stopping further propagation of the event.
+	 */
+	PB.$.Event.prototype.preventDefault = function () {
+		
+		this.returnValue = false;
+	}
 
 	/**
 	 * Destroy element cache
