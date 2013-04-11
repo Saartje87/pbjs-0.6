@@ -25,7 +25,11 @@ module.exports = function(grunt) {
 			},
 			dist: {
 
-				src: ['<banner>', 'src/intro.js',
+				src: ['<banner>', 
+
+					// Todo: Put every section in own closure?
+
+					'src/intro.js',
 
 					// Core
 					'src/core/utils.js', 'src/core/class.js',
@@ -46,7 +50,9 @@ module.exports = function(grunt) {
 					'src/dom/enumerable.js',
 					'src/dom/animation.js',
 
+					// Older browser support files
 					'src/dom/legacy.js',
+					'src/dom/event-ie.js',
 
 					// Request
 					'src/request/request.js', 'src/request/utils.js',
