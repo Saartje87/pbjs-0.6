@@ -1,4 +1,8 @@
-// IE event fixes
+/**
+ * Event fixes across browser
+ *
+ * IE < 9
+ */
 (function ( context, PB ) {
 
 	var window = context,

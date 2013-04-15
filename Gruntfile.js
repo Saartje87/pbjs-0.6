@@ -39,23 +39,29 @@ module.exports = function(grunt) {
 					'src/patterns/queue.js',
 
 					// $ DOM
-					'src/dom/core.js', 'src/dom/utils.js', 'src/dom/hooks.js',
-					'src/dom/style.js', 'src/dom/morph.js', 'src/dom/manipulation.js',
+					'src/dom/core.js',
+					'src/dom/utils.js',
+					'src/dom/style.js',
+					'src/dom/morph.js',
+					'src/dom/manipulation.js',
 					'src/dom/layout.js',
 					'src/dom/stuff.js',
 					'src/dom/traversal.js',
 					'src/dom/event.js',
 					'src/dom/buildfragment.js',
-					'src/dom/selector.js',
 					'src/dom/enumerable.js',
 					'src/dom/animation.js',
 
+					// Using native selector engine
+					'src/dom/selector.js',
+
 					// Older browser support files
-					'src/dom/legacy.js',
-					'src/dom/event-ie.js',
+					'src/dom/support/legacy.js',
+					'src/dom/support/event.js',
 
 					// Request
-					'src/request/request.js', 'src/request/utils.js',
+					'src/request/request.js',
+					'src/request/utils.js',
 
 					// JSON
 
