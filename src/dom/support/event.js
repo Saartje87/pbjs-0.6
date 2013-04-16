@@ -27,7 +27,7 @@
 			}
 		},
 
-		mouse: {
+		mouse_ie: {
 
 			matches: /(!?mouse|click|focus|drag)/,
 			hook: function ( event, originalEvent ) {

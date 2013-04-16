@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-04-12 00:10
+ * Build date 2013-04-16 13:43
  */
 (function ( name, context, definition ) {
 	
@@ -1863,22 +1863,27 @@ PB.overwrite(PB.$.fn, {
 	// Does browser support mouseenter and mouseleave
 var mouseenterleave = 'onmouseenter' in docElement && 'onmouseleave' in docElement,
 	// Contains all event that should be triggered `manual` node.focus()
-	rmanualevent = /^(?:load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll)$/;
+	rmanualevent = /^(?:load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll)$/,
 
+	standardEvents = 'type target defaultPrevented bubbles'.split(' '),
+
+	mouseEvents = 'altKey ctrlKey metaKey shiftKey which pageX pageY'.split(' ');
+
+/**
+ *
+ */
 function Event ( originalEvent, element ) {
 
 	var type = originalEvent.type,
 		key;
 
 	this.originalEvent = originalEvent;
-
-	//
-	this.type = type;
-	this.target = originalEvent.target;
-	this.currentTarget = originalEvent.currentTarget;
-	this.defaultPrevented = false;
 	this.currentTarget = element;
 
+	// Extend with standard event properties
+	this.extend(standardEvents);
+
+	// Any hooks for this event.type ?
 	for( key in Event.hooks ) {
 
 		if( Event.hooks.hasOwnProperty(key) && Event.hooks[key].matches.test(type) ) {
@@ -1890,6 +1895,26 @@ function Event ( originalEvent, element ) {
 
 Event.prototype = {
 
+	/**
+	 * Extend event with original event
+	 *
+	 * @param {Array} filled with property names that should be copied
+	 */
+	extend: function ( properties ) {
+
+		var i = 0,
+			l = properties.length;
+
+		// Populate
+		for( ; i < l; i++ ) {
+
+			this[properties[i]] = this.originalEvent[properties[i]];
+		}
+	},
+
+	/**
+	 *
+	 */
 	preventDefault: function () {
 
 		this.defaultPrevented = true;
@@ -1897,6 +1922,9 @@ Event.prototype = {
 		this.originalEvent.preventDefault();
 	},
 
+	/**
+	 *
+	 */
 	stopPropagation: function () {
 
 		this.originalEvent.stopPropagation();
@@ -1909,26 +1937,63 @@ Event.prototype = {
 
 		this.preventDefault();
 		this.stopPropagation();
+	},
+
+	/**
+	 * Checks whether the event target matches the given selector
+	 *
+	 * @param {String} css selector
+	 * @return {Boolean}
+	 */
+	matchesSelector: function ( selector ) {
+
+		var target = this.target;
+
+		do {
+
+			// When selector matches target set as currentTarget
+			if( PB.$.selector.matches(target, selector) ) {
+
+				this.currentTarget = target;
+				return true;
+			}
+
+			// No need to look further then the target that listens to the event
+			if( target === this.currentTarget ) {
+
+				return false;
+			}
+
+		} while ( target = target.parentNode )
+
+		// No match
+		return false;
 	}
 };
 
 Event.hooks = {
 
+	/**
+	 * Extend mouse 
+	 */
 	mouse: {
 
-		matches: /(!?mouse|click|focus|drag)/,
+		matches: /(!?mouse|click|drag|focusin|focusout)/,
 		hook: function ( event, originalEvent ) {
+
+			// Extend with standard event properties
+			event.extend(mouseEvents);
 
 			if( originalEvent.relatedTarget ) {
 
 				event.relatedTarget = originalEvent.relatedTarget;
 			}
-
-			event.pageX = originalEvent.pageX;
-			event.pageY = originalEvent.pageY;
 		}
 	},
 
+	/**
+	 * Normalize wheelDelta crossbrowser
+	 */
 	mousewheel: {
 
 		matches: /^(?:DOMMouseScroll|mousewheel|wheel)$/,
@@ -1944,8 +2009,6 @@ Event.hooks = {
 // Expose
 PB.$.Event = Event;
 
-
-
 /**
  * Register event
  *
@@ -1953,9 +2016,9 @@ PB.$.Event = Event;
  * @param {String} event name
  * @param {Function} handler
  * @param {Object} handler context
- * @param {String} css expression
+ * @param {String} css selector
  */
-function register ( element, eventName, handler, context, expression ) {
+function register ( element, eventName, handler, context, selector ) {
 
 	var storage = domGetStorage(element),
 		entries,
@@ -1992,7 +2055,7 @@ function register ( element, eventName, handler, context, expression ) {
 	entry = {
 
 		handler: handler,
-		responder: eventResponder(element.__PBID__, eventName, handler, context, expression)
+		responder: eventResponder(element.__PBID__, eventName, handler, context, selector)
 	};
 
 	entries.push(entry);
@@ -2068,43 +2131,19 @@ function unregister ( element, eventName, handler ) {
  * @param {String} event name
  * @param {Function} handler
  * @param {Object} handler context
- * @param {String} css expression
+ * @param {String} css selector
  */
-function eventResponder ( pbid, eventName, handler, context, expression ) {
+function eventResponder ( pbid, eventName, handler, context, selector ) {
 
 	return function ( originalEvent ) {
 
 		var element = PB.$.cache[pbid].element,
-			event = new Event(originalEvent, element),
-			target;
-		
-		// Extend event
-		//event = extendEvent( event, element );
+			event = new Event(originalEvent, element);
 
-		//event.selectorTarget = null;
+		// If selector is given, test selector
+		if( selector && !event.matchesSelector(selector) ) {
 
-		// If css expression is given and the expression does not matches the target or a parent
-		// stop the event.
-		if( expression ) {
-
-			target = event.target;
-
-			do {
-
-				if( PB.$.selector.matches(target, expression) ) {
-
-					event.currentTarget = target;
-					target = true;
-					break;
-				}
-
-			} while ( target !== element && (target = target.parentNode) );
-
-			// When no element matched, stop event
-			if( target !== true ) {
-
-				return;
-			}
+			return;
 		}
 
 		// [Chrome] Workaround to support for mouseenter / mouseleave
@@ -2128,23 +2167,23 @@ PB.overwrite(PB.$.fn, {
 	 * Add event listener to every element in the set
 	 *
 	 * @param {String} event name
-	 * @param {String} *optional css expression
+	 * @param {String} *optional css selector
 	 * @param {Function} handler
 	 * @param {Object} handler context
 	 * @return 
 	 */
-	on: function ( eventName, expression, handler, context ) {
+	on: function ( eventName, selector, handler, context ) {
 		
 		var types = eventName.split(' '),
 			l = types.length,
 			i = 0,
 			j;
 
-		if( typeof expression === 'function' ) {
+		if( typeof selector === 'function' ) {
 
 			context = handler;
-			handler = expression;
-			expression = null;
+			handler = selector;
+			selector = null;
 		}
 
 		if( typeof handler !== 'function' ) {
@@ -2159,7 +2198,7 @@ PB.overwrite(PB.$.fn, {
 			for( j = 0; j < l; j++ ) {
 
 				//this[i].addEventListener(types[i], callback, false);
-				register(this[i], types[j], handler, context, expression);
+				register(this[i], types[j], handler, context, selector);
 			}
 		}
 
@@ -2217,7 +2256,7 @@ PB.overwrite(PB.$.fn, {
 				// Remove property
 				delete entries[name];
 			}
-			// Remove a single event, must match eventName and handler
+			// Remove a single event, must match eventName and handler to be removed
 			else {
 
 				// Remove event listener by event name and handler
@@ -2288,28 +2327,6 @@ PB.$.buildFragment = function ( html ) {
 	fragment = null;
 
 	return children;
-};
-
-// Native query selector
-var matches = docElement.matchesSelector || docElement.mozMatchesSelector || docElement.webkitMatchesSelector || docElement.oMatchesSelector || docElement.msMatchesSelector;
-
-PB.$.selector = {
-	
-	/**
-	 * Native
-	 */
-	find: function ( selector, node ) {
-
-		return PB.toArray(node.querySelectorAll(selector));
-	},
-
-	/**
-	 * Compare node to selector
-	 */
-	matches: function ( node, selector ) {
-
-		return matches.call(node, selector);
-	}
 };
 
 /**
@@ -2442,6 +2459,28 @@ PB.Animation.effects = {
 		}
 	}
 };
+// Native query selector
+var matches = docElement.matchesSelector || docElement.mozMatchesSelector || docElement.webkitMatchesSelector || docElement.oMatchesSelector || docElement.msMatchesSelector;
+
+PB.$.selector = {
+	
+	/**
+	 * Native
+	 */
+	find: function ( selector, node ) {
+
+		return PB.toArray(node.querySelectorAll(selector));
+	},
+
+	/**
+	 * Compare node to selector
+	 */
+	matches: function ( node, selector ) {
+
+		return matches.call(node, selector);
+	}
+};
+
 // Support for older browsers
 (function ( PB, undefined ) {
 
@@ -2666,7 +2705,11 @@ PB.Animation.effects = {
 	div = null;
 })(PB);
 
-// IE event fixes
+/**
+ * Event fixes across browser
+ *
+ * IE < 9
+ */
 (function ( context, PB ) {
 
 	var window = context,
@@ -2691,7 +2734,7 @@ PB.Animation.effects = {
 			}
 		},
 
-		mouse: {
+		mouse_ie: {
 
 			matches: /(!?mouse|click|focus|drag)/,
 			hook: function ( event, originalEvent ) {
@@ -2719,6 +2762,7 @@ PB.Animation.effects = {
 	 */
 	PB.$.Event.prototype.stopPropagation = function () {
 		
+		this.defaultPrevented = true;
 		this.cancelBubble = true;
 	},
 	
