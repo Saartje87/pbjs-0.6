@@ -55,6 +55,7 @@
 	 */
 	PB.$.Event.prototype.stopPropagation = function () {
 		
+		this.defaultPrevented = true;
 		this.cancelBubble = true;
 	},
 	
