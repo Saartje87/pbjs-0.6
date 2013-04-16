@@ -14,6 +14,7 @@ pbjs is seperated into the following modules:
 * core
 * request
 * dom
+* patterns
 * date?
 
 Features
@@ -24,6 +25,18 @@ Features
 * OOP - PB.Class
 * Easy to implement your own code
 * Compatible with other frameworks
+
+Browser support
+---
+
+pbjs focus on modern browsers and offers support to older browsers trough seperated source files.
+
+* Firefox 4+
+* Chrome ?+
+* Safari 5+
+* Opera ?+
+* IE 7+
+* And mobile browsers (ios, android, nokia, ...)
 
 ---
 
