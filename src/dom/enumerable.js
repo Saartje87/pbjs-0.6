@@ -1,29 +1,45 @@
-/**
- *
- */
-function domFilter ( filter ) {
+PB.overwrite(PB.$.fn, {
 
-	var res = [],
-		i = 0;
+	/**
+	 *
+	 */
+	// should be forEach
+	each: function ( fn ) {
 
-	for( ; i < this.length; i++ ) {
+		var _args = slice.call( arguments, 1 ),
+			i = 0;
 
-		if( typeof filter === 'string' ) {
+		for( ; i < this.length; i++ ) {
 
-			if( PB.$.selector.matches(this[i], filter) ) {
+			fn.apply(this[i], _args);
+		}
+
+		return this;
+	},
+
+	/**
+	 *
+	 */
+	filter: function ( filter ) {
+
+		var res = [],
+			i = 0,
+			filterIsString = typeof filter === 'string';
+
+		for( ; i < this.length; i++ ) {
+
+			if( filterIsString ) {
+
+				if( PB.$.selector.matches(this[i], filter) ) {
+
+					res.push(this[i]);
+				}
+			} else if ( filter(this[i]) === true ) {
 
 				res.push(this[i]);
 			}
-		} else if ( filter.call(null, this[i]) === true ) {
-
-			res.push(this[i]);
 		}
+
+		return new this.constructor(res);
 	}
-
-	return new this.constructor(res);
-}
-
-PB.overwrite(PB.$.fn, {
-
-	filter: domFilter
 });

@@ -118,5 +118,141 @@ PB.overwrite(PB.$.fn, {
 		}
 
 		return box;
+	},
+
+	/**
+	 * Returns true if the first element in the set has the given class name.
+	 */
+	hasClass: function ( className ) {
+
+		return (' '+this.context.className+' ').indexOf(' '+className+' ') >= 0;
+	},
+
+	/**
+	 * Add class(es) to every element in the set.
+	 */
+	addClass: function ( classNames ) {
+
+		var i = 0,
+			classList = classNames.split(' '),
+			className,
+			j;
+
+		for( ; i < this.length; i++ ) {
+			
+			className = ' '+this[i].className+' ';
+
+			for( j = 0; j < classList.length; j++ ) {
+
+				// Skip if element already got the class
+				if( className.indexOf(' '+classList[j]+' ') >= 0 ) {
+				
+					continue;
+				}
+				
+				// Add class
+				this[i].className += (this[i].className ? ' ' : '')+classList[j];
+			}
+		}
+
+		return this;
+	},
+
+	/**
+	 * Removes class(es) from every element in the set.
+	 */
+	removeClass: function ( classNames ) {
+
+		var i = 0,
+			classList = classNames.split(' '),
+			l = classList.length,
+			className,
+			j;
+
+		for( ; i < this.length; i++ ) {
+
+			className = ' '+this[i].className+' ';
+
+			for( j = 0; j < l; j++ ) {
+				
+				// Already exists
+				if( className.indexOf(' '+classList[j]+' ') >= 0 ) {
+				
+					className = className.replace(' '+classList[j]+' ', ' ');
+				}
+			}
+
+			// Trim whitespaces
+			className = className.replace(/^\s|\s$/g, '');
+
+			// Update class list
+			if( className ) {
+
+				this[i].className = className;
+			}
+			// Remove class attribute
+			else {
+
+				this[i].removeAttribute('class');
+			}
+		}
+
+		return this;
+	},
+
+	/**
+	 * Shows every element in the set.
+	 */
+	show: function () {
+
+		var style,
+			i = 0;
+
+		for( ; i < this.length; i++ ) {
+
+			style = this[i].style;
+
+			if( style.display === 'none' ) {
+
+				style.display = domGetStorage(this[i])['css-display'] || 'block';
+			}
+		}
+
+		return this;
+	},
+
+	/**
+	 * Hides every element in the set.
+	 */
+	hide: function () {
+
+		var style,
+			i = 0;
+
+		for( ; i < this.length; i++ ) {
+
+			style = this[i].style;
+
+			if( style.display !== 'none' ) {
+
+				// Store css display value
+				domGetStorage(this[i])['css-display'] = PB.$(this[i]).getStyle('display');
+
+				// Hide element
+				style.display = 'none';
+			}
+		}
+
+		return this;
+	},
+
+	/**
+	 * Returns boolean whether the first element in the set is visible or not.
+	 */
+	isVisible: function () {
+
+		var element = PB.$(this[0]);
+
+		return element.getStyle('display') !== 'none' && element.getStyle('opacity') > 0;
 	}
 });
