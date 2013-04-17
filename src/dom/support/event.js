@@ -27,7 +27,7 @@
 			}
 		},
 
-		mouse_ie: {
+		mouseIe: {
 
 			matches: /(!?mouse|click|focus|drag)/,
 			hook: function ( event, originalEvent ) {
@@ -57,7 +57,7 @@
 		
 		this.defaultPrevented = true;
 		this.cancelBubble = true;
-	},
+	};
 	
 	/**
 	 * Cancels the event if it is cancelable, without stopping further propagation of the event.
@@ -65,7 +65,7 @@
 	PB.$.Event.prototype.preventDefault = function () {
 		
 		this.returnValue = false;
-	}
+	};
 
 	/**
 	 * Destroy element cache

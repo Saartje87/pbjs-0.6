@@ -102,7 +102,7 @@ Event.prototype = {
 				return false;
 			}
 
-		} while ( target = target.parentNode )
+		} while ( target = target.parentNode );
 
 		// No match
 		return false;
