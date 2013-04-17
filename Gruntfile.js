@@ -41,11 +41,11 @@ module.exports = function(grunt) {
 					// $ DOM
 					'src/dom/core.js',
 					'src/dom/utils.js',
+					'src/dom/attribute.js',
 					'src/dom/style.js',
 					'src/dom/morph.js',
 					'src/dom/manipulation.js',
 					'src/dom/layout.js',
-					'src/dom/stuff.js',
 					'src/dom/traversal.js',
 					'src/dom/event.js',
 					'src/dom/buildfragment.js',
