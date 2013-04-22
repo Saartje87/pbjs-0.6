@@ -276,7 +276,8 @@ function eventResponder ( pbid, eventName, handler, context, selector ) {
 	return function ( originalEvent ) {
 
 		var element = PB.$.cache[pbid].element,
-			event = new Event(originalEvent, element);
+			event = new Event(originalEvent, element),
+			relatedTarget;
 
 		// If selector is given, test selector
 		if( selector && !event.matchesSelector(selector) ) {
@@ -284,13 +285,20 @@ function eventResponder ( pbid, eventName, handler, context, selector ) {
 			return;
 		}
 
-		// [Chrome] Workaround to support for mouseenter / mouseleave
-		if( !mouseenterleave && eventName === 'mouseleave' ) {
+		// When selector is given, currentTarget is now the selected element
+		element = event.currentTarget;
 
-			if( event.currentTarget.contains(event.relatedTarget) ) {
+		// [Chrome] Workaround to support for mouseenter / mouseleave
+		if( !mouseenterleave && (eventName === 'mouseleave' || eventName === 'mouseenter') ) {
+
+			relatedTarget = event.relatedTarget;
+
+			if( element === relatedTarget || element.contains(relatedTarget) ) {
 
 				return;
 			}
+
+			event.type = eventName;
 		}
 		
 		// Execute callback, use context as scope otherwise the given element
