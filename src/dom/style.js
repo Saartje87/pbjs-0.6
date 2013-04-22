@@ -61,6 +61,8 @@ PB.overwrite(PB.$.fn, {
 
 	/**
 	 * Set inline css style(s) for every element in the set.
+	 *
+	 * @return {Object} this
 	 */
 	setStyle: function ( styles ) {
 
