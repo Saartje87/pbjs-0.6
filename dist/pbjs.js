@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-04-22 20:42
+ * Build date 2013-04-22 21:11
  */
 (function ( name, context, definition ) {
 	
@@ -878,6 +878,8 @@ PB.overwrite(PB.$.fn, {
 
 	/**
 	 * Set inline css style(s) for every element in the set.
+	 *
+	 * @return {Object} this
 	 */
 	setStyle: function ( styles ) {
 
@@ -963,6 +965,14 @@ PB.overwrite(PB.$.fn, {
 	}
 });
 
+// if supports box-sizing
+/*
+PB.$.hook('getStyle.width', function () {
+	
+	// Calculations...
+});
+*/
+
 /**
  * Convert arguments to ordered object
  */
@@ -970,6 +980,7 @@ function morphArgsToObject ( args ) {
 
 	// Default options
 	var i = 1,
+		effect,
 		options = {
 			
 			duration: 0.4,
@@ -991,7 +1002,12 @@ function morphArgsToObject ( args ) {
 		
 			case 'string':
 				// easeInOut -> ease-in-out
-				options.effect = args[i].replace(/([A-Z])/g, '-$1').toLowerCase();
+				effect = args[i].replace(/([A-Z])/g, '-$1').toLowerCase();
+
+				if( /^linear|ease|ease-in|ease-out|ease-in-out|cubic-bezier\(.*?\)$/.test(effect) ) {
+
+					options.effect = effect;
+				}
 				break;
 		}
 	}

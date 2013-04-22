@@ -5,6 +5,7 @@ function morphArgsToObject ( args ) {
 
 	// Default options
 	var i = 1,
+		effect,
 		options = {
 			
 			duration: 0.4,
@@ -26,7 +27,12 @@ function morphArgsToObject ( args ) {
 		
 			case 'string':
 				// easeInOut -> ease-in-out
-				options.effect = args[i].replace(/([A-Z])/g, '-$1').toLowerCase();
+				effect = args[i].replace(/([A-Z])/g, '-$1').toLowerCase();
+
+				if( /^linear|ease|ease-in|ease-out|ease-in-out|cubic-bezier\(.*?\)$/.test(effect) ) {
+
+					options.effect = effect;
+				}
 				break;
 		}
 	}
