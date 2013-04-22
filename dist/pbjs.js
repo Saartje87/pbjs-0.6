@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-04-22 17:46
+ * Build date 2013-04-22 20:42
  */
 (function ( name, context, definition ) {
 	
@@ -36,13 +36,18 @@ PB.VERSION = '0.6.0';
 /**
  * Get unique id inside PB
  *
- * @return number
+ * @return {Number}
  */
 PB.id = function () {
 
 	return ++uid;
 };
 
+/**
+ * Get currect timestamp in milliseconds
+ *
+ * @return {Number}
+ */
 PB.now = Date.now || function () { return new Date().getTime(); };
 
 /**
@@ -85,6 +90,8 @@ PB.extend = function ( target, source ) {
 
 /**
  * Return a deep clone of the given object
+ *
+ * @return {Object} clone
  */
 PB.clone = function ( source ) {
 
@@ -119,7 +126,7 @@ PB.clone = function ( source ) {
  * @param object
  * @param function
  * @param object
- * @return void
+ * @return {Void}
  */
 PB.each = function ( collection, fn, context ) {
 
@@ -140,7 +147,9 @@ PB.each = function ( collection, fn, context ) {
 };
 
 /**
- * 
+ * Create array of array like object
+ *
+ * @return {Array}
  */
 PB.toArray = function ( arr ) {
 
@@ -189,7 +198,9 @@ PB.log = function () {
 };
 
 /**
- * 
+ * Put back previous value of PB global and returns current PB (pbjs) object
+ *
+ * @return {Object} 
  */
 PB.noConflict = function () {
 
@@ -2126,7 +2137,8 @@ function eventResponder ( pbid, eventName, handler, context, selector ) {
 	return function ( originalEvent ) {
 
 		var element = PB.$.cache[pbid].element,
-			event = new Event(originalEvent, element);
+			event = new Event(originalEvent, element),
+			relatedTarget;
 
 		// If selector is given, test selector
 		if( selector && !event.matchesSelector(selector) ) {
@@ -2134,13 +2146,20 @@ function eventResponder ( pbid, eventName, handler, context, selector ) {
 			return;
 		}
 
-		// [Chrome] Workaround to support for mouseenter / mouseleave
-		if( !mouseenterleave && eventName === 'mouseleave' ) {
+		// When selector is given, currentTarget is now the selected element
+		element = event.currentTarget;
 
-			if( event.currentTarget.contains(event.relatedTarget) ) {
+		// [Chrome] Workaround to support for mouseenter / mouseleave
+		if( !mouseenterleave && (eventName === 'mouseleave' || eventName === 'mouseenter') ) {
+
+			relatedTarget = event.relatedTarget;
+
+			if( element === relatedTarget || element.contains(relatedTarget) ) {
 
 				return;
 			}
+
+			event.type = eventName;
 		}
 		
 		// Execute callback, use context as scope otherwise the given element

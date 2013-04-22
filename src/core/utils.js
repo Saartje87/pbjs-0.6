@@ -1,12 +1,19 @@
 /**
  * Get unique id inside PB
  *
- * @return number
+ * @return {Number}
  */
 PB.id = function () {
 
 	return ++uid;
 };
+
+/**
+ * Get currect timestamp in milliseconds
+ *
+ * @return {Number}
+ */
+PB.now = Date.now || function () { return new Date().getTime(); };
 
 /**
  * Overwrite properties or methods in target object
@@ -48,6 +55,8 @@ PB.extend = function ( target, source ) {
 
 /**
  * Return a deep clone of the given object
+ *
+ * @return {Object} clone
  */
 PB.clone = function ( source ) {
 
@@ -82,7 +91,7 @@ PB.clone = function ( source ) {
  * @param object
  * @param function
  * @param object
- * @return void
+ * @return {Void}
  */
 PB.each = function ( collection, fn, context ) {
 
@@ -103,7 +112,9 @@ PB.each = function ( collection, fn, context ) {
 };
 
 /**
- * 
+ * Create array of array like object
+ *
+ * @return {Array}
  */
 PB.toArray = function ( arr ) {
 
@@ -152,7 +163,9 @@ PB.log = function () {
 };
 
 /**
- * 
+ * Put back previous value of PB global and returns current PB (pbjs) object
+ *
+ * @return {Object} 
  */
 PB.noConflict = function () {
 
