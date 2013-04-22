@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-04-17 17:54
+ * Build date 2013-04-22 17:46
  */
 (function ( name, context, definition ) {
 	
@@ -42,6 +42,8 @@ PB.id = function () {
 
 	return ++uid;
 };
+
+PB.now = Date.now || function () { return new Date().getTime(); };
 
 /**
  * Overwrite properties or methods in target object
@@ -878,7 +880,7 @@ PB.overwrite(PB.$.fn, {
 
 			for( prop in styles ) {
 
-				if( !styles.hasOwnProperty(prop) ) {
+				if( styles.hasOwnProperty(prop) ) {
 
 					value = styles[prop];
 

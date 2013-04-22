@@ -74,7 +74,7 @@ PB.overwrite(PB.$.fn, {
 
 			for( prop in styles ) {
 
-				if( !styles.hasOwnProperty(prop) ) {
+				if( styles.hasOwnProperty(prop) ) {
 
 					value = styles[prop];
 
