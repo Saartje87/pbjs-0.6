@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-04-22 21:11
+ * Build date 2013-04-23 11:55
  */
 (function ( name, context, definition ) {
 	
@@ -965,14 +965,6 @@ PB.overwrite(PB.$.fn, {
 	}
 });
 
-// if supports box-sizing
-/*
-PB.$.hook('getStyle.width', function () {
-	
-	// Calculations...
-});
-*/
-
 /**
  * Convert arguments to ordered object
  */
@@ -1568,7 +1560,7 @@ PB.overwrite(PB.$.fn, {
 	 */
 	hasClass: function ( className ) {
 
-		return (' '+this.context.className+' ').indexOf(' '+className+' ') >= 0;
+		return (' '+this[0].className+' ').indexOf(' '+className+' ') >= 0;
 	},
 
 	/**
@@ -2166,6 +2158,7 @@ function eventResponder ( pbid, eventName, handler, context, selector ) {
 		element = event.currentTarget;
 
 		// [Chrome] Workaround to support for mouseenter / mouseleave
+		// Inspired by blog.stchur.com/2007/03/15/mouseenter-and-mouseleave-events-for-firefox-and-other-non-ie-browsers/
 		if( !mouseenterleave && (eventName === 'mouseleave' || eventName === 'mouseenter') ) {
 
 			relatedTarget = event.relatedTarget;
@@ -2515,6 +2508,12 @@ PB.$.selector = {
 	 * Compare node to selector
 	 */
 	matches: function ( node, selector ) {
+
+		// #22 matchesSelector only avaible for element nodes
+		if( node.nodeType !== 1 ) {
+
+			return false;
+		}
 
 		return matches.call(node, selector);
 	}

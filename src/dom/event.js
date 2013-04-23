@@ -289,6 +289,7 @@ function eventResponder ( pbid, eventName, handler, context, selector ) {
 		element = event.currentTarget;
 
 		// [Chrome] Workaround to support for mouseenter / mouseleave
+		// Inspired by blog.stchur.com/2007/03/15/mouseenter-and-mouseleave-events-for-firefox-and-other-non-ie-browsers/
 		if( !mouseenterleave && (eventName === 'mouseleave' || eventName === 'mouseenter') ) {
 
 			relatedTarget = event.relatedTarget;

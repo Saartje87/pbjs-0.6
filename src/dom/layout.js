@@ -125,7 +125,7 @@ PB.overwrite(PB.$.fn, {
 	 */
 	hasClass: function ( className ) {
 
-		return (' '+this.context.className+' ').indexOf(' '+className+' ') >= 0;
+		return (' '+this[0].className+' ').indexOf(' '+className+' ') >= 0;
 	},
 
 	/**
