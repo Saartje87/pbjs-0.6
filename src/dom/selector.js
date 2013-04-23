@@ -16,6 +16,12 @@ PB.$.selector = {
 	 */
 	matches: function ( node, selector ) {
 
+		// #22 matchesSelector only avaible for element nodes
+		if( node.nodeType !== 1 ) {
+
+			return false;
+		}
+
 		return matches.call(node, selector);
 	}
 };
