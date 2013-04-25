@@ -43,7 +43,7 @@
 
 		while( callback = queue.shift() ) {
 
-			callback();
+			callback(PB);
 		}
 	}
 
@@ -57,10 +57,10 @@
 
 		if( ready ) {
 
-			callback();
+			callback(PB);
 		} else {
 
-			queue.push(callback());
+			queue.push(callback);
 		}
 	}
 
