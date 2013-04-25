@@ -55,6 +55,9 @@ module.exports = function(grunt) {
 					// Using native selector engine
 					'src/dom/selector.js',
 
+					// 
+					'src/dom/ready.js',
+
 					// Older browser support files
 					'src/dom/support/legacy.js',
 					'src/dom/support/event.js',
