@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-04-23 11:55
+ * Build date 2013-05-14 17:12
  */
 (function ( name, context, definition ) {
 	
@@ -211,14 +211,6 @@ PB.noConflict = function () {
 
 	return PB;
 };
-
-/*  // Set Const.prototype.__proto__ to Super.prototype
-  function inherit (Const, Super) {
-    function F () {}
-    F.prototype = Super.prototype;
-    Const.prototype = new F();
-    Const.prototype.constructor = Const;
-  }*/
 
 /**
  * Create a wrapper function that makes it possible to call the parent method
@@ -2519,6 +2511,104 @@ PB.$.selector = {
 	}
 };
 
+/**
+ * PB.ready
+ */
+(function ( PB ) {
+
+	var doc = window.document,
+		ready = doc.readyState === 'complete',
+		fn,
+		queue = [];
+
+	// When browser supports addEventListener, DOMContentLoaded is existing
+	if( doc.addEventListener ) {
+
+		doc.addEventListener('DOMContentLoaded', fn = function () {
+
+			doc.removeEventListener('DOMContentLoaded', fn);
+			runQueue();
+		});
+	}
+	// For IE7/8 check readystatechange event
+	else {
+
+		doc.attachEvent('onreadystatechange', fn = function () {
+
+			if( doc.readyState === 'complete' ) {
+
+				doc.detachEvent('onreadystatechange', fn);
+				runQueue();
+			}
+		});
+	}
+
+	/**
+	 * Call every function in queue
+	 *
+	 * @return {Void}
+	 */
+	function runQueue () {
+
+		var callback;
+
+		ready = true;
+
+		while( callback = queue.shift() ) {
+
+			callback(PB);
+		}
+	}
+
+	/**
+	 * Handle callback, call callback imidiatily when document is ready else queue. And call
+	 * when document is ready.
+	 *
+	 * @return {Void}
+	 */
+	function onDomReady ( callback ) {
+
+		if( ready ) {
+
+			callback(PB);
+		} else {
+
+			queue.push(callback);
+		}
+	}
+
+	// Expose
+	PB.ready = onDomReady;
+})( PB );
+// Support for older browsers
+(function ( PB ) {
+
+	if( !Function.prototype.bind ) {
+
+		Function.prototype.bind = function ( oThis ) {
+
+			if( typeof this !== "function" ) {
+
+				// closest thing possible to the ECMAScript 5 internal IsCallable function
+				throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
+			}
+
+			var aArgs = Array.prototype.slice.call(arguments, 1), 
+				fToBind = this, 
+				fNOP = function () {},
+				fBound = function () {
+
+					return fToBind.apply(this instanceof fNOP && oThis ? this : oThis, aArgs.concat(Array.prototype.slice.call(arguments)));
+				};
+
+			fNOP.prototype = this.prototype;
+			fBound.prototype = new fNOP();
+
+			return fBound;
+		};
+	}
+
+})(PB);
 // Support for older browsers
 (function ( PB, undefined ) {
 

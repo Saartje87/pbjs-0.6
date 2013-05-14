@@ -59,6 +59,7 @@ module.exports = function(grunt) {
 					'src/dom/ready.js',
 
 					// Older browser support files
+					'src/core/support/legacy.js',
 					'src/dom/support/legacy.js',
 					'src/dom/support/event.js',
 
