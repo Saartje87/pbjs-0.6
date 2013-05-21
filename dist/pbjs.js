@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-05-14 17:12
+ * Build date 2013-05-21 15:25
  */
 (function ( name, context, definition ) {
 	
@@ -813,7 +813,7 @@ var div = document.createElement('div'),
 	// We could probably drop ms :) http://www.impressivewebs.com/dropping-ms-vendor-prefixes-ie10/
 	vendorPrefixes = 'O ms Moz Webkit'.split(' '),
 	// Styles that could require a vendor prefix
-	stylesUsingPrefix = 'animationName transform transition transitionProperty transitionDuration transitionTimingFunction boxSizing backgroundSize boxReflect'.split(' '),
+	stylesUsingPrefix = 'animationName animationDuration transform transition transitionProperty transitionDuration transitionTimingFunction boxSizing backgroundSize boxReflect'.split(' '),
 	// All styles that require a prefix are stored in here
 	prefixStyles = {
 
@@ -924,21 +924,16 @@ PB.overwrite(PB.$.fn, {
 	 */
 	getStyle: function ( styleName, calculated ) {
 
-		var value;
+		var value,
+			// Get prefixed style name or current style name
+			prefixStyleName = prefixStyles[styleName] || styleName;
 
-		// If a hook is specified use the hook
-		if( PB.$.hooks['setStyle.'+styleName] ) {
-
-			return PB.$.hooks['getStyle.'+styleName]( this[0] );
-		}
-
-		// Need prefix?
-		styleName = prefixStyles[styleName] || styleName;
-		value = this[0].style[styleName];
+		// Store inline value
+		value = this[0].style[prefixStyleName];
 
 		if( calculated || !value || value === 'auto' ) {
 
-			value = window.getComputedStyle( this[0], null )[styleName];
+			value = window.getComputedStyle( this[0], null )[prefixStyleName];
 
 			// IE 9 sometimes return auto.. In this case we force the value to 0
 			if( value === 'auto' ) {
@@ -949,11 +944,16 @@ PB.overwrite(PB.$.fn, {
 
 		if( styleName === 'opacity' ) {
 			
-			return value ? parseFloat(value) : 1.0;
+			value = value ? parseFloat(value) : 1.0;
+		}
+		// Parse to int when value is a pixel value
+		else {
+
+			value = (/^-?[\d.]+px$/i).test( value ) ? parseInt(value, 10) : value;
 		}
 
-		// Parse to int when value is a pixel value
-		return (/^-?[\d.]+px$/i).test( value ) ? parseInt(value, 10) : value;
+		// If a hook is specified use the hook
+		return PB.$.hooks['getStyle.'+styleName] ? PB.$.hooks['getStyle.'+styleName]( this[0], value, prefixStyleName ) : value;
 	}
 });
 
