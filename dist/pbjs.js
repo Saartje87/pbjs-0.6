@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-06-17 17:56
+ * Build date 2013-06-17 18:00
  */
 (function ( name, context, definition ) {
 	
@@ -1804,6 +1804,16 @@ PB.overwrite(PB.$.fn, {
 		}
 
 		return -1;
+	},
+
+	/**
+	 * Gets a child element from the parent at a specied index.
+	 */
+	childAt: function( index ) {
+
+		var children = this.children();
+
+		return children && children[index] ? PB.$(children[index]) : null;
 	},
 
 	contains: function () {

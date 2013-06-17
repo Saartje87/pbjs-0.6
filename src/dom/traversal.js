@@ -121,6 +121,16 @@ PB.overwrite(PB.$.fn, {
 		return -1;
 	},
 
+	/**
+	 * Gets a child element from the parent at a specied index.
+	 */
+	childAt: function( index ) {
+
+		var children = this.children();
+
+		return children && children[index] ? PB.$(children[index]) : null;
+	},
+
 	contains: function () {
 
 
