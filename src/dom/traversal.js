@@ -17,6 +17,11 @@ PB.overwrite(PB.$.fn, {
 			i = 0,
 			elements = [];
 
+		if( !node ) {
+
+			return null;
+		}
+
 		do {
 
 			// Only add element nodes
