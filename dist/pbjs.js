@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-06-27 17:45
+ * Build date 2013-06-27 18:22
  */
 (function ( name, context, definition ) {
 	
@@ -521,7 +521,8 @@ PB.Queue = PB.Class(PB.Observer, {
 
 var window = context,
 	doc = window.document,
-	docElement = doc.documentElement;
+	docElement = doc.documentElement,
+	$doc = new Dom(document);
 
 /**
  * Create PB.$ global
@@ -570,6 +571,11 @@ PB.$ = function ( selector ) {
 			// Create element
 			return PB.$.buildFragment(selector);
 		}
+		// user querySelector
+		else {
+
+			return $doc.find(selector);
+		}
 	}
 
 	/* When doing this we should validate that only elements are parsed...
@@ -587,13 +593,15 @@ PB.$ = function ( selector ) {
  */
 PB.$$ = function ( selector ) {
 
+	PB.log('Usage of PB.$$ is deprecated');
+
 	// Already PB Dom object
 	if( selector instanceof Dom ) {
 
 		return selector;
 	}
 
-	return new Dom(document).find(selector);
+	return $doc.find(selector);
 };
 
 /**
