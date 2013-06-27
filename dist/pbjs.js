@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-06-17 18:00
+ * Build date 2013-06-27 17:45
  */
 (function ( name, context, definition ) {
 	
@@ -211,6 +211,14 @@ PB.noConflict = function () {
 
 	return PB;
 };
+
+/*  // Set Const.prototype.__proto__ to Super.prototype
+  function inherit (Const, Super) {
+    function F () {}
+    F.prototype = Super.prototype;
+    Const.prototype = new F();
+    Const.prototype.constructor = Const;
+  }*/
 
 /**
  * Create a wrapper function that makes it possible to call the parent method
@@ -578,6 +586,12 @@ PB.$ = function ( selector ) {
  * Return collection by css selector
  */
 PB.$$ = function ( selector ) {
+
+	// Already PB Dom object
+	if( selector instanceof Dom ) {
+
+		return selector;
+	}
 
 	return new Dom(document).find(selector);
 };
@@ -1429,12 +1443,23 @@ PB.overwrite(PB.$.fn, {
 
 	width: function () {
 
+		if( this[0] === window ) {
+
+			// Return viewport width, excluding toolbars/scrollbars
+			// Using docElement.clientWidth for IE7/8
+			return window.innerWidth || docElement.clientWidth;
+		} else if ( this[0] === doc ) {
+
+			// Return document size
+			return Math.max(docElement.clientWidth, docElement.offsetWidth, docElement.scrollWidth);
+		}
+
 		return this.getStyle('width', true);
 	},
 
 	innerWidth: function () {
 
-		return this.getStyle('width', true) + this.getStyle('paddingLeft', true) + this.getStyle('paddingRight', true);
+		return this.width() + this.getStyle('paddingLeft', true) + this.getStyle('paddingRight', true);
 	},
 
 	outerWidth: function ( includeMargin ) {
@@ -1456,12 +1481,23 @@ PB.overwrite(PB.$.fn, {
 
 	height: function () {
 
+		if( this[0] === window ) {
+
+			// Return viewport width, excluding toolbars/scrollbars
+			// Using docElement.clientWidth for IE7/8
+			return window.innerHeight || docElement.clientHeight;
+		} else if ( this[0] === doc ) {
+
+			// Return document size
+			return Math.max(docElement.clientHeight, docElement.offsetHeight, docElement.scrollHeight);
+		}
+
 		return this.getStyle('height', true);
 	},
 
 	innerHeight: function () {
 
-		return this.getStyle('height', true) + this.getStyle('paddingTop', true) + this.getStyle('paddingBottom', true);
+		return this.height() + this.getStyle('paddingTop', true) + this.getStyle('paddingBottom', true);
 	},
 
 	outerHeight: function ( includeMargin ) {
@@ -1675,6 +1711,8 @@ PB.overwrite(PB.$.fn, {
 
 	/**
 	 * Returns boolean whether the first element in the set is visible or not.
+	 *
+	 * - rename to shown ?
 	 */
 	isVisible: function () {
 
@@ -3184,12 +3222,15 @@ PB.Request.defaults = {
 	// Default request headers
 	headers: {
 
-		'X-Requested-With': 'PBJS-'+PB.VERSION,
+		// Note, Do not send headers when requesting crossdomain requests
+		'X-Requested-With': 'XMLHttpRequest',
 		'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
 	},
 	encoding: 'UTF-8',
 	// Todo: timeout
-	timeout: 0
+	timeout: 0,
+	// Is crossdomain request
+	crossdomain: false
 };
 
 // Declare methods, then assign to namespace
@@ -3271,6 +3312,11 @@ PB.overwrite(PB.Request, {
 });
 
 /*
+PB.get('file.json', {foo: 'bar'}, function ( t ) {
+	
+	alert("Done!");
+});
+
 PB.each({get: 'GET', post: 'POST', put: 'PUT', del: 'DELETE'}, function ( key, value ) {
 	
 	// arguments -> url, data, success, error ?
