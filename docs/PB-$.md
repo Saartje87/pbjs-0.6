@@ -10,7 +10,7 @@ Add callback for when the dom is ready for manipulation.
 
 ###### Signature
 ```js
-PB.$.ready(function ( $ ) {
+PB.$.ready(function ( PB ) {
 	
 	// Document ready to be touched
 });
@@ -372,11 +372,17 @@ PB.$('#element').isVisible();
 
 Retrieve width from the first element in the set.
 
+When requesting window width, the innerWidth of the window is returned (so scrollbar/toolbar is excluded).
+
 > Width is the element width without margins and borders. (padding?)
+> How is box-sizing handled?
 
 ###### Signature
 ```js
 PB.$('#element').width();
+
+PB.$(window).width();
+PB.$(document).width();
 ```
 
 ###### Returns
@@ -389,6 +395,7 @@ PB.$('#element').width();
 Retrieve inner width from the first element in the set.
 
 > Inner width is the width + padding.
+> window/document are not supported in this method.
 
 ###### Signature
 ```js
@@ -405,6 +412,7 @@ PB.$('#element').innerWidth();
 Retrieve outer width from the first element in the set.
 
 > Outer width is the width + border. Or optionally width + border + margin. 
+> window/document are not supported in this method.
 
 ###### Signature
 ```js
@@ -544,11 +552,11 @@ Returns the children for the first element in the set.
 
 ###### Signature
 ```javascript
-PB.$('#element').childeren();
+PB.$('#element').children();
 ```
 
 ###### Returns
-{Object} - Collection containing childeren
+{Object} - Collection containing children
 
 ---
 
@@ -558,7 +566,7 @@ Returns the first element in the set.
 
 ###### Signature
 ```javascript
-PB.$('#element').childeren().first();
+PB.$('#element').children().first();
 ```
 
 ###### Returns
@@ -572,7 +580,7 @@ Returns the last element in the set.
 
 ###### Signature
 ```javascript
-PB.$('#element').childeren().last();
+PB.$('#element').children().last();
 ```
 
 ###### Returns
