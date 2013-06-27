@@ -2,12 +2,23 @@ PB.overwrite(PB.$.fn, {
 
 	width: function () {
 
+		if( this[0] === window ) {
+
+			// Return viewport width, excluding toolbars/scrollbars
+			// Using docElement.clientWidth for IE7/8
+			return window.innerWidth || docElement.clientWidth;
+		} else if ( this[0] === doc ) {
+
+			// Return document size
+			return Math.max(docElement.clientWidth, docElement.offsetWidth, docElement.scrollWidth);
+		}
+
 		return this.getStyle('width', true);
 	},
 
 	innerWidth: function () {
 
-		return this.getStyle('width', true) + this.getStyle('paddingLeft', true) + this.getStyle('paddingRight', true);
+		return this.width() + this.getStyle('paddingLeft', true) + this.getStyle('paddingRight', true);
 	},
 
 	outerWidth: function ( includeMargin ) {
@@ -29,12 +40,23 @@ PB.overwrite(PB.$.fn, {
 
 	height: function () {
 
+		if( this[0] === window ) {
+
+			// Return viewport width, excluding toolbars/scrollbars
+			// Using docElement.clientWidth for IE7/8
+			return window.innerHeight || docElement.clientHeight;
+		} else if ( this[0] === doc ) {
+
+			// Return document size
+			return Math.max(docElement.clientHeight, docElement.offsetHeight, docElement.scrollHeight);
+		}
+
 		return this.getStyle('height', true);
 	},
 
 	innerHeight: function () {
 
-		return this.getStyle('height', true) + this.getStyle('paddingTop', true) + this.getStyle('paddingBottom', true);
+		return this.height() + this.getStyle('paddingTop', true) + this.getStyle('paddingBottom', true);
 	},
 
 	outerHeight: function ( includeMargin ) {
@@ -248,6 +270,8 @@ PB.overwrite(PB.$.fn, {
 
 	/**
 	 * Returns boolean whether the first element in the set is visible or not.
+	 *
+	 * - rename to shown ?
 	 */
 	isVisible: function () {
 
