@@ -66,6 +66,12 @@ PB.$ = function ( selector ) {
  */
 PB.$$ = function ( selector ) {
 
+	// Already PB Dom object
+	if( selector instanceof Dom ) {
+
+		return selector;
+	}
+
 	return new Dom(document).find(selector);
 };
 
