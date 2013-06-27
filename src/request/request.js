@@ -247,10 +247,13 @@ PB.Request.defaults = {
 	// Default request headers
 	headers: {
 
-		'X-Requested-With': 'PBJS-'+PB.VERSION,
+		// Note, Do not send headers when requesting crossdomain requests
+		'X-Requested-With': 'XMLHttpRequest',
 		'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
 	},
 	encoding: 'UTF-8',
 	// Todo: timeout
-	timeout: 0
+	timeout: 0,
+	// Is crossdomain request
+	crossdomain: false
 };
