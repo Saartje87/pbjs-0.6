@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-07-08 10:02
+ * Build date 2013-07-08 10:09
  */
 (function ( name, context, definition ) {
 	
@@ -1758,7 +1758,7 @@ PB.overwrite(PB.$.fn, {
 	},
 
 	/**
-	 * Returns the child at the specief index in the first element in the set.
+	 * Returns the child from the first element in the set at a specifed index.
 	 */
 	childAt: function( index ) {
 

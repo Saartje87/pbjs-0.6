@@ -35,7 +35,7 @@ PB.overwrite(PB.$.fn, {
 	},
 
 	/**
-	 * Returns the child at the specief index in the first element in the set.
+	 * Returns the child from the first element in the set at a specifed index.
 	 */
 	childAt: function( index ) {
 
