@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-06-27 18:22
+ * Build date 2013-07-08 10:02
  */
 (function ( name, context, definition ) {
 	
@@ -211,14 +211,6 @@ PB.noConflict = function () {
 
 	return PB;
 };
-
-/*  // Set Const.prototype.__proto__ to Super.prototype
-  function inherit (Const, Super) {
-    function F () {}
-    F.prototype = Super.prototype;
-    Const.prototype = new F();
-    Const.prototype.constructor = Const;
-  }*/
 
 /**
  * Create a wrapper function that makes it possible to call the parent method
@@ -1766,6 +1758,16 @@ PB.overwrite(PB.$.fn, {
 	},
 
 	/**
+	 * Returns the child at the specief index in the first element in the set.
+	 */
+	childAt: function( index ) {
+
+		var children = this.children();
+
+		return children && children[index] ? PB.$(children[index]) : null;
+	},
+
+	/**
 	 * Returns the first child from the first element in the set.
 	 */
 	firstChild: function () {
@@ -1850,16 +1852,6 @@ PB.overwrite(PB.$.fn, {
 		}
 
 		return -1;
-	},
-
-	/**
-	 * Gets a child element from the parent at a specied index.
-	 */
-	childAt: function( index ) {
-
-		var children = this.children();
-
-		return children && children[index] ? PB.$(children[index]) : null;
 	},
 
 	contains: function () {
@@ -3320,11 +3312,6 @@ PB.overwrite(PB.Request, {
 });
 
 /*
-PB.get('file.json', {foo: 'bar'}, function ( t ) {
-	
-	alert("Done!");
-});
-
 PB.each({get: 'GET', post: 'POST', put: 'PUT', del: 'DELETE'}, function ( key, value ) {
 	
 	// arguments -> url, data, success, error ?

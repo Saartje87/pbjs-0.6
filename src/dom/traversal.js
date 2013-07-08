@@ -35,6 +35,16 @@ PB.overwrite(PB.$.fn, {
 	},
 
 	/**
+	 * Returns the child at the specief index in the first element in the set.
+	 */
+	childAt: function( index ) {
+
+		var children = this.children();
+
+		return children && children[index] ? PB.$(children[index]) : null;
+	},
+
+	/**
 	 * Returns the first child from the first element in the set.
 	 */
 	firstChild: function () {
@@ -119,16 +129,6 @@ PB.overwrite(PB.$.fn, {
 		}
 
 		return -1;
-	},
-
-	/**
-	 * Gets a child element from the parent at a specied index.
-	 */
-	childAt: function( index ) {
-
-		var children = this.children();
-
-		return children && children[index] ? PB.$(children[index]) : null;
 	},
 
 	contains: function () {
