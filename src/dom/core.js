@@ -57,13 +57,6 @@ PB.$ = function ( selector ) {
 		}
 	}
 
-	/* When doing this we should validate that only elements are parsed...
-	if( PB.type(selector) === 'array' ) {
-
-		return new Dom( selector );
-	}
-	*/
-
 	return null;
 };
 
@@ -103,7 +96,7 @@ function Dom ( collection ) {
 	}
 
 	this.length = i;
-}
+};
 
 Dom.prototype.constructor = Dom;
 
