@@ -88,9 +88,9 @@ PB.clone = function ( source ) {
  * 
  * fn arguments: key, value
  * 
- * @param object
- * @param function
- * @param object
+ * @param {Object}
+ * @param {Function}
+ * @param {Object}
  * @return {Void}
  */
 PB.each = function ( collection, fn, context ) {
