@@ -257,24 +257,27 @@ PB.overwrite(PB.$.fn, {
 		return this[0].innerHTML;
 	},
 
+	/**
+	 *
+	 */
 	setText: function ( value ) {
 
 		var i = 0;
 
-		// Empty elements
-		this.setHtml('');
-
 		// Append text to every element
 		for( ; i < this.length; i++ ) {
 
-			this[i].appendChild(doc.createTextNode(value));
+			this[i].textContent = value;
 		}
 
 		return this;
 	},
 
+	/**
+	 *
+	 */
 	getText: function () {
 
-		return this[0].textContent || this[0].nodeValue || '';
+		return this[0].textContent || this[0].innerText;
 	}
 });
