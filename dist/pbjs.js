@@ -123,8 +123,8 @@ PB.clone = function ( source ) {
  * 
  * fn arguments: key, value
  * 
- * @param object
- * @param function
+ * @param {Object}
+ * @param {Function}
  * @param object
  * @return {Void}
  */
@@ -271,7 +271,14 @@ PB.Class = function ( parentClass, base ) {
 
                 constructor = function () {
 
-                    var _parent = this.parent;
+                    var _parent;
+
+                    if( !this ) {
+
+                        return _constructor.apply( this, arguments );
+                    }
+
+                    _parent = this.parent;
 
                     this.parent = parentPrototype.construct;
 
@@ -282,7 +289,7 @@ PB.Class = function ( parentClass, base ) {
 
                 if( typeof constructor === 'function' ) {
                     
-                    constructor.apply( this, arguments );
+                    return constructor.apply( this, arguments );
                 }
             };
         } else {
