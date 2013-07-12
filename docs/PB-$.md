@@ -588,6 +588,19 @@ PB.$('#element').children().last();
 
 ---
 
+### childAt
+
+Returns the child from the first element in the set at a specifed index.
+
+###### Signature
+```javascript
+PB.$('#element').childAt(5);
+```
+
+###### Returns
+{Object} - Collection containing the specified child
+
+---
 
 ### firstChild
 

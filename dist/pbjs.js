@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-06-27 17:45
+ * Build date 2013-07-08 10:09
  */
 (function ( name, context, definition ) {
 	
@@ -123,8 +123,8 @@ PB.clone = function ( source ) {
  * 
  * fn arguments: key, value
  * 
- * @param object
- * @param function
+ * @param {Object}
+ * @param {Function}
  * @param object
  * @return {Void}
  */
@@ -212,14 +212,6 @@ PB.noConflict = function () {
 	return PB;
 };
 
-/*  // Set Const.prototype.__proto__ to Super.prototype
-  function inherit (Const, Super) {
-    function F () {}
-    F.prototype = Super.prototype;
-    Const.prototype = new F();
-    Const.prototype.constructor = Const;
-  }*/
-
 /**
  * Create a wrapper function that makes it possible to call the parent method
  * trough 'this.parent()'
@@ -279,7 +271,14 @@ PB.Class = function ( parentClass, base ) {
 
                 constructor = function () {
 
-                    var _parent = this.parent;
+                    var _parent;
+
+                    if( !this ) {
+
+                        return _constructor.apply( this, arguments );
+                    }
+
+                    _parent = this.parent;
 
                     this.parent = parentPrototype.construct;
 
@@ -290,7 +289,7 @@ PB.Class = function ( parentClass, base ) {
 
                 if( typeof constructor === 'function' ) {
                     
-                    constructor.apply( this, arguments );
+                    return constructor.apply( this, arguments );
                 }
             };
         } else {
@@ -521,7 +520,8 @@ PB.Queue = PB.Class(PB.Observer, {
 
 var window = context,
 	doc = window.document,
-	docElement = doc.documentElement;
+	docElement = doc.documentElement,
+	$doc = new Dom(document);
 
 /**
  * Create PB.$ global
@@ -570,6 +570,11 @@ PB.$ = function ( selector ) {
 			// Create element
 			return PB.$.buildFragment(selector);
 		}
+		// user querySelector
+		else {
+
+			return $doc.find(selector);
+		}
 	}
 
 	/* When doing this we should validate that only elements are parsed...
@@ -587,13 +592,15 @@ PB.$ = function ( selector ) {
  */
 PB.$$ = function ( selector ) {
 
+	PB.log('Usage of PB.$$ is deprecated');
+
 	// Already PB Dom object
 	if( selector instanceof Dom ) {
 
 		return selector;
 	}
 
-	return new Dom(document).find(selector);
+	return $doc.find(selector);
 };
 
 /**
@@ -1758,6 +1765,16 @@ PB.overwrite(PB.$.fn, {
 	},
 
 	/**
+	 * Returns the child from the first element in the set at a specifed index.
+	 */
+	childAt: function( index ) {
+
+		var children = this.children();
+
+		return children && children[index] ? PB.$(children[index]) : null;
+	},
+
+	/**
 	 * Returns the first child from the first element in the set.
 	 */
 	firstChild: function () {
@@ -1842,16 +1859,6 @@ PB.overwrite(PB.$.fn, {
 		}
 
 		return -1;
-	},
-
-	/**
-	 * Gets a child element from the parent at a specied index.
-	 */
-	childAt: function( index ) {
-
-		var children = this.children();
-
-		return children && children[index] ? PB.$(children[index]) : null;
 	},
 
 	contains: function () {
@@ -3312,11 +3319,6 @@ PB.overwrite(PB.Request, {
 });
 
 /*
-PB.get('file.json', {foo: 'bar'}, function ( t ) {
-	
-	alert("Done!");
-});
-
 PB.each({get: 'GET', post: 'POST', put: 'PUT', del: 'DELETE'}, function ( key, value ) {
 	
 	// arguments -> url, data, success, error ?
