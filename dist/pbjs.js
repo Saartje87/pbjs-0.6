@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-06-27 17:45
+ * Build date 2013-07-12 14:00
  */
 (function ( name, context, definition ) {
 	
@@ -211,14 +211,6 @@ PB.noConflict = function () {
 
 	return PB;
 };
-
-/*  // Set Const.prototype.__proto__ to Super.prototype
-  function inherit (Const, Super) {
-    function F () {}
-    F.prototype = Super.prototype;
-    Const.prototype = new F();
-    Const.prototype.constructor = Const;
-  }*/
 
 /**
  * Create a wrapper function that makes it possible to call the parent method
@@ -3312,11 +3304,6 @@ PB.overwrite(PB.Request, {
 });
 
 /*
-PB.get('file.json', {foo: 'bar'}, function ( t ) {
-	
-	alert("Done!");
-});
-
 PB.each({get: 'GET', post: 'POST', put: 'PUT', del: 'DELETE'}, function ( key, value ) {
 	
 	// arguments -> url, data, success, error ?
