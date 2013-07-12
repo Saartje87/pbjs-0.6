@@ -1,6 +1,7 @@
 var window = context,
 	doc = window.document,
-	docElement = doc.documentElement;
+	docElement = doc.documentElement,
+	$doc = new Dom(document);
 
 /**
  * Create PB.$ global
@@ -49,14 +50,12 @@ PB.$ = function ( selector ) {
 			// Create element
 			return PB.$.buildFragment(selector);
 		}
-	}
+		// user querySelector
+		else {
 
-	/* When doing this we should validate that only elements are parsed...
-	if( PB.type(selector) === 'array' ) {
-
-		return new Dom( selector );
+			return $doc.find(selector);
+		}
 	}
-	*/
 
 	return null;
 };
@@ -66,13 +65,15 @@ PB.$ = function ( selector ) {
  */
 PB.$$ = function ( selector ) {
 
+	PB.log('Usage of PB.$$ is deprecated');
+
 	// Already PB Dom object
 	if( selector instanceof Dom ) {
 
 		return selector;
 	}
 
-	return new Dom(document).find(selector);
+	return $doc.find(selector);
 };
 
 /**
@@ -95,7 +96,7 @@ function Dom ( collection ) {
 	}
 
 	this.length = i;
-}
+};
 
 Dom.prototype.constructor = Dom;
 

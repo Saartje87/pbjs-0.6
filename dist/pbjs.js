@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-07-12 14:00
+ * Build date 2013-07-12 14:23
  */
 (function ( name, context, definition ) {
 	
@@ -123,9 +123,9 @@ PB.clone = function ( source ) {
  * 
  * fn arguments: key, value
  * 
- * @param object
- * @param function
- * @param object
+ * @param {Object}
+ * @param {Function}
+ * @param {Object}
  * @return {Void}
  */
 PB.each = function ( collection, fn, context ) {
@@ -212,6 +212,14 @@ PB.noConflict = function () {
 	return PB;
 };
 
+/*  // Set Const.prototype.__proto__ to Super.prototype
+  function inherit (Const, Super) {
+    function F () {}
+    F.prototype = Super.prototype;
+    Const.prototype = new F();
+    Const.prototype.constructor = Const;
+  }*/
+
 /**
  * Create a wrapper function that makes it possible to call the parent method
  * trough 'this.parent()'
@@ -271,7 +279,14 @@ PB.Class = function ( parentClass, base ) {
 
                 constructor = function () {
 
-                    var _parent = this.parent;
+                    var _parent;
+
+                    if( !this ) {
+
+                        return _constructor.apply( this, arguments );
+                    }
+
+                    _parent = this.parent;
 
                     this.parent = parentPrototype.construct;
 
@@ -282,7 +297,7 @@ PB.Class = function ( parentClass, base ) {
 
                 if( typeof constructor === 'function' ) {
                     
-                    constructor.apply( this, arguments );
+                    return constructor.apply( this, arguments );
                 }
             };
         } else {
@@ -513,7 +528,8 @@ PB.Queue = PB.Class(PB.Observer, {
 
 var window = context,
 	doc = window.document,
-	docElement = doc.documentElement;
+	docElement = doc.documentElement,
+	$doc = new Dom(document);
 
 /**
  * Create PB.$ global
@@ -562,14 +578,12 @@ PB.$ = function ( selector ) {
 			// Create element
 			return PB.$.buildFragment(selector);
 		}
-	}
+		// user querySelector
+		else {
 
-	/* When doing this we should validate that only elements are parsed...
-	if( PB.type(selector) === 'array' ) {
-
-		return new Dom( selector );
+			return $doc.find(selector);
+		}
 	}
-	*/
 
 	return null;
 };
@@ -579,13 +593,15 @@ PB.$ = function ( selector ) {
  */
 PB.$$ = function ( selector ) {
 
+	PB.log('Usage of PB.$$ is deprecated');
+
 	// Already PB Dom object
 	if( selector instanceof Dom ) {
 
 		return selector;
 	}
 
-	return new Dom(document).find(selector);
+	return $doc.find(selector);
 };
 
 /**
@@ -608,7 +624,7 @@ function Dom ( collection ) {
 	}
 
 	this.length = i;
-}
+};
 
 Dom.prototype.constructor = Dom;
 
@@ -1410,25 +1426,28 @@ PB.overwrite(PB.$.fn, {
 		return this[0].innerHTML;
 	},
 
+	/**
+	 *
+	 */
 	setText: function ( value ) {
 
 		var i = 0;
 
-		// Empty elements
-		this.setHtml('');
-
 		// Append text to every element
 		for( ; i < this.length; i++ ) {
 
-			this[i].appendChild(doc.createTextNode(value));
+			this[i].textContent = value;
 		}
 
 		return this;
 	},
 
+	/**
+	 *
+	 */
 	getText: function () {
 
-		return this[0].textContent || this[0].nodeValue || '';
+		return this[0].textContent || this[0].innerText;
 	}
 });
 PB.overwrite(PB.$.fn, {
@@ -1750,6 +1769,16 @@ PB.overwrite(PB.$.fn, {
 	},
 
 	/**
+	 * Returns the child from the first element in the set at a specifed index.
+	 */
+	childAt: function( index ) {
+
+		var children = this.children();
+
+		return children && children[index] ? PB.$(children[index]) : null;
+	},
+
+	/**
 	 * Returns the first child from the first element in the set.
 	 */
 	firstChild: function () {
@@ -1834,16 +1863,6 @@ PB.overwrite(PB.$.fn, {
 		}
 
 		return -1;
-	},
-
-	/**
-	 * Gets a child element from the parent at a specied index.
-	 */
-	childAt: function( index ) {
-
-		var children = this.children();
-
-		return children && children[index] ? PB.$(children[index]) : null;
 	},
 
 	contains: function () {
@@ -2181,9 +2200,16 @@ function eventResponder ( pbid, eventName, handler, context, selector ) {
 
 	return function ( originalEvent ) {
 
-		var element = PB.$.cache[pbid].element,
-			event = new Event(originalEvent, element),
+		var element = PB.$.cache[pbid] && PB.$.cache[pbid].element,
+			event,
 			relatedTarget;
+
+		if( !element ) {
+
+			return;
+		}
+
+		event = new Event(originalEvent, element);
 
 		// If selector is given, test selector
 		if( selector && !event.matchesSelector(selector) ) {
