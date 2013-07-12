@@ -275,9 +275,16 @@ function eventResponder ( pbid, eventName, handler, context, selector ) {
 
 	return function ( originalEvent ) {
 
-		var element = PB.$.cache[pbid].element,
-			event = new Event(originalEvent, element),
+		var element = PB.$.cache[pbid] && PB.$.cache[pbid].element,
+			event,
 			relatedTarget;
+
+		if( !element ) {
+
+			return;
+		}
+
+		event = new Event(originalEvent, element);
 
 		// If selector is given, test selector
 		if( selector && !event.matchesSelector(selector) ) {
