@@ -31,7 +31,7 @@ PB.overwrite(PB.$.fn, {
 			}
 		} while( node = node.nextSibling );
 
-		return new this.constructor(elements);
+		return elements.length ? new this.constructor(elements) : null;
 	},
 
 	/**
@@ -167,7 +167,7 @@ PB.overwrite(PB.$.fn, {
 		}
 		
 		// we should return an unique set
-		return new this.constructor(elements);
+		return elements.length ? new this.constructor(elements) : null;
 	},
 
 	/**
