@@ -97,12 +97,22 @@ module.exports = function(grunt) {
 				src: ["dist/pbjs.js", /*"vendor/qwery/qwery.js"*/],
 				dest: "dist/pbjs.min.js"
 			}
+		},
+		watch: {
+			scripts: {
+				files: ['**/*.js'],
+				tasks: ['default'],
+				options: {
+					//nospawn: true,
+				},
+			},
 		}
 	});
 
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
+	grunt.loadNpmTasks('grunt-contrib-watch');
 
 	// Default task(s).
 	grunt.registerTask('default', ['concat', 'uglify']);
