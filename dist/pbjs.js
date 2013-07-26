@@ -1761,7 +1761,7 @@ PB.overwrite(PB.$.fn, {
 			}
 		} while( node = node.nextSibling );
 
-		return new this.constructor(elements);
+		return elements.length ? new this.constructor(elements) : null;
 	},
 
 	/**
