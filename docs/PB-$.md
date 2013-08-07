@@ -1170,7 +1170,39 @@ PB.$('#element').removeData('key');
 
 ### serializeForm
 
-*Ideas*
+Serialize form elements from given form.
+
+Name is required in form elements.
+
+###### Signature
+```javascript
+PB.$('#element').serializeForm();
+```
+
+###### Example
+```xml
+<form id="form">
+	<input type="text" name="name" value="John Doe" />
+	<input type="text" name="birthday" value="1888-04-02" />
+	<button>Submit</button>
+</form>
+```
+
+```js
+console.log(PB.$('#form').serializeForm());
+// Output
+{
+	name: "John Doe",
+	birthday: "1888-04-02"
+}
+```
+
+###### Returns
+{Object} - form data
+
+---
+
+*Ideas/todos/..*
 ### get
 ### filter
 ### forEach
