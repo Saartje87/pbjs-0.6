@@ -43,7 +43,6 @@ module.exports = function(grunt) {
 					'src/dom/utils.js',
 					'src/dom/attribute.js',
 					'src/dom/style.js',
-					'src/dom/morph.js',
 					'src/dom/manipulation.js',
 					'src/dom/layout.js',
 					'src/dom/traversal.js',
@@ -51,6 +50,10 @@ module.exports = function(grunt) {
 					'src/dom/buildfragment.js',
 					'src/dom/enumerable.js',
 					'src/dom/animation.js',
+
+					'src/dom/queue.js',
+					'src/dom/transition.js',
+					'src/dom/morph.js',
 
 					// Using native selector engine
 					'src/dom/selector.js',

@@ -11,17 +11,9 @@ PB.Queue = PB.Class({
 
 	add: function ( fn, context ) {
 
-		if( this.length === 0 && this.state !== PB.Queue.STATE_INPROGRESS ) {
+		this.length++;
 
-			this.state = PB.Queue.STATE_INPROGRESS;
-
-			fn.call(context || fn, this._next);
-		} else {
-
-			this.length++;
-
-			this.stack.unshift(fn.bind(context || fn, this._next));
-		}
+		this.stack.unshift(fn.bind(context || fn, this._next));
 
 		return this;
 	},
@@ -32,7 +24,7 @@ PB.Queue = PB.Class({
 			queue = this.stack,
 			fn;
 
-		if( this.state === PB.Queue.STATE_INPROGRESS || !queue ) {
+		if( this.state === PB.Queue.STATE_INPROGRESS || !queue.length ) {
 
 			return this;
 		}
@@ -41,17 +33,12 @@ PB.Queue = PB.Class({
 
 		fn = this.stack.pop();
 
-		if( fn ) {
-
-			fn();
-		}
+		fn();
 
 		return this;
 	},
 
 	next: function () {
-
-		console.log('next');
 
 		this.state = PB.Queue.STATE_IDLE;
 
