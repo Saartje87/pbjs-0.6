@@ -129,7 +129,7 @@ PB.overwrite(PB.$.fn, {
 
 			if( PB.$.selector.matches( node, expression ) ) {
 
-				return node;
+				return PB.$(node);
 			}
 
 			if( !--maxDepth ) {

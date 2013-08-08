@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-07-08 10:09
+ * Build date 2013-08-08 11:05
  */
 (function ( name, context, definition ) {
 	
@@ -125,7 +125,7 @@ PB.clone = function ( source ) {
  * 
  * @param {Object}
  * @param {Function}
- * @param object
+ * @param {Object}
  * @return {Void}
  */
 PB.each = function ( collection, fn, context ) {
@@ -211,6 +211,14 @@ PB.noConflict = function () {
 
 	return PB;
 };
+
+/*  // Set Const.prototype.__proto__ to Super.prototype
+  function inherit (Const, Super) {
+    function F () {}
+    F.prototype = Super.prototype;
+    Const.prototype = new F();
+    Const.prototype.constructor = Const;
+  }*/
 
 /**
  * Create a wrapper function that makes it possible to call the parent method
@@ -577,13 +585,6 @@ PB.$ = function ( selector ) {
 		}
 	}
 
-	/* When doing this we should validate that only elements are parsed...
-	if( PB.type(selector) === 'array' ) {
-
-		return new Dom( selector );
-	}
-	*/
-
 	return null;
 };
 
@@ -623,7 +624,7 @@ function Dom ( collection ) {
 	}
 
 	this.length = i;
-}
+};
 
 Dom.prototype.constructor = Dom;
 
@@ -826,6 +827,49 @@ PB.overwrite(PB.$.fn, {
 		}
 
 		return this;
+	},
+
+	/**
+	 * Serialize form data
+	 *
+	 * Will throw an error if no form is found in set
+	 *
+	 * @param {Object} formData
+	 */
+	serializeForm: function () {
+
+		var i = 0,
+			j = 0,
+			data = {},
+			formElements,
+			element,
+			type,
+			isGroup = /radio|checkbox/i,
+			exclude = /file|undefined|reset|button|submit|fieldset/i;
+
+		for( ; i < this.length; i++ ) {
+
+			if( this[i].nodeName === 'FORM' ) {
+
+				formElements = this[i].elements;
+
+				for( ; j < formElements.length; j++ ) {
+
+					element = formElements[j];
+					type = element.type;
+
+					if( element.name && !exclude.test(type) && !(isGroup.test(type) && !element.checked) ) {
+
+						data[element.name] = new this.constructor(element).getValue();
+					}
+				}
+
+				return data;
+			}
+		}
+
+		// No form element given
+		throw new Error('Form not found'); // A tought, where selector is css expression 'Form not found ['+this.selector+']'
 	}
 });
 	// Used for tests
@@ -1331,6 +1375,8 @@ PB.overwrite(PB.$.fn, {
 			delete this[i];
 		}
 
+		this.length = 0;
+
 		// Return null
 		return null;
 	},
@@ -1425,25 +1471,28 @@ PB.overwrite(PB.$.fn, {
 		return this[0].innerHTML;
 	},
 
+	/**
+	 *
+	 */
 	setText: function ( value ) {
 
 		var i = 0;
 
-		// Empty elements
-		this.setHtml('');
-
 		// Append text to every element
 		for( ; i < this.length; i++ ) {
 
-			this[i].appendChild(doc.createTextNode(value));
+			this[i].textContent = value;
 		}
 
 		return this;
 	},
 
+	/**
+	 *
+	 */
 	getText: function () {
 
-		return this[0].textContent || this[0].nodeValue || '';
+		return this[0].textContent || this[0].innerText;
 	}
 });
 PB.overwrite(PB.$.fn, {
@@ -1826,7 +1875,7 @@ PB.overwrite(PB.$.fn, {
 
 			if( PB.$.selector.matches( node, expression ) ) {
 
-				return node;
+				return PB.$(node);
 			}
 
 			if( !--maxDepth ) {
@@ -2196,9 +2245,16 @@ function eventResponder ( pbid, eventName, handler, context, selector ) {
 
 	return function ( originalEvent ) {
 
-		var element = PB.$.cache[pbid].element,
-			event = new Event(originalEvent, element),
+		var element = PB.$.cache[pbid] && PB.$.cache[pbid].element,
+			event,
 			relatedTarget;
+
+		if( !element ) {
+
+			return;
+		}
+
+		event = new Event(originalEvent, element);
 
 		// If selector is given, test selector
 		if( selector && !event.matchesSelector(selector) ) {
