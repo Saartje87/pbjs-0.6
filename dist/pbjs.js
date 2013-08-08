@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-08-08 10:01
+ * Build date 2013-08-08 11:05
  */
 (function ( name, context, definition ) {
 	
@@ -1875,7 +1875,7 @@ PB.overwrite(PB.$.fn, {
 
 			if( PB.$.selector.matches( node, expression ) ) {
 
-				return node;
+				return PB.$(node);
 			}
 
 			if( !--maxDepth ) {
