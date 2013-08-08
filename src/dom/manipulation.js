@@ -163,6 +163,8 @@ PB.overwrite(PB.$.fn, {
 			delete this[i];
 		}
 
+		this.length = 0;
+
 		// Return null
 		return null;
 	},

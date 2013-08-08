@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-08-08 09:46
+ * Build date 2013-08-08 10:01
  */
 (function ( name, context, definition ) {
 	
@@ -1374,6 +1374,8 @@ PB.overwrite(PB.$.fn, {
 			// Clear reference to element
 			delete this[i];
 		}
+
+		this.length = 0;
 
 		// Return null
 		return null;
