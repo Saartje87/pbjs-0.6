@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-08-08 11:05
+ * Build date 2013-08-09 02:00
  */
 (function ( name, context, definition ) {
 	
@@ -552,7 +552,7 @@ PB.$ = function ( selector ) {
 	// element and document nodes are valid
 	if( selector.nodeType === 1 || selector.nodeType === 9 || selector === window ) {
 
-		return new Dom( selector );
+		return new Dom(selector);
 	}
 
 	// Handle string argument
@@ -1021,194 +1021,6 @@ PB.overwrite(PB.$.fn, {
 		return PB.$.hooks['getStyle.'+styleName] ? PB.$.hooks['getStyle.'+styleName]( this[0], value, prefixStyleName ) : value;
 	}
 });
-
-/**
- * Convert arguments to ordered object
- */
-function morphArgsToObject ( args ) {
-
-	// Default options
-	var i = 1,
-		effect,
-		options = {
-			
-			duration: 0.4,
-			effect: 'ease'
-		};
-	
-	// Loop trough args
-	for( ; i < args.length; i++ ) {
-
-		switch( typeof args[i] ) {
-			
-			case 'function':
-				options.fn = args[i];
-				break;
-
-			case 'number':
-				options.duration = args[i];
-				break;
-		
-			case 'string':
-				// easeInOut -> ease-in-out
-				effect = args[i].replace(/([A-Z])/g, '-$1').toLowerCase();
-
-				if( /^linear|ease|ease-in|ease-out|ease-in-out|cubic-bezier\(.*?\)$/.test(effect) ) {
-
-					options.effect = effect;
-				}
-				break;
-		}
-	}
-	
-	return options;
-}
-
-// Detect browser feature
-PB.$.fn.morph = !!prefixStyles.transition ?
-/**
- * Morph current css styles to given css styles for every element in the set.
- */
-function ( properties ) {
-
-	// Normalize arguments
-	var options = morphArgsToObject( arguments );
-
-	return this.each(function () {
-
-		var element = PB.$(this),
-			data = element.getData('morph') || {},
-			currentStyles = {
-
-				transition: 'all '+options.duration+'s '+options.effect+' 0s'
-			};
-
-		// Stop current animation, will stop animating with current styles
-		if( data.running ) {
-
-			element.stop(false);
-		}
-
-		// Store 
-		data.end = properties;
-		data.fn = options.fn;
-		data.running = true;
-
-		// Calculate current styles
-		PB.each(properties, function ( property ) {
-			
-			currentStyles[property] = element.getStyle( property, true );
-		});
-
-		// Set the current styles inline
-		element.setStyle(currentStyles);
-
-		// Force redraw, for some browsers (atleast firefox). Otherwise there will be no animation
-		this.offsetHeight;
-
-		// Start transition
-		element.setStyle(properties);
-
-		// Our callback is handles with timeout, an easy crossbrowser solution.
-		// Todo: could this lead to a memory leak? Timer (closure that leads to the parent function..)
-		// Maybe use the correct event
-		data.timer = setTimeout(function () {
-
-			// Make sure the element still exists
-			if( !element[0].parentNode ) {
-
-				return;
-			}
-
-			//
-			data.running = false;
-
-			// Remove transition
-			element.setStyle({
-				
-				transition: ''
-			});
-
-			// Trigger callback
-			if( data.fn ) {
-				
-				data.fn( element );
-			}
-		}, (options.duration*1000)+50);	// Add a small delay, so the animation is realy finished
-
-		// Store morph data
-		element.setData('morph', data);
-	});
-} :
-/**
- * Set styles directly for every element. This is used when the
- * browser does not support css transitions.
- */
-function ( properties ) {
-
-	// Normalize arguments
-	var options = morphArgsToObject( arguments ),
-		i = 0;
-
-	// Set css styles
-	this.setStyle(properties);
-
-	// Trigger callbacks, if given
-	if( options.fn ) {
-		
-		for( ; i < this.length; i++ ) {
-
-			options.fn( PB.$(this[i]) );
-		}
-	}
-
-	return this;
-};
-
-PB.$.fn.stop = function ( gotoEnd ) {
-
-	return this.each(function () {
-
-		var element = PB.$(this),
-			data = element.getData('morph');
-
-		if( !data || !data.running ) {
-			
-			return;
-		}
-
-		// Assign default value
-		gotoEnd = (gotoEnd === undefined) ? true : !!gotoEnd;
-
-		// Not running anymore
-		data.running = false;
-
-		// Clear the callback
-		clearTimeout( data.timer );
-
-		// Clear transition
-		data.end.transition = 'none 0s ease 0s';
-
-		// Stop animation
-		if( !gotoEnd ) {
-
-			// Get current styles to 'pause' our transition
-			PB.each(data.end, function ( property ) {
-
-				data.end[property] = element.getStyle(property, true);
-			});
-		}
-
-		// Set ending styles
-		element.setStyle(data.end);
-
-		// Trigger callback
-		if( gotoEnd && data.fn ) {
-			
-			data.fn( this );
-		}
-	});
-};
 
 PB.overwrite(PB.$.fn, {
 	
@@ -1781,6 +1593,8 @@ PB.overwrite(PB.$.fn, {
 
 	/**
 	 * Returns the parent node of the first element in the set.
+	 *
+	 * @return {Object} PB.$
 	 */
 	parent: function () {
 
@@ -1789,6 +1603,9 @@ PB.overwrite(PB.$.fn, {
 
 	/**
 	 * Returns the children for the first element in the set.
+	 * When element has no children it will return null
+	 *
+	 * @return {Object} PB.$ or null
 	 */
 	children: function () {
 
@@ -1815,6 +1632,9 @@ PB.overwrite(PB.$.fn, {
 
 	/**
 	 * Returns the child from the first element in the set at a specifed index.
+	 *
+	 * @param {Number}
+	 * @return {Object} PB.$ or null
 	 */
 	childAt: function( index ) {
 
@@ -1825,6 +1645,8 @@ PB.overwrite(PB.$.fn, {
 
 	/**
 	 * Returns the first child from the first element in the set.
+	 *
+	 * @return {Object} PB.$ or null
 	 */
 	firstChild: function () {
 
@@ -1833,6 +1655,8 @@ PB.overwrite(PB.$.fn, {
 
 	/**
 	 * Returns the first child from the first element in the set.
+	 *
+	 * @return {Object} PB.$ or null
 	 */
 	lastChild: function () {
 
@@ -1841,6 +1665,8 @@ PB.overwrite(PB.$.fn, {
 
 	/**
 	 * Returns the first element in the set.
+	 *
+	 * @return {Object} PB.$ or null
 	 */
 	first: function () {
 
@@ -1849,22 +1675,41 @@ PB.overwrite(PB.$.fn, {
 
 	/**
 	 * Returns the last element in the set.
+	 *
+	 * @return {Object} PB.$ or null
 	 */
 	last: function () {
 
 		return PB.$(this[this.length-1]);
 	},
 
+	/**
+	 * Retrieve next sibling from first element in set
+	 *
+	 * @return {Object} PB.$ or null
+	 */
 	next: function () {
 
 		return PB.$(this[0].nextElementSibling || this[0].nextSibling);
 	},
 
+	/**
+	 * Retrieve previous sibling from first element in set
+	 *
+	 * @return {Object} PB.$ or null
+	 */
 	prev: function () {
 
 		return PB.$(this[0].previousElementSibling || this[0].previousSibling);
 	},
 
+	/**
+	 * Retrieve next sibling from first element in set
+	 *
+	 * @param {String} css expression
+	 * @param {Number} number of parent to follow
+	 * @return {Object} PB.$ or null
+	 */
 	closest: function ( expression, maxDepth ) {
 
 		var node = this[0];
@@ -1888,6 +1733,11 @@ PB.overwrite(PB.$.fn, {
 		return null;
 	},
 
+	/**
+	 * 
+	 *
+	 * @return {Object} PB.$ or null
+	 */
 	indexOf: function ( element ) {
 
 		var i = 0;
@@ -1910,13 +1760,33 @@ PB.overwrite(PB.$.fn, {
 		return -1;
 	},
 
-	contains: function () {
+	/**
+	 * Check whether first element in the set contains the given element
+	 *
+	 * @param {mixed} valid PB.$ argument
+	 * @return {Boolean}
+	 */
+	contains: function ( element ) {
 
+		var node = this[0];
 
+		element = PB.$(element);
+
+		if( !node || !element ) {
+
+			return false;
+		}
+
+		return node.contains
+			? node.contains(element[0])
+			: !!(node.compareDocumentPosition(element[0]) & 16);
 	},
 
 	/**
 	 * Returns all matched elements by CSS expression for every element in the set.
+	 *
+	 * @param {String} css expression
+	 * @return {Object} PB.$ or null
 	 */
 	find: function ( expression ) {
 
@@ -1950,16 +1820,19 @@ PB.overwrite(PB.$.fn, {
 	},
 
 	/**
+	 * Check whether the given selector matches all elements in the set
 	 *
+	 * @param {String} css expression
+	 * @return {Boolean}
 	 */
-	matches: function ( selector ) {
+	matches: function ( expression ) {
 
 		var i = 0;
 
 		for( ; i < this.length; i++ ) {
 
 			// Using qwery for selector validation
-			if( !PB.$.selector.matches(this[i], selector) ) {
+			if( !PB.$.selector.matches(this[i], expression) ) {
 
 				return false;
 			}
@@ -2599,6 +2472,275 @@ PB.Animation.effects = {
 		}
 	}
 };
+PB.Queue = PB.Class({
+
+	construct: function () {
+
+		this.stack = [];
+		this.length = 0;
+		this.state = PB.Queue.STATE_IDLE;
+
+		this._next = this.next.bind(this);
+	},
+
+	add: function ( fn, context ) {
+
+		this.length++;
+
+		this.stack.unshift(fn.bind(context || fn, this._next));
+
+		return this;
+	},
+
+	run: function () {
+
+		var i = 0,
+			queue = this.stack,
+			fn;
+
+		if( this.state === PB.Queue.STATE_INPROGRESS || !queue.length ) {
+
+			return this;
+		}
+
+		this.state = PB.Queue.STATE_INPROGRESS;
+
+		fn = this.stack.pop();
+
+		fn();
+
+		return this;
+	},
+
+	next: function () {
+
+		this.state = PB.Queue.STATE_IDLE;
+
+		this.run();
+	},
+
+	empty: function () {
+
+		this.stack.length = 0;
+		this.state = PB.Queue.STATE_IDLE;
+	}
+});
+
+PB.Queue.STATE_IDLE = 0;
+PB.Queue.STATE_INPROGRESS = 1;
+
+/**
+ * Convert arguments to ordered object
+ */
+function morphArgsToObject ( args ) {
+
+	// Default options
+	var i = 1,
+		effect,
+		options = {
+			
+			duration: 0.4,
+			effect: 'ease'
+		};
+	
+	// Loop trough args
+	for( ; i < args.length; i++ ) {
+
+		switch( typeof args[i] ) {
+			
+			case 'function':
+				options.fn = args[i];
+				break;
+
+			case 'number':
+				options.duration = args[i];
+				break;
+		
+			case 'string':
+				// easeInOut -> ease-in-out
+				effect = args[i].replace(/([A-Z])/g, '-$1').toLowerCase();
+
+				if( /^linear|ease|ease-in|ease-out|ease-in-out|cubic-bezier\(.*?\)$/.test(effect) ) {
+
+					options.effect = effect;
+				}
+				break;
+		}
+	}
+	
+	return options;
+}
+
+/**
+ * Css transition function
+ *
+ * Uses hooks for animation fallbacks
+ *
+ * @param {Object} Css properties to be animated
+ */
+PB.$.fn.transition = function ( properties ) {
+
+	// Normalize arguments
+	var options = morphArgsToObject(arguments);
+
+	options.properties = properties;
+
+	PB.$.hooks['transition'].call(this, options);
+
+	return this;
+};
+
+PB.$.hook('transition', function ( options ) {
+
+	return this.each(function () {
+
+		var element = PB.$(this),
+			queue = element.getData('pbjs-fx-queue'),
+			properties = options.properties;
+
+		if( !queue ) {
+
+			queue = new PB.Queue();
+			element.setData('pbjs-fx-queue', queue);
+		}
+
+		queue.add(function ( next, data ) {
+
+			var data = {},
+				currentStyles = {
+
+					transition: 'all '+options.duration+'s '+options.effect+' 0s'
+				};
+
+			// Store 
+			data.end = properties;
+			data.fn = options.fn;
+
+			// Calculate current styles
+			PB.each(properties, function ( property ) {
+				
+				currentStyles[property] = element.getStyle( property, true );
+			});
+
+			// Set the current styles inline
+			element.setStyle(currentStyles);
+
+			// Force redraw, for some browsers (atleast firefox). Otherwise there will be no animation
+			this.offsetHeight;
+
+			// Start transition
+			element.setStyle(properties);
+
+			// Our callback is handles with timeout, an easy crossbrowser solution.
+			// Todo: could this lead to a memory leak? Timer (closure that leads to the parent function..)
+			// Maybe use the correct event
+			data.timer = setTimeout(function () {
+
+				// Make sure the element still exists
+				if( !element[0].parentNode ) {
+
+					return;
+				}
+
+				//
+				data.running = false;
+
+				// Remove transition
+				element.setStyle({
+					
+					transition: ''
+				});
+
+				// Trigger callback
+				if( data.fn ) {
+					
+					data.fn( element );
+				}
+
+				next();
+			}, (options.duration*1000)+50);	// Add a small delay, so the animation is realy finished
+		});
+
+		queue.run();
+	});
+});
+
+if( !prefixStyles.transition ) {
+
+	/**
+	 * Set styles directly for every element. This is used when the
+	 * browser does not support css transitions.
+	 */
+	PB.$.hook('transition', function ( properties, options ) {
+
+		// Normalize arguments
+		var i = 0;
+
+		// Set css styles
+		this.setStyle(properties);
+
+		// Trigger callbacks, if given
+		if( options.fn ) {
+			
+			for( ; i < this.length; i++ ) {
+
+				options.fn( PB.$(this[i]) );
+			}
+		}
+
+		return this;
+	});
+}
+
+/**
+ * Stop animation, if any in queue, start next
+ */
+PB.$.fn.stop = function ( gotoEnd, clearQueue ) {
+
+	return this.each(function () {
+
+		var element = PB.$(this),
+			data = element.getData('morph');
+
+		if( !data || !data.running ) {
+			
+			return;
+		}
+
+		// Assign default value
+		gotoEnd = (gotoEnd === undefined) ? true : !!gotoEnd;
+
+		// Not running anymore
+		data.running = false;
+
+		// Clear the callback
+		clearTimeout( data.timer );
+
+		// Clear transition
+		data.end.transition = 'none 0s ease 0s';
+
+		// Stop animation
+		if( !gotoEnd ) {
+
+			// Get current styles to 'pause' our transition
+			PB.each(data.end, function ( property ) {
+
+				data.end[property] = element.getStyle(property, true);
+			});
+		}
+
+		// Set ending styles
+		element.setStyle(data.end);
+
+		// Trigger callback
+		if( gotoEnd && data.fn ) {
+			
+			data.fn( this );
+		}
+	});
+};
+
+PB.$.fn.morph = PB.$.fn.transition;
 // Native query selector
 var matches = docElement.matchesSelector || docElement.mozMatchesSelector || docElement.webkitMatchesSelector || docElement.oMatchesSelector || docElement.msMatchesSelector;
 
