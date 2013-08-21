@@ -1,4 +1,4 @@
-var requestXMLHttpRequest = 'XMLHttpRequest' in context;
+var supportXMLHttpRequest = 'XMLHttpRequest' in context;
 
 /*
 PB.Request.defaultSend
@@ -160,7 +160,7 @@ PB.Request = PB.Class(PB.Observer, {
 
 		// IE < 8 has troubles with a reusable xmlHttpRequest object
 		// In this case we always return a new xmlHttpRequest instance
-		if( this.xhr && requestXMLHttpRequest ) {
+		if( this.xhr && supportXMLHttpRequest ) {
 
 			return this.xhr;
 		}
@@ -171,7 +171,7 @@ PB.Request = PB.Class(PB.Observer, {
 			this.xhr.abort();
 		}
 
-		this.xhr = requestXMLHttpRequest ?
+		this.xhr = supportXMLHttpRequest ?
 			new XMLHttpRequest() :
 			new ActiveXObject('Microsoft.XMLHTTP');
 
@@ -257,3 +257,4 @@ PB.Request.defaults = {
 	// Is crossdomain request
 	crossdomain: false
 };
+
