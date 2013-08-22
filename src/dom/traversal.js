@@ -195,9 +195,10 @@ PB.overwrite(PB.$.fn, {
 	 * Returns all matched elements by CSS expression for every element in the set.
 	 *
 	 * @param {String} css expression
+	 * @param {Boolean} *default false* true => find method return null if no elements matched
 	 * @return {Object} PB.$ or null
 	 */
-	find: function ( expression ) {
+	find: function ( expression, nullable ) {
 
 		var i = 0,
 			j, k, r,
@@ -225,7 +226,7 @@ PB.overwrite(PB.$.fn, {
 		}
 		
 		// we should return an unique set
-		return elements.length ? new this.constructor(elements) : null;
+		return elements.length || !nullable ? new this.constructor(elements) : null;
 	},
 
 	/**

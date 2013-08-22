@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-08-09 02:00
+ * Build date 2013-08-22 16:01
  */
 (function ( name, context, definition ) {
 	
@@ -581,7 +581,7 @@ PB.$ = function ( selector ) {
 		// user querySelector
 		else {
 
-			return $doc.find(selector);
+			return $doc.find(selector, true);
 		}
 	}
 
@@ -1786,9 +1786,10 @@ PB.overwrite(PB.$.fn, {
 	 * Returns all matched elements by CSS expression for every element in the set.
 	 *
 	 * @param {String} css expression
+	 * @param {Boolean} *default false* true => find method return null if no elements matched
 	 * @return {Object} PB.$ or null
 	 */
-	find: function ( expression ) {
+	find: function ( expression, nullable ) {
 
 		var i = 0,
 			j, k, r,
@@ -1816,7 +1817,7 @@ PB.overwrite(PB.$.fn, {
 		}
 		
 		// we should return an unique set
-		return elements.length ? new this.constructor(elements) : null;
+		return elements.length || !nullable ? new this.constructor(elements) : null;
 	},
 
 	/**
@@ -3178,7 +3179,7 @@ PB.$.selector = {
 	
 })(context || this, PB);
 
-var requestXMLHttpRequest = 'XMLHttpRequest' in context;
+var supportXMLHttpRequest = 'XMLHttpRequest' in context;
 
 /*
 PB.Request.defaultSend
@@ -3340,7 +3341,7 @@ PB.Request = PB.Class(PB.Observer, {
 
 		// IE < 8 has troubles with a reusable xmlHttpRequest object
 		// In this case we always return a new xmlHttpRequest instance
-		if( this.xhr && requestXMLHttpRequest ) {
+		if( this.xhr && supportXMLHttpRequest ) {
 
 			return this.xhr;
 		}
@@ -3351,7 +3352,7 @@ PB.Request = PB.Class(PB.Observer, {
 			this.xhr.abort();
 		}
 
-		this.xhr = requestXMLHttpRequest ?
+		this.xhr = supportXMLHttpRequest ?
 			new XMLHttpRequest() :
 			new ActiveXObject('Microsoft.XMLHTTP');
 
@@ -3437,6 +3438,7 @@ PB.Request.defaults = {
 	// Is crossdomain request
 	crossdomain: false
 };
+
 
 // Declare methods, then assign to namespace
 // more or less an idea to create less annanomous functions.
