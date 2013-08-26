@@ -32,7 +32,8 @@ module.exports = function(grunt) {
 					'src/intro.js',
 
 					// Core
-					'src/core/utils.js', 'src/core/class.js',
+					'src/core/utils.js',
+					'src/core/class.js',
 
 					// Patterns
 					'src/patterns/observer.js',
@@ -61,11 +62,6 @@ module.exports = function(grunt) {
 					// 
 					'src/dom/ready.js',
 
-					// Older browser support files
-					'src/core/support/legacy.js',
-					'src/dom/support/legacy.js',
-					'src/dom/support/event.js',
-
 					// Request
 					'src/request/request.js',
 					'src/request/utils.js',
@@ -78,7 +74,26 @@ module.exports = function(grunt) {
 					'src/outro.js'
 				],
 				dest: 'dist/pbjs.js'
-			}
+			},
+			basic_and_extras: {
+				files: {
+					'dist/pbjs-legacy.js': [
+
+						'src/support/intro.js',
+
+						// ES5 shims
+						'src/support/core/es5.js',
+
+						// $ DOM
+						'src/support/dom/style.js',
+						'src/support/dom/transition.js',
+						'src/support/dom/event.js',
+
+						// Outro
+						'src/support/outro.js'
+					]
+				},
+		    },
 		},
 		jshint: {
 

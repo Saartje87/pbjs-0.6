@@ -3,18 +3,12 @@
  *
  * IE < 9
  */
-(function ( context, PB ) {
+var doc = context.document,
+	docElement = doc.documentElement,
+	body = doc.body;
 
-	var window = context,
-		doc = window.document,
-		docElement = doc.documentElement,
-		body = doc.body;
-
-	// Check if browser is using an old event model
-	if( !window.attachEvent && window.addEventListener ) {
-
-		return;
-	}
+// Check if browser is using an old event model
+if( context.attachEvent && !context.addEventListener ) {
 
 	PB.overwrite(PB.$.Event.hooks, {
 
@@ -58,7 +52,7 @@
 		this.defaultPrevented = true;
 		this.cancelBubble = true;
 	};
-	
+
 	/**
 	 * Cancels the event if it is cancelable, without stopping further propagation of the event.
 	 */
@@ -77,10 +71,9 @@
 
 		PB.$.cache = null;
 
-		window.detachEvent('onunload', destroyCache);
+		context.detachEvent('onunload', destroyCache);
 	}
 
 	// Destroy cache in case of older IE browsers
-	window.attachEvent('onunload', destroyCache);
-	
-})(context || this, PB);
+	context.attachEvent('onunload', destroyCache);
+}
