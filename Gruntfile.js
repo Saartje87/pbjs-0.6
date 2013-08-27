@@ -81,6 +81,7 @@ module.exports = function(grunt) {
 					'src/support/dom/style.js',
 					'src/support/dom/transition.js',
 					'src/support/dom/event.js',
+					'src/support/dom/qwery.js',
 
 					// JSON
 

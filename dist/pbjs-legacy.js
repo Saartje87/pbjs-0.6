@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-08-27 14:10
+ * Build date 2013-08-27 16:57
  */
 (function ( context ) {
 
@@ -575,6 +575,19 @@ if( context.attachEvent && !context.addEventListener ) {
 
 	// Destroy cache in case of older IE browsers
 	context.attachEvent('onunload', destroyCache);
+}
+
+/**
+ * Add qwery to pbjs
+ */
+if( !document.querySelectorAll ) {
+
+	PB.$.selector.find = qwery;
+}
+
+if( !(docElement.matchesSelector || docElement.mozMatchesSelector || docElement.webkitMatchesSelector || docElement.oMatchesSelector || docElement.msMatchesSelector) ) {
+
+	PB.$.selector.matches = qwery.is;
 }
 
 })(this);
