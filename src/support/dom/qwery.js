@@ -1,12 +1,17 @@
 /**
  * Add qwery to pbjs
+ *
+ * Using ready method to ensure qwery is loaded
  */
-if( !document.querySelectorAll ) {
+PB.ready(function ( PB ) {
 
-	PB.$.selector.find = qwery;
-}
+	if( !document.querySelectorAll ) {
 
-if( !(docElement.matchesSelector || docElement.mozMatchesSelector || docElement.webkitMatchesSelector || docElement.oMatchesSelector || docElement.msMatchesSelector) ) {
+		PB.$.selector.find = qwery;
+	}
 
-	PB.$.selector.matches = qwery.is;
-}
+	if( !(docElement.matchesSelector || docElement.mozMatchesSelector || docElement.webkitMatchesSelector || docElement.oMatchesSelector || docElement.msMatchesSelector) ) {
+
+		PB.$.selector.matches = qwery.is;
+	}
+});
