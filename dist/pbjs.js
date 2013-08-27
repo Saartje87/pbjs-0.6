@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-08-27 14:29
+ * Build date 2013-08-27 14:33
  */
 (function ( name, context, definition ) {
 	
@@ -581,11 +581,27 @@ PB.$ = function ( selector ) {
 		// user querySelector
 		else {
 
-			return $doc.find(selector);
+			return $doc.find(selector, true);
 		}
 	}
 
 	return null;
+};
+
+/**
+ * Return collection by css selector
+ */
+PB.$$ = function ( selector ) {
+
+	PB.log('Usage of PB.$$ is deprecated');
+
+	// Already PB Dom object
+	if( selector instanceof Dom ) {
+
+		return selector;
+	}
+
+	return $doc.find(selector);
 };
 
 /**
@@ -599,7 +615,7 @@ function Dom ( collection ) {
 
 		this[0] = collection;
 		i = 1;
-	} else {
+	} else if ( 'length' in collection ) {
 
 		for( i = 0; i < collection.length; i++ ) {
 
@@ -610,7 +626,7 @@ function Dom ( collection ) {
 	this.length = i;
 };
 
-//Dom.prototype.constructor = Dom;
+Dom.prototype.constructor = Dom;
 
 // For extending PB.$ methods
 PB.$.fn = Dom.prototype;
@@ -1777,9 +1793,10 @@ PB.overwrite(PB.$.fn, {
 	 * Returns all matched elements by CSS expression for every element in the set.
 	 *
 	 * @param {String} css expression
+	 * @param {Boolean} *default false* true => find method return null if no elements matched
 	 * @return {Object} PB.$ or null
 	 */
-	find: function ( expression ) {
+	find: function ( expression, nullable ) {
 
 		var i = 0,
 			j, k, r,
@@ -1807,7 +1824,7 @@ PB.overwrite(PB.$.fn, {
 		}
 		
 		// we should return an unique set
-		return elements.length ? new this.constructor(elements) : null;
+		return elements.length || !nullable ? new this.constructor(elements) : null;
 	},
 
 	/**

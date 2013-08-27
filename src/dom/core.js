@@ -53,7 +53,7 @@ PB.$ = function ( selector ) {
 		// user querySelector
 		else {
 
-			return $doc.find(selector);
+			return $doc.find(selector, true);
 		}
 	}
 
