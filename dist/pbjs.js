@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-08-26 23:17
+ * Build date 2013-08-27 14:29
  */
 (function ( name, context, definition ) {
 	
@@ -1389,12 +1389,19 @@ PB.overwrite(PB.$.fn, {
 		return this;
 	},
 
+	/**
+	 * Get scroll position left/top from the first element in the set.
+	 *
+	 * When first element is not element node, this will return position of scroll in viewport
+	 *
+	 * @return {Object} {top: x, left: x}
+	 */
 	getScroll: function () {
 
 		return {
 
-			top: this[0].scrollTop,
-			left: this[0].scrollLeft
+			top: this[0].nodeType === 1 ? this[0].scrollTop : Math.max(docElement.scrollTop, doc.body.scrollTop),
+			left: this[0].nodeType === 1 ? this[0].scrollLeft : Math.max(docElement.scrollLeft, doc.body.scrollLeft)
 		};
 	},
 
