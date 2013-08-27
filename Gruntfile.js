@@ -25,9 +25,7 @@ module.exports = function(grunt) {
 			},
 			dist: {
 
-				src: ['<banner>', 
-
-					// Todo: Put every section in own closure?
+				src: [
 
 					'src/intro.js',
 
@@ -66,33 +64,33 @@ module.exports = function(grunt) {
 					'src/request/request.js',
 					'src/request/utils.js',
 
-					// JSON
-
-					// String
-
 					// Outro
 					'src/outro.js'
 				],
 				dest: 'dist/pbjs.js'
 			},
-			basic_and_extras: {
-				files: {
-					'dist/pbjs-legacy.js': [
+			legacy: {
+				src: [
 
-						'src/support/intro.js',
+					'src/support/intro.js',
 
-						// ES5 shims
-						'src/support/core/es5.js',
+					// ES5 shims
+					'src/support/core/es5.js',
 
-						// $ DOM
-						'src/support/dom/style.js',
-						'src/support/dom/transition.js',
-						'src/support/dom/event.js',
+					// $ DOM
+					'src/support/dom/style.js',
+					'src/support/dom/transition.js',
+					'src/support/dom/event.js',
 
-						// Outro
-						'src/support/outro.js'
-					]
-				},
+					// JSON
+
+					// Outro
+					'src/support/outro.js',
+
+					// Qwery selector engine
+					'vendor/qwery/qwery.js'
+				],
+				dest: 'dist/pbjs-legacy.js'
 		    },
 		},
 		jshint: {
@@ -112,8 +110,13 @@ module.exports = function(grunt) {
 			},
 			build: {
 
-				src: ["dist/pbjs.js", /*"vendor/qwery/qwery.js"*/],
+				src: ["dist/pbjs.js"],
 				dest: "dist/pbjs.min.js"
+			},
+			legacy: {
+
+				src: ["dist/pbjs-legacy.js"],
+				dest: "dist/pbjs-legacy.min.js"
 			}
 		},
 		watch: {

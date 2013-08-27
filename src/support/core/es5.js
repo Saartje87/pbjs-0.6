@@ -211,7 +211,7 @@ PB.extend(Array.prototype, {
 		}
 
 		return result;
-	}
+	},
 	
 	/**
 	 * Return new array with modified values
