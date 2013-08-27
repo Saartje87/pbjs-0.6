@@ -1,7 +1,49 @@
 // Create a fallback for the morph method if transition are not supported
 if( !('transition' in div.style) && !('MozTransition' in div.style) && !('WebkitTransition' in div.style) ) {
 
-	PB.$.fn.morph = function ( properties ) {
+	/**
+	 * Convert arguments to ordered object
+	 */
+	function morphArgsToObject ( args ) {
+
+		// Default options
+		var i = 1,
+			effect,
+			options = {
+				
+				duration: 0.4,
+				effect: 'ease'
+			};
+		
+		// Loop trough args
+		for( ; i < args.length; i++ ) {
+
+			switch( typeof args[i] ) {
+				
+				case 'function':
+					options.fn = args[i];
+					break;
+
+				case 'number':
+					options.duration = args[i];
+					break;
+			
+				case 'string':
+					// easeInOut -> ease-in-out
+					effect = args[i].replace(/([A-Z])/g, '-$1').toLowerCase();
+
+					if( /^linear|ease|ease-in|ease-out|ease-in-out|cubic-bezier\(.*?\)$/.test(effect) ) {
+
+						options.effect = effect;
+					}
+					break;
+			}
+		}
+		
+		return options;
+	}
+
+	PB.$.fn.transition = function ( properties ) {
 
 		// Normalize arguments
 		var options = morphArgsToObject( arguments );

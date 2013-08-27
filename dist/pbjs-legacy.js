@@ -8,11 +8,11 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-08-27 10:01
+ * Build date 2013-08-27 13:53
  */
 (function ( context ) {
 
-'use strict';
+//'use strict';
 
 var PB = context.PB,
 	
@@ -402,7 +402,49 @@ if( 'currentStyle' in div && !window.getComputedStyle ) {
 // Create a fallback for the morph method if transition are not supported
 if( !('transition' in div.style) && !('MozTransition' in div.style) && !('WebkitTransition' in div.style) ) {
 
-	PB.$.fn.morph = function ( properties ) {
+	/**
+	 * Convert arguments to ordered object
+	 */
+	function morphArgsToObject ( args ) {
+
+		// Default options
+		var i = 1,
+			effect,
+			options = {
+				
+				duration: 0.4,
+				effect: 'ease'
+			};
+		
+		// Loop trough args
+		for( ; i < args.length; i++ ) {
+
+			switch( typeof args[i] ) {
+				
+				case 'function':
+					options.fn = args[i];
+					break;
+
+				case 'number':
+					options.duration = args[i];
+					break;
+			
+				case 'string':
+					// easeInOut -> ease-in-out
+					effect = args[i].replace(/([A-Z])/g, '-$1').toLowerCase();
+
+					if( /^linear|ease|ease-in|ease-out|ease-in-out|cubic-bezier\(.*?\)$/.test(effect) ) {
+
+						options.effect = effect;
+					}
+					break;
+			}
+		}
+		
+		return options;
+	}
+
+	PB.$.fn.transition = function ( properties ) {
 
 		// Normalize arguments
 		var options = morphArgsToObject( arguments );
@@ -563,7 +605,7 @@ if( context.attachEvent && !context.addEventListener ) {
 	context.attachEvent('onunload', destroyCache);
 }
 
-})();
+})(this);
 
 /*!
   * @preserve Qwery - A Blazing Fast query selector engine

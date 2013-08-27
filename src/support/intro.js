@@ -1,6 +1,6 @@
 (function ( context ) {
 
-'use strict';
+//'use strict';
 
 var PB = context.PB,
 	
