@@ -280,6 +280,6 @@ PB.overwrite(PB.$.fn, {
 	 */
 	getText: function () {
 
-		return this[0].textContent || this[0].innerText;
+		return this[0].textContent;
 	}
 });

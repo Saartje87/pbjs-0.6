@@ -78,10 +78,12 @@ module.exports = function(grunt) {
 					'src/support/core/es5.js',
 
 					// $ DOM
+					'src/support/dom/tests.js',
 					'src/support/dom/style.js',
 					'src/support/dom/transition.js',
 					'src/support/dom/event.js',
 					'src/support/dom/qwery.js',
+					'src/support/dom/manipulation.js',
 
 					// JSON
 

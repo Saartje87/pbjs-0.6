@@ -1,5 +1,5 @@
 // Create a fallback for the morph method if transition are not supported
-if( !('transition' in div.style) && !('MozTransition' in div.style) && !('WebkitTransition' in div.style) ) {
+if( !supportsCssTransition ) {
 
 	PB.$.hook('transition', function ( options ) {
 
@@ -92,6 +92,3 @@ if( !('transition' in div.style) && !('MozTransition' in div.style) && !('Webkit
 		});
 	};
 }
-
-// Clear memory
-div = null;

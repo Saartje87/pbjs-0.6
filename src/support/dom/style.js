@@ -1,9 +1,8 @@
-var div = document.createElement('div'),
-	ropacity = /alpha\(opacity=(.*)\)/i,
+var ropacity = /alpha\(opacity=(.*)\)/i,
 	rpixel = /^-?[\d.]+px$/i;
 
 // IE < 9 opacity support
-if( div.style.opacity === undefined ) {
+if( !supportsOpacityProperty ) {
 
 	/**
 	 * Set opacity trough filter property
@@ -44,7 +43,7 @@ if( div.style.opacity === undefined ) {
 }
 
 // 
-if( 'currentStyle' in div && !window.getComputedStyle ) {
+if( !supportsGetComputedStyle ) {
 
 	/**
 	 * Overwrite getStyle when browser does not support getComputedStyle
@@ -61,7 +60,7 @@ if( 'currentStyle' in div && !window.getComputedStyle ) {
 		var value,
 			div,
 			targetNode,
-			hook = PB.$.hooks['setStyle.'+styleName],
+			hook = PB.$.hooks['getStyle.'+styleName],
 			node = this[0];
 
 		// If a hook is specified use the hook

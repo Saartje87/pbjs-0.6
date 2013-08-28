@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-08-27 17:04
+ * Build date 2013-08-28 10:28
  */
 (function ( context ) {
 
@@ -267,12 +267,27 @@ PB.extend(Array.prototype, {
 	}
 });
 
-var div = document.createElement('div'),
-	ropacity = /alpha\(opacity=(.*)\)/i,
+var doc = context.document,
+	docElement = doc.documentElement,
+	body = doc.body,
+
+	div = document.createElement('div'),
+	style = div.style
+
+	legacyEventModel = context.attachEvent && !context.addEventListener,
+	supportsTextContent = div.textContent !== undefined,
+	supportsOpacityProperty = style.opacity !== undefined,
+	supportsGetComputedStyle = !!window.getComputedStyle,
+	supportsCssTransition = 'transition' in style || 'MozTransition' in style || 'WebkitTransition' in style;
+
+// Clear memory
+div = null;
+
+var ropacity = /alpha\(opacity=(.*)\)/i,
 	rpixel = /^-?[\d.]+px$/i;
 
 // IE < 9 opacity support
-if( div.style.opacity === undefined ) {
+if( !supportsOpacityProperty ) {
 
 	/**
 	 * Set opacity trough filter property
@@ -313,7 +328,7 @@ if( div.style.opacity === undefined ) {
 }
 
 // 
-if( 'currentStyle' in div && !window.getComputedStyle ) {
+if( !supportsGetComputedStyle ) {
 
 	/**
 	 * Overwrite getStyle when browser does not support getComputedStyle
@@ -330,7 +345,7 @@ if( 'currentStyle' in div && !window.getComputedStyle ) {
 		var value,
 			div,
 			targetNode,
-			hook = PB.$.hooks['setStyle.'+styleName],
+			hook = PB.$.hooks['getStyle.'+styleName],
 			node = this[0];
 
 		// If a hook is specified use the hook
@@ -400,7 +415,7 @@ if( 'currentStyle' in div && !window.getComputedStyle ) {
 }
 
 // Create a fallback for the morph method if transition are not supported
-if( !('transition' in div.style) && !('MozTransition' in div.style) && !('WebkitTransition' in div.style) ) {
+if( !supportsCssTransition ) {
 
 	PB.$.hook('transition', function ( options ) {
 
@@ -494,20 +509,10 @@ if( !('transition' in div.style) && !('MozTransition' in div.style) && !('Webkit
 	};
 }
 
-// Clear memory
-div = null;
-
 /**
- * Event fixes across browser
- *
- * IE < 9
+ * Event normalisation for browsers with older event model
  */
-var doc = context.document,
-	docElement = doc.documentElement,
-	body = doc.body;
-
-// Check if browser is using an old event model
-if( context.attachEvent && !context.addEventListener ) {
+if( legacyEventModel ) {
 
 	PB.overwrite(PB.$.Event.hooks, {
 
@@ -594,6 +599,36 @@ PB.ready(function ( PB ) {
 		PB.$.selector.matches = qwery.is;
 	}
 });
+if( !supportsTextContent ) {
+
+	/**
+	 *
+	 */
+	PB.$.fn.setText = function ( value ) {
+
+		var i = 0;
+
+		// Empty elements
+		this.setHtml('');
+
+		// Append text to every element
+		for( ; i < this.length; i++ ) {
+
+			this[i].appendChild(doc.createTextNode(value));
+		}
+
+		return this;
+	};
+
+	/**
+	 *
+	 */
+	PB.$.fn.getText = function () {
+
+		return this[0].innerText;
+	};
+}
+
 })(this);
 
 /*!

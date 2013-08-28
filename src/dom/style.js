@@ -1,5 +1,7 @@
 	// Used for tests
 var div = document.createElement('div'),
+	//
+	rpixel = /^-?[\d.]+px$/i,
 	// Vendor prefixes
 	// We could probably drop ms :) http://www.impressivewebs.com/dropping-ms-vendor-prefixes-ie10/
 	vendorPrefixes = 'O ms Moz Webkit'.split(' '),
@@ -117,14 +119,15 @@ PB.overwrite(PB.$.fn, {
 
 		var value,
 			// Get prefixed style name or current style name
-			prefixStyleName = prefixStyles[styleName] || styleName;
+			prefixStyleName = prefixStyles[styleName] || styleName,
+			hook = PB.$.hooks['getStyle.'+styleName];
 
 		// Store inline value
 		value = this[0].style[prefixStyleName];
 
 		if( calculated || !value || value === 'auto' ) {
 
-			value = window.getComputedStyle( this[0], null )[prefixStyleName];
+			value = window.getComputedStyle(this[0], null)[prefixStyleName];
 
 			// IE 9 sometimes return auto.. In this case we force the value to 0
 			if( value === 'auto' ) {
@@ -140,10 +143,10 @@ PB.overwrite(PB.$.fn, {
 		// Parse to int when value is a pixel value
 		else {
 
-			value = (/^-?[\d.]+px$/i).test( value ) ? parseInt(value, 10) : value;
+			value = rpixel.test(value) ? parseInt(value, 10) : value;
 		}
 
 		// If a hook is specified use the hook
-		return PB.$.hooks['getStyle.'+styleName] ? PB.$.hooks['getStyle.'+styleName]( this[0], value, prefixStyleName ) : value;
+		return hook ? hook(this[0], value, prefixStyleName) : value;
 	}
 });

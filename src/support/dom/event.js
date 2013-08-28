@@ -1,14 +1,7 @@
 /**
- * Event fixes across browser
- *
- * IE < 9
+ * Event normalisation for browsers with older event model
  */
-var doc = context.document,
-	docElement = doc.documentElement,
-	body = doc.body;
-
-// Check if browser is using an old event model
-if( context.attachEvent && !context.addEventListener ) {
+if( legacyEventModel ) {
 
 	PB.overwrite(PB.$.Event.hooks, {
 
