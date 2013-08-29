@@ -9,7 +9,9 @@ var doc = context.document,
 	supportsTextContent = div.textContent !== undefined,
 	supportsOpacityProperty = style.opacity !== undefined,
 	supportsGetComputedStyle = !!window.getComputedStyle,
-	supportsCssTransition = 'transition' in style || 'MozTransition' in style || 'WebkitTransition' in style;
+	supportsCssTransition = 'transition' in style || 'MozTransition' in style || 'WebkitTransition' in style,
+	supportQuerySelectorAll = !!document.querySelectorAll,
+	supportMatchesSelector = !!(docElement.matchesSelector || docElement.mozMatchesSelector || docElement.webkitMatchesSelector || docElement.oMatchesSelector || docElement.msMatchesSelector);
 
 // Clear memory
 div = null;

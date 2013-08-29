@@ -48,7 +48,7 @@ PB.extend(Object, {
 		var result = [],
 			key;
 		
-		if ( this === null || PB.type(object) === object ) {
+		if ( this === null || PB.type(object) === 'object' ) {
 
 			throw new TypeError();
 		}

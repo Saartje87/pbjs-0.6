@@ -3,15 +3,18 @@
  *
  * Using ready method to ensure qwery is loaded
  */
-PB.ready(function ( PB ) {
+if( !supportQuerySelectorAll ) {
 
-	if( !document.querySelectorAll ) {
+	PB.$.selector.find = function ( expression, element ) {
 
-		PB.$.selector.find = qwery;
-	}
+		return qwery(expression, element);
+	};
+}
 
-	if( !(docElement.matchesSelector || docElement.mozMatchesSelector || docElement.webkitMatchesSelector || docElement.oMatchesSelector || docElement.msMatchesSelector) ) {
+if( !supportMatchesSelector ) {
 
-		PB.$.selector.matches = qwery.is;
-	}
-});
+	PB.$.selector.matches = function ( element, expression ) {
+
+		return qwery.is(element, expression);
+	};
+}
