@@ -1,6 +1,6 @@
 # PB.$
 
-Pbjs dom handling!
+*pbjs* dom handling!
 
 ---
 
@@ -199,41 +199,49 @@ PB.$('#element').getStyle('opacity'); //=> 1.0 float
 {Mixed} - string/numeric
 
 ---
+### transition
 
-### morph
-
-Morph current css styles to given css styles for every element in the set.
+Transitions current applied css values to given end values.
 
 > First argument of this method requires a object, the other arguments don't require a specific order.
 
-> At this moment the morph method only uses css transition, and therefor using morph in an 'older' browser will have instant styles applied.
+> Chained transition will wait for each other to be finished before starting the next transition.
 
-> Relative values like jQuery does are not supported. `{ width: '-=400px' }`
+> Our transition method uses css3 transitions, older browsers do have much more simple fallback (this one only animates pixel/percentages).
+
+> Relative values like jQuery has are not supported. Example `{ width: '-=400px' }` does not work.
 
 ###### Signature
 ```js
-// Default animation, duration of .4 seconds
-PB.$('#element').morph({
+// An object of css values is required for a transition, the default duration is 0.4 second.
+PB.$('#element').transition({
 	
 	left: 400,
 	color: 'RGB(0, 225, 0)'
 });
 
-// Custom
-PB.$('#element').morph({
+// Specify duration and timing function
+PB.$('#element').transition({
 	
-	left: 400,
-	color: 'RGB(0, 225, 0)'
-}, 1.2, 'easeIn', function () {
+	left: 100,
+	color: 'RGB(0, 0, 225)'
+}, 1.2, 'easeIn');
+
+// Callback
+PB.$('#element').transition({
 	
-	// Animation ended
+	left: 100,
+	color: 'RGB(0, 0, 225)'
+}, 1.2, 'easeIn', function ( element ) {
+	
+	// Transition finshed
 });
 ```
 ###### Arguments
 {Object} - styles  
 {Numeric} - duration in seconds  
 {String} - transition function (Bezier curve is supported for modern browsers)  
-{Function} - called when animation has finished
+{Function} - called when animation finishes
 
 ###### Returns
 {Object} - this
@@ -515,7 +523,9 @@ PB.$('#element').setScroll({
 
 ### getScroll
 
-Get scroll from te first element in the set.
+Get scroll position left/top from the first element in the set.
+
+> When element is no element node this method will retrieve scroll of viewport.
 
 ###### Signature
 ```js
@@ -1190,6 +1200,7 @@ PB.$('#element').serializeForm();
 
 ```js
 console.log(PB.$('#form').serializeForm());
+
 // Output
 {
 	name: "John Doe",
