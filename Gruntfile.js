@@ -43,6 +43,7 @@ module.exports = function(grunt) {
 					'src/dom/utils.js',
 					'src/dom/attribute.js',
 					'src/dom/style.js',
+					//'src/dom/css-transform.js',
 					'src/dom/manipulation.js',
 					'src/dom/layout.js',
 					'src/dom/traversal.js',
