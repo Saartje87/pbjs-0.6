@@ -19,12 +19,12 @@ module.exports = function(grunt) {
 		pkg: grunt.file.readJSON('package.json'),
 		// Concat
 		concat: {
-			options: {
-
-				banner: banner
-			},
+			
 			dist: {
+				options: {
 
+					banner: banner
+				},
 				src: [
 
 					'src/intro.js',
@@ -96,6 +96,16 @@ module.exports = function(grunt) {
 				],
 				dest: 'dist/pbjs-legacy.js'
 		    },
+		    // 
+		    build: {
+
+		    	src: [
+
+		    		'dist/pbjs.js',
+		    		'dist/pbjs-legacy.js'
+		    	],
+		    	dest: 'dist/pbjs.js'
+		    }
 		},
 		jshint: {
 
@@ -116,12 +126,12 @@ module.exports = function(grunt) {
 
 				src: ["dist/pbjs.js"],
 				dest: "dist/pbjs.min.js"
-			},
+			}/*,
 			legacy: {
 
 				src: ["dist/pbjs-legacy.js"],
 				dest: "dist/pbjs-legacy.min.js"
-			}
+			}*/
 		},
 		watch: {
 			scripts: {

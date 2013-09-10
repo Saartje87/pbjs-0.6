@@ -1,15 +1,3 @@
-/*!
- * pbjs JavaScript Framework v0.6.0
- * http://saartje87.github.com/pbjs
- *
- * Includes Qwery
- * https://github.com/ded/qwery
- *
- * Copyright 2013 Niek Saarberg
- * Licensed MIT
- *
- * Build date 2013-08-28 10:28
- */
 (function ( context ) {
 
 //'use strict';
@@ -70,7 +58,7 @@ PB.extend(Object, {
 		var result = [],
 			key;
 		
-		if ( this === null || PB.type(object) === object ) {
+		if ( this === null || PB.type(object) === 'object' ) {
 
 			throw new TypeError();
 		}
@@ -278,7 +266,9 @@ var doc = context.document,
 	supportsTextContent = div.textContent !== undefined,
 	supportsOpacityProperty = style.opacity !== undefined,
 	supportsGetComputedStyle = !!window.getComputedStyle,
-	supportsCssTransition = 'transition' in style || 'MozTransition' in style || 'WebkitTransition' in style;
+	supportsCssTransition = 'transition' in style || 'MozTransition' in style || 'WebkitTransition' in style,
+	supportQuerySelectorAll = !!document.querySelectorAll,
+	supportMatchesSelector = !!(docElement.matchesSelector || docElement.mozMatchesSelector || docElement.webkitMatchesSelector || docElement.oMatchesSelector || docElement.msMatchesSelector);
 
 // Clear memory
 div = null;
@@ -587,18 +577,21 @@ if( legacyEventModel ) {
  *
  * Using ready method to ensure qwery is loaded
  */
-PB.ready(function ( PB ) {
+if( !supportQuerySelectorAll ) {
 
-	if( !document.querySelectorAll ) {
+	PB.$.selector.find = function ( expression, element ) {
 
-		PB.$.selector.find = qwery;
-	}
+		return qwery(expression, element);
+	};
+}
 
-	if( !(docElement.matchesSelector || docElement.mozMatchesSelector || docElement.webkitMatchesSelector || docElement.oMatchesSelector || docElement.msMatchesSelector) ) {
+if( !supportMatchesSelector ) {
 
-		PB.$.selector.matches = qwery.is;
-	}
-});
+	PB.$.selector.matches = function ( element, expression ) {
+
+		return qwery.is(element, expression);
+	};
+}
 if( !supportsTextContent ) {
 
 	/**
