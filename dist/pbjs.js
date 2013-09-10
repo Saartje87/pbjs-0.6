@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-07-08 10:09
+ * Build date 2013-07-12 14:23
  */
 (function ( name, context, definition ) {
 	
@@ -125,7 +125,7 @@ PB.clone = function ( source ) {
  * 
  * @param {Object}
  * @param {Function}
- * @param object
+ * @param {Object}
  * @return {Void}
  */
 PB.each = function ( collection, fn, context ) {
@@ -211,6 +211,14 @@ PB.noConflict = function () {
 
 	return PB;
 };
+
+/*  // Set Const.prototype.__proto__ to Super.prototype
+  function inherit (Const, Super) {
+    function F () {}
+    F.prototype = Super.prototype;
+    Const.prototype = new F();
+    Const.prototype.constructor = Const;
+  }*/
 
 /**
  * Create a wrapper function that makes it possible to call the parent method
@@ -577,13 +585,6 @@ PB.$ = function ( selector ) {
 		}
 	}
 
-	/* When doing this we should validate that only elements are parsed...
-	if( PB.type(selector) === 'array' ) {
-
-		return new Dom( selector );
-	}
-	*/
-
 	return null;
 };
 
@@ -623,7 +624,7 @@ function Dom ( collection ) {
 	}
 
 	this.length = i;
-}
+};
 
 Dom.prototype.constructor = Dom;
 
@@ -1425,25 +1426,28 @@ PB.overwrite(PB.$.fn, {
 		return this[0].innerHTML;
 	},
 
+	/**
+	 *
+	 */
 	setText: function ( value ) {
 
 		var i = 0;
 
-		// Empty elements
-		this.setHtml('');
-
 		// Append text to every element
 		for( ; i < this.length; i++ ) {
 
-			this[i].appendChild(doc.createTextNode(value));
+			this[i].textContent = value;
 		}
 
 		return this;
 	},
 
+	/**
+	 *
+	 */
 	getText: function () {
 
-		return this[0].textContent || this[0].nodeValue || '';
+		return this[0].textContent || this[0].innerText;
 	}
 });
 PB.overwrite(PB.$.fn, {
@@ -2196,9 +2200,16 @@ function eventResponder ( pbid, eventName, handler, context, selector ) {
 
 	return function ( originalEvent ) {
 
-		var element = PB.$.cache[pbid].element,
-			event = new Event(originalEvent, element),
+		var element = PB.$.cache[pbid] && PB.$.cache[pbid].element,
+			event,
 			relatedTarget;
+
+		if( !element ) {
+
+			return;
+		}
+
+		event = new Event(originalEvent, element);
 
 		// If selector is given, test selector
 		if( selector && !event.matchesSelector(selector) ) {
