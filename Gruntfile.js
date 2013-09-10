@@ -19,20 +19,19 @@ module.exports = function(grunt) {
 		pkg: grunt.file.readJSON('package.json'),
 		// Concat
 		concat: {
-			options: {
-
-				banner: banner
-			},
+			
 			dist: {
+				options: {
 
-				src: ['<banner>', 
-
-					// Todo: Put every section in own closure?
+					banner: banner
+				},
+				src: [
 
 					'src/intro.js',
 
 					// Core
-					'src/core/utils.js', 'src/core/class.js',
+					'src/core/utils.js',
+					'src/core/class.js',
 
 					// Patterns
 					'src/patterns/observer.js',
@@ -43,7 +42,7 @@ module.exports = function(grunt) {
 					'src/dom/utils.js',
 					'src/dom/attribute.js',
 					'src/dom/style.js',
-					'src/dom/morph.js',
+					//'src/dom/css-transform.js',
 					'src/dom/manipulation.js',
 					'src/dom/layout.js',
 					'src/dom/traversal.js',
@@ -52,30 +51,61 @@ module.exports = function(grunt) {
 					'src/dom/enumerable.js',
 					'src/dom/animation.js',
 
+					'src/dom/queue.js',
+					'src/dom/transition.js',
+					'src/dom/morph.js',
+
 					// Using native selector engine
 					'src/dom/selector.js',
 
 					// 
 					'src/dom/ready.js',
 
-					// Older browser support files
-					'src/core/support/legacy.js',
-					'src/dom/support/legacy.js',
-					'src/dom/support/event.js',
-
 					// Request
 					'src/request/request.js',
 					'src/request/utils.js',
-
-					// JSON
-
-					// String
 
 					// Outro
 					'src/outro.js'
 				],
 				dest: 'dist/pbjs.js'
-			}
+			},
+			legacy: {
+				src: [
+
+					'src/support/intro.js',
+
+					// ES5 shims
+					'src/support/core/es5.js',
+
+					// $ DOM
+					'src/support/dom/tests.js',
+					'src/support/dom/style.js',
+					'src/support/dom/transition.js',
+					'src/support/dom/event.js',
+					'src/support/dom/qwery.js',
+					'src/support/dom/manipulation.js',
+
+					// JSON
+
+					// Outro
+					'src/support/outro.js',
+
+					// Qwery selector engine
+					'vendor/qwery/qwery.js'
+				],
+				dest: 'dist/pbjs-legacy.js'
+		    },
+		    // 
+		    build: {
+
+		    	src: [
+
+		    		'dist/pbjs.js',
+		    		'dist/pbjs-legacy.js'
+		    	],
+		    	dest: 'dist/pbjs.js'
+		    }
 		},
 		jshint: {
 
@@ -94,15 +124,30 @@ module.exports = function(grunt) {
 			},
 			build: {
 
-				src: ["dist/pbjs.js", /*"vendor/qwery/qwery.js"*/],
+				src: ["dist/pbjs.js"],
 				dest: "dist/pbjs.min.js"
-			}
+			}/*,
+			legacy: {
+
+				src: ["dist/pbjs-legacy.js"],
+				dest: "dist/pbjs-legacy.min.js"
+			}*/
+		},
+		watch: {
+			scripts: {
+				files: ['**/*.js'],
+				tasks: ['default'],
+				options: {
+					//nospawn: true,
+				},
+			},
 		}
 	});
 
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
+	grunt.loadNpmTasks('grunt-contrib-watch');
 
 	// Default task(s).
 	grunt.registerTask('default', ['concat', 'uglify']);

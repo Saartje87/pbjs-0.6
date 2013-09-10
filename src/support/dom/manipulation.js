@@ -1,9 +1,9 @@
-PB.overwrite(PB.$.fn, {
+if( !supportsTextContent ) {
 
 	/**
 	 *
 	 */
-	setText: function ( value ) {
+	PB.$.fn.setText = function ( value ) {
 
 		var i = 0;
 
@@ -17,5 +17,13 @@ PB.overwrite(PB.$.fn, {
 		}
 
 		return this;
-	}
-});
+	};
+
+	/**
+	 *
+	 */
+	PB.$.fn.getText = function () {
+
+		return this[0].innerText;
+	};
+}

@@ -140,5 +140,48 @@ PB.overwrite(PB.$.fn, {
 		}
 
 		return this;
+	},
+
+	/**
+	 * Serialize form data
+	 *
+	 * Will throw an error if no form is found in set
+	 *
+	 * @param {Object} formData
+	 */
+	serializeForm: function () {
+
+		var i = 0,
+			j = 0,
+			data = {},
+			formElements,
+			element,
+			type,
+			isGroup = /radio|checkbox/i,
+			exclude = /file|undefined|reset|button|submit|fieldset/i;
+
+		for( ; i < this.length; i++ ) {
+
+			if( this[i].nodeName === 'FORM' ) {
+
+				formElements = this[i].elements;
+
+				for( ; j < formElements.length; j++ ) {
+
+					element = formElements[j];
+					type = element.type;
+
+					if( element.name && !exclude.test(type) && !(isGroup.test(type) && !element.checked) ) {
+
+						data[element.name] = new this.constructor(element).getValue();
+					}
+				}
+
+				return data;
+			}
+		}
+
+		// No form element given
+		throw new Error('Form not found'); // A tought, where selector is css expression 'Form not found ['+this.selector+']'
 	}
 });

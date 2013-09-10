@@ -24,7 +24,7 @@ PB.$ = function ( selector ) {
 	// element and document nodes are valid
 	if( selector.nodeType === 1 || selector.nodeType === 9 || selector === window ) {
 
-		return new Dom( selector );
+		return new Dom(selector);
 	}
 
 	// Handle string argument
@@ -53,7 +53,7 @@ PB.$ = function ( selector ) {
 		// user querySelector
 		else {
 
-			return $doc.find(selector);
+			return $doc.find(selector, true);
 		}
 	}
 

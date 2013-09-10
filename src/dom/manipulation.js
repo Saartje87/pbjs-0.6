@@ -163,6 +163,8 @@ PB.overwrite(PB.$.fn, {
 			delete this[i];
 		}
 
+		this.length = 0;
+
 		// Return null
 		return null;
 	},
@@ -278,6 +280,6 @@ PB.overwrite(PB.$.fn, {
 	 */
 	getText: function () {
 
-		return this[0].textContent || this[0].innerText;
+		return this[0].textContent;
 	}
 });
