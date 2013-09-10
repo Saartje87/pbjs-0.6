@@ -82,19 +82,19 @@ PB.overwrite(PB.$.fn, {
 
 					value = styles[prop];
 
+					// Add px when value is a number and property is a px value
+					if( typeof value === 'number' && !skipUnits[prop] ) {
+						
+						value += 'px';
+					}
+
 					// Use hook
 					if( PB.$.hooks['setStyle.'+prop] ) {
 
-						PB.$.hooks['setStyle.'+prop]( this[i], value );
+						PB.$.hooks['setStyle.'+prop](this[i], value);
 					}
 					// Use normal setter
 					else {
-
-						// Add px when value is a number and property is a px value
-						if( typeof value === 'number' && !skipUnits[prop] ) {
-							
-							value += 'px';
-						}
 
 						// IE throws error when setting a non valid value
 						try {
