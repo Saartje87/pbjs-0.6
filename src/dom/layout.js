@@ -234,17 +234,11 @@ PB.overwrite(PB.$.fn, {
 	 */
 	show: function () {
 
-		var style,
-			i = 0;
+		var i = 0;
 
 		for( ; i < this.length; i++ ) {
 
-			style = this[i].style;
-
-			if( style.display === 'none' ) {
-
-				style.display = domGetStorage(this[i])['css-display'] || 'block';
-			}
+			this[i].style.display = domGetStorage(this[i])['css-display'] || 'block';
 		}
 
 		return this;
