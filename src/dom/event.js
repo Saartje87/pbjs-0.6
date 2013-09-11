@@ -437,8 +437,8 @@ PB.overwrite(PB.$.fn, {
 
 		for( ; i < this.length; i++ ) {
 
-			// Some events need manual trigger, like element.focus()
-			if( manual || (this[i].nodeName === 'input' && eventName === 'click') ) {
+			// Some events need manual trigger, like element.focus() make sure the method exsits on given element
+			if( (manual && eventName in this[i]) || (this[i].nodeName === 'input' && eventName === 'click') ) {
 
 				this[i][eventName]();
 			}
