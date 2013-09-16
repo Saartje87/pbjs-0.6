@@ -144,6 +144,27 @@ PB.$('#element').getValue(); //=> 'value'
 
 ---
 
+### check
+
+Checks every checkbox in the set.
+
+###### Signature
+```js
+PB.$('input[type="checkbox"]').check();
+```
+---
+
+### uncheck
+
+Unchecks every checkbox in the set.
+
+###### Signature
+```js
+PB.$('input[type="checkbox"]').uncheck();
+```
+
+---
+
 ### setStyle
 
 Set *inline* css style(s) for every element in the set.
