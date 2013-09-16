@@ -143,6 +143,46 @@ PB.overwrite(PB.$.fn, {
 	},
 
 	/**
+	 * Checks every element in the set.
+	 */
+	check: function () {
+
+		var i = 0,
+			elem;
+
+		for( ; i < this.length; i++ ) {
+
+			elem = this[i];
+
+			if( elem.checked === undefined ) {
+				continue;
+			}
+
+			elem.checked = true;
+		}
+	},
+
+	/**
+	 * Unchecks every element in the set.
+	 */
+	uncheck: function () {
+
+		var i = 0,
+			elem;
+
+		for( ; i < this.length; i++ ) {
+
+			elem = this[i];
+
+			if( elem.checked === undefined ) {
+				continue;
+			}
+
+			elem.checked = false;
+		}
+	},
+
+	/**
 	 * Serialize form data
 	 *
 	 * Will throw an error if no form is found in set
