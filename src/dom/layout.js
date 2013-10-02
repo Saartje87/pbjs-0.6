@@ -249,21 +249,21 @@ PB.overwrite(PB.$.fn, {
 	 */
 	hide: function () {
 
-		var style,
+		var display,
 			i = 0;
 
 		for( ; i < this.length; i++ ) {
 
-			style = this[i].style;
+			display = PB.$(this[i]).getStyle('display');
 
-			if( style.display !== 'none' ) {
+			// Store css display value
+			if( display !== 'none' ) {
 
-				// Store css display value
-				domGetStorage(this[i])['css-display'] = PB.$(this[i]).getStyle('display');
-
-				// Hide element
-				style.display = 'none';
+				domGetStorage(this[i])['css-display'] = display;
 			}
+
+			// Hide element
+			this[i].style.display = 'none';
 		}
 
 		return this;
