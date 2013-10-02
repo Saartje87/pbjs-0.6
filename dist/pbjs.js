@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-09-11 14:00
+ * Build date 2013-10-02 17:33
  */
 (function ( name, context, definition ) {
 	
@@ -1546,17 +1546,11 @@ PB.overwrite(PB.$.fn, {
 	 */
 	show: function () {
 
-		var style,
-			i = 0;
+		var i = 0;
 
 		for( ; i < this.length; i++ ) {
 
-			style = this[i].style;
-
-			if( style.display === 'none' ) {
-
-				style.display = domGetStorage(this[i])['css-display'] || 'block';
-			}
+			this[i].style.display = domGetStorage(this[i])['css-display'] || 'block';
 		}
 
 		return this;
@@ -1567,21 +1561,21 @@ PB.overwrite(PB.$.fn, {
 	 */
 	hide: function () {
 
-		var style,
+		var display,
 			i = 0;
 
 		for( ; i < this.length; i++ ) {
 
-			style = this[i].style;
+			display = PB.$(this[i]).getStyle('display');
 
-			if( style.display !== 'none' ) {
+			// Store css display value
+			if( display !== 'none' ) {
 
-				// Store css display value
-				domGetStorage(this[i])['css-display'] = PB.$(this[i]).getStyle('display');
-
-				// Hide element
-				style.display = 'none';
+				domGetStorage(this[i])['css-display'] = display;
 			}
+
+			// Hide element
+			this[i].style.display = 'none';
 		}
 
 		return this;
@@ -1859,14 +1853,15 @@ var mouseenterleave = 'onmouseenter' in docElement && 'onmouseleave' in docEleme
 
 	standardEvents = 'type target defaultPrevented bubbles'.split(' '),
 
-	mouseEvents = 'altKey ctrlKey metaKey shiftKey which pageX pageY'.split(' ');
+	mouseEvents = 'altKey ctrlKey metaKey shiftKey which pageX pageY which'.split(' ');
 
 /**
  *
  */
 function Event ( originalEvent, element ) {
 
-	var type = originalEvent.type,
+	var hooks = Event.hooks,
+		type = originalEvent.type,
 		key;
 
 	this.originalEvent = originalEvent;
@@ -1878,9 +1873,9 @@ function Event ( originalEvent, element ) {
 	// Any hooks for this event.type ?
 	for( key in Event.hooks ) {
 
-		if( Event.hooks.hasOwnProperty(key) && Event.hooks[key].matches.test(type) ) {
+		if( hooks.hasOwnProperty(key) && hooks[key].matches.test(type) ) {
 
-			Event.hooks[key].hook(this, originalEvent);
+			hooks[key].hook(this, originalEvent);
 		}
 	}
 }
@@ -2155,7 +2150,7 @@ function eventResponder ( pbid, eventName, handler, context, selector ) {
 
 			relatedTarget = event.relatedTarget;
 
-			if( element === relatedTarget || element.contains(relatedTarget) ) {
+			if( element === relatedTarget || (element.contains && element.contains(relatedTarget)) ) {
 
 				return;
 			}
@@ -3496,7 +3491,8 @@ var doc = context.document,
 div = null;
 
 var ropacity = /alpha\(opacity=(.*)\)/i,
-	rpixel = /^-?[\d.]+px$/i;
+	rpixel = /^-?[\d.]+px$/i,
+	rnum = /^-?[\d.]/;
 
 // IE < 9 opacity support
 if( !supportsOpacityProperty ) {
@@ -3588,7 +3584,10 @@ if( !supportsGetComputedStyle ) {
 
 			// Awesomo trick! from http://blog.stchur.com/2006/09/20/converting-to-pixels-with-javascript/
 			// Calculate non pixel values
-			if( !/px$/.test(value) ) {
+
+			// Is not a pixel number
+			// if( /(?:%|em|pt|cm|in)$/i.test(value) ) {
+			if( !rpixel.test(value) && rnum.test(value) ) {
 
 				div = document.createElement('div');
 				div.style.cssText = 'visbility: hidden; position: absolute; line-height: 0;';
@@ -3734,6 +3733,13 @@ if( legacyEventModel ) {
 			hook: function ( event, originalEvent ) {
 
 				event.target = originalEvent.srcElement || originalEvent.toElement;
+
+				// Add correct value for which
+				event.which = (event.keyCode === undefined) ? event.charCode : event.keyCode;
+
+				// Normalize mouse button codes..
+				// left: 0, middle: 1, right: 2
+				event.which = (event.which === 0 ? 1 : (event.which === 4 ? 2: (event.which === 2 ? 3 : event.which)));
 			}
 		},
 
@@ -3751,7 +3757,7 @@ if( legacyEventModel ) {
 				}
 
 				// Set which
-				event.which = (originalEvent.keyCode === undefined) ? originalEvent.charCode : originalEvent.keyCode;
+				event.which = originalEvent.keyCode || originalEvent.charCode;
 
 				// Normalize mousebutton codes to W3C standards
 				// Left: 0, Middle: 1, Right: 2
@@ -3765,8 +3771,8 @@ if( legacyEventModel ) {
 	 */
 	PB.$.Event.prototype.stopPropagation = function () {
 		
-		this.defaultPrevented = true;
-		this.cancelBubble = true;
+		this.originalEvent.defaultPrevented = true;
+		this.originalEvent.cancelBubble = true;
 	};
 
 	/**
@@ -3774,7 +3780,7 @@ if( legacyEventModel ) {
 	 */
 	PB.$.Event.prototype.preventDefault = function () {
 		
-		this.returnValue = false;
+		this.originalEvent.returnValue = false;
 	};
 
 	/**
