@@ -5,14 +5,15 @@ var mouseenterleave = 'onmouseenter' in docElement && 'onmouseleave' in docEleme
 
 	standardEvents = 'type target defaultPrevented bubbles'.split(' '),
 
-	mouseEvents = 'altKey ctrlKey metaKey shiftKey which pageX pageY'.split(' ');
+	mouseEvents = 'altKey ctrlKey metaKey shiftKey which pageX pageY which'.split(' ');
 
 /**
  *
  */
 function Event ( originalEvent, element ) {
 
-	var type = originalEvent.type,
+	var hooks = Event.hooks,
+		type = originalEvent.type,
 		key;
 
 	this.originalEvent = originalEvent;
@@ -24,9 +25,9 @@ function Event ( originalEvent, element ) {
 	// Any hooks for this event.type ?
 	for( key in Event.hooks ) {
 
-		if( Event.hooks.hasOwnProperty(key) && Event.hooks[key].matches.test(type) ) {
+		if( hooks.hasOwnProperty(key) && hooks[key].matches.test(type) ) {
 
-			Event.hooks[key].hook(this, originalEvent);
+			hooks[key].hook(this, originalEvent);
 		}
 	}
 }
@@ -301,7 +302,7 @@ function eventResponder ( pbid, eventName, handler, context, selector ) {
 
 			relatedTarget = event.relatedTarget;
 
-			if( element === relatedTarget || element.contains(relatedTarget) ) {
+			if( element === relatedTarget || (element.contains && element.contains(relatedTarget)) ) {
 
 				return;
 			}
