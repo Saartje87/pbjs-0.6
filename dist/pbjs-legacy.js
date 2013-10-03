@@ -369,7 +369,8 @@ if( !supportsGetComputedStyle ) {
 			// Calculate non pixel values
 
 			// Is not a pixel number
-			if( value && !rpixel.test(value) && !rnum.test(value) ) {
+			//if( value && !rpixel.test(value) && !rnum.test(value) ) {
+			if( value && /em|%|pt|border/.test(value) ) {
 
 				div = document.createElement('div');
 				div.style.cssText = 'visbility: hidden; position: absolute; line-height: 0;';

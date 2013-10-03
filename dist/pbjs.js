@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-10-03 16:25
+ * Build date 2013-10-03 17:08
  */
 (function ( name, context, definition ) {
 	
@@ -3586,7 +3586,8 @@ if( !supportsGetComputedStyle ) {
 			// Calculate non pixel values
 
 			// Is not a pixel number
-			if( value && !rpixel.test(value) && !rnum.test(value) ) {
+			//if( value && !rpixel.test(value) && !rnum.test(value) ) {
+			if( value && /em|%|pt|border/.test(value) ) {
 
 				div = document.createElement('div');
 				div.style.cssText = 'visbility: hidden; position: absolute; line-height: 0;';
