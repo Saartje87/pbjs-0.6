@@ -119,8 +119,8 @@ PB.overwrite(PB.$.fn, {
 
 		return {
 
-			top: box.top + (window.scrollY || window.pageYOffset),
-			left: box.left + (window.scrollX || window.pageXOffset)
+			top: box.top + (window.scrollY || window.pageYOffset || docElement.scrollTop),
+			left: box.left + (window.scrollX || window.pageXOffset || docElement.scrollLeft)
 		};
 	},
 

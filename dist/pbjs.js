@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-10-04 10:35
+ * Build date 2013-10-04 13:19
  */
 (function ( name, context, definition ) {
 	
@@ -1431,8 +1431,8 @@ PB.overwrite(PB.$.fn, {
 
 		return {
 
-			top: box.top + (window.scrollY || window.pageYOffset),
-			left: box.left + (window.scrollX || window.pageXOffset)
+			top: box.top + (window.scrollY || window.pageYOffset || docElement.scrollTop),
+			left: box.left + (window.scrollX || window.pageXOffset || docElement.scrollLeft)
 		};
 	},
 
@@ -3587,7 +3587,7 @@ if( !supportsGetComputedStyle ) {
 
 			// Is not a pixel number
 			//if( value && !rpixel.test(value) && !rnum.test(value) ) {
-			if( value && /em|%|pt|border/.test(value) ) {
+			if( value && (/em|%|pt/.test(value) || /border/.test(styleName)) ) {
 
 				div = document.createElement('div');
 				div.style.cssText = 'visbility: hidden; position: absolute; line-height: 0;';
