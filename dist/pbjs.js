@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-10-03 17:08
+ * Build date 2013-10-04 10:35
  */
 (function ( name, context, definition ) {
 	
@@ -1222,7 +1222,7 @@ PB.overwrite(PB.$.fn, {
 
 				children = PB.$(ret[i]).find('*');
 
-				for ( ; i < length; i++) {
+				for ( ; i < children.length; i++) {
 
 					children[i].removeAttribute('id');
 					children[i].removeAttribute('__PBID__');

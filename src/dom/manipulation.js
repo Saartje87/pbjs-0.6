@@ -195,7 +195,7 @@ PB.overwrite(PB.$.fn, {
 
 				children = PB.$(ret[i]).find('*');
 
-				for ( ; i < length; i++) {
+				for ( ; i < children.length; i++) {
 
 					children[i].removeAttribute('id');
 					children[i].removeAttribute('__PBID__');
