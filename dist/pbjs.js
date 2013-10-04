@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-10-04 13:19
+ * Build date 2013-10-04 16:22
  */
 (function ( name, context, definition ) {
 	
@@ -559,7 +559,7 @@ PB.$ = function ( selector ) {
 	if( typeof selector === 'string' ) {
 
 		// Element id given
-		if( selector.charAt(0) === '#' ) {
+		if( selector.charAt(0) === '#' && selector.indexOf(' ') === -1 ) {
 
 			// Select element
 			selector = doc.getElementById(selector.substr(1));
