@@ -226,7 +226,7 @@ PB.overwrite(PB.$.fn, {
 		}
 		
 		// we should return an unique set
-		return elements.length || !nullable ? new this.constructor(elements) : null;
+		return elements && elements.length || !nullable ? new this.constructor(elements) : null;
 	},
 
 	/**

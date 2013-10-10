@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-10-04 16:22
+ * Build date 2013-10-10 16:48
  */
 (function ( name, context, definition ) {
 	
@@ -818,7 +818,7 @@ PB.overwrite(PB.$.fn, {
 
 			id = this[i].__PBID__;
 
-			if( !id || !PB.$.cache[id] ) {
+			if( !id || !PB.$.cache[id] || !PB.$.cache[id].data ) {
 
 				continue;
 			}
@@ -1251,7 +1251,8 @@ PB.overwrite(PB.$.fn, {
 			} catch (e) {
 
 				// Remove all childs
-				PB.$(this[i]).children().remove();
+				children = PB.$(this[i]).children();
+				children && children.remove();
 
 				// Check for certain node names, in case of tbody|tr|td we have to use a 'special' approach
 				// in which we create the element with a wrapper.
@@ -1821,7 +1822,7 @@ PB.overwrite(PB.$.fn, {
 		}
 		
 		// we should return an unique set
-		return elements.length || !nullable ? new this.constructor(elements) : null;
+		return elements && elements.length || !nullable ? new this.constructor(elements) : null;
 	},
 
 	/**
