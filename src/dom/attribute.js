@@ -131,7 +131,7 @@ PB.overwrite(PB.$.fn, {
 
 			id = this[i].__PBID__;
 
-			if( !id || !PB.$.cache[id] ) {
+			if( !id || !PB.$.cache[id] || !PB.$.cache[id].data ) {
 
 				continue;
 			}
