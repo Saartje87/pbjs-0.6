@@ -3,9 +3,9 @@ var mouseenterleave = 'onmouseenter' in docElement && 'onmouseleave' in docEleme
 	// Contains all event that should be triggered `manual` node.focus()
 	rmanualevent = /^(?:load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll)$/,
 
-	standardEvents = 'type target defaultPrevented bubbles'.split(' '),
+	standardEvents = 'type target defaultPrevented bubbles which'.split(' '),
 
-	mouseEvents = 'altKey ctrlKey metaKey shiftKey which pageX pageY which'.split(' ');
+	mouseEvents = 'altKey ctrlKey metaKey shiftKey which pageX pageY'.split(' ');
 
 /**
  *

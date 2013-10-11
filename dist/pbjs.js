@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-10-10 16:51
+ * Build date 2013-10-11 11:08
  */
 (function ( name, context, definition ) {
 	
@@ -1853,9 +1853,9 @@ var mouseenterleave = 'onmouseenter' in docElement && 'onmouseleave' in docEleme
 	// Contains all event that should be triggered `manual` node.focus()
 	rmanualevent = /^(?:load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll)$/,
 
-	standardEvents = 'type target defaultPrevented bubbles'.split(' '),
+	standardEvents = 'type target defaultPrevented bubbles which'.split(' '),
 
-	mouseEvents = 'altKey ctrlKey metaKey shiftKey which pageX pageY which'.split(' ');
+	mouseEvents = 'altKey ctrlKey metaKey shiftKey which pageX pageY'.split(' ');
 
 /**
  *
