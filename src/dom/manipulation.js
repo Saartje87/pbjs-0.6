@@ -212,7 +212,8 @@ PB.overwrite(PB.$.fn, {
 	// Should we make an option to parse script tags?
 	setHtml: function ( value ) {
 
-		var i = 0;
+		var i = 0,
+			children;
 
 		for( ; i < this.length; i++ ) {
 
