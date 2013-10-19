@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-10-11 11:08
+ * Build date 2013-10-19 15:26
  */
 (function ( name, context, definition ) {
 	
@@ -1667,6 +1667,16 @@ PB.overwrite(PB.$.fn, {
 	lastChild: function () {
 
 		return PB.$(this[0].lastElementChild || this[0].lastChild);
+	},
+
+	/**
+	 * Returns x element in the set.
+	 *
+	 * @return {Object} PB.$ or null
+	 */
+	get: function ( index ) {
+
+		return PB.$(this[index]);
 	},
 
 	/**

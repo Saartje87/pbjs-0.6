@@ -73,6 +73,16 @@ PB.overwrite(PB.$.fn, {
 	},
 
 	/**
+	 * Returns x element in the set.
+	 *
+	 * @return {Object} PB.$ or null
+	 */
+	get: function ( index ) {
+
+		return PB.$(this[index]);
+	},
+
+	/**
 	 * Returns the first element in the set.
 	 *
 	 * @return {Object} PB.$ or null
