@@ -155,14 +155,23 @@ PB.log = function () {
 	if( typeof console !== 'undefined' && typeof console.log === 'function' ) {
 
 		var args = PB.toArray(arguments);
+		var tmp = Error.apply(this, arguments);
 
-		/* TODO rewrite this to a regex solution */
-		var stackFirstLine = new Error().stack.split('\n')[1];
-		var lineNumber = stackFirstLine.split(':')[2]; 
-		var fileNameArray = stackFirstLine.split(':')[1].split('/'); 
-		var filename = fileNameArray[fileNameArray.length-1]; 
+		/* TODO rewrite this to a regex solution */		
+		if(tmp && tmp.stack) {
 
-		args.unshift('pbjs: ' + filename + ' (line '+lineNumber+'): ');
+		var stackLines = tmp.stack.split('\n');
+
+			var stackFirstLine = stackLines[3] || stackLines[1];
+			var lineNumber = stackFirstLine.split(':')[2]; 
+			var fileNameArray = stackFirstLine.split(':')[1].split('/'); 
+			var filename = fileNameArray[fileNameArray.length-1]; 
+
+			args.unshift('pbjs: ' + filename + ' (line '+lineNumber+'): ');		
+		} else {
+
+			args.unshift('pbjs: ');	
+		}
 
 		console.log.apply(console, args);
 	}
