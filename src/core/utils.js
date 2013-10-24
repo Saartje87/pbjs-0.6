@@ -156,7 +156,13 @@ PB.log = function () {
 
 		var args = PB.toArray(arguments);
 
-		args.unshift('pbjs:');
+		/* TODO rewrite this to a regex solution */
+		var stackFirstLine = new Error().stack.split('\n')[1];
+		var lineNumber = stackFirstLine.split(':')[2]; 
+		var fileNameArray = stackFirstLine.split(':')[1].split('/'); 
+		var filename = fileNameArray[fileNameArray.length-1]; 
+
+		args.unshift('pbjs: ' + filename + ' (line '+lineNumber+'): ');
 
 		console.log.apply(console, args);
 	}
