@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-09-10 09:45
+ * Build date 2013-10-25 11:10
  */
 (function ( name, context, definition ) {
 	
@@ -189,9 +189,30 @@ PB.log = function () {
 
 	if( typeof console !== 'undefined' && typeof console.log === 'function' ) {
 
-		var args = PB.toArray(arguments);
+		var args = PB.toArray(arguments),
+			error = Error.apply(this, arguments),
+			stackLines,
+			stackFirstLine,
+			lineNumber,
+			fileNameArray,
+			filename;
 
-		args.unshift('pbjs:');
+		// TODO rewrite this to a regex solution
+		if( error && error.stack ) {
+
+			// Firefox leaves a trailing endline
+			stackLines = error.stack.replace(/\n+$/g, '').split('\n');
+
+			stackFirstLine =  stackLines[stackLines.length-2];
+			lineNumber = stackFirstLine.split(':')[2]; 
+			fileNameArray = stackFirstLine.split(':')[1].split('/'); 
+			filename = fileNameArray[fileNameArray.length-1]; 
+
+			args.unshift('pbjs: '+filename+' (line '+lineNumber+'): ');		
+		} else {
+
+			args.unshift('pbjs: ');	
+		}
 
 		console.log.apply(console, args);
 	}
@@ -3189,11 +3210,6 @@ PB.overwrite(PB.Request, {
 });
 
 /*
-PB.get('file.json', {foo: 'bar'}, function ( t ) {
-	
-	alert("Done!");
-});
-
 PB.each({get: 'GET', post: 'POST', put: 'PUT', del: 'DELETE'}, function ( key, value ) {
 	
 	// arguments -> url, data, success, error ?

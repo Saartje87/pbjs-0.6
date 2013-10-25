@@ -154,22 +154,26 @@ PB.log = function () {
 
 	if( typeof console !== 'undefined' && typeof console.log === 'function' ) {
 
-		var args = PB.toArray(arguments);
-		var tmp = Error.apply(this, arguments);
-		var browserString = window.navigator.userAgent;
+		var args = PB.toArray(arguments),
+			error = Error.apply(this, arguments),
+			stackLines,
+			stackFirstLine,
+			lineNumber,
+			fileNameArray,
+			filename;
 
+		// TODO rewrite this to a regex solution
+		if( error && error.stack ) {
 
-		/* TODO rewrite this to a regex solution */		
-		if(tmp && tmp.stack) {
+			// Firefox leaves a trailing endline
+			stackLines = error.stack.replace(/\n+$/g, '').split('\n');
 
-		var stackLines = tmp.stack.split('\n');
+			stackFirstLine =  stackLines[stackLines.length-2];
+			lineNumber = stackFirstLine.split(':')[2]; 
+			fileNameArray = stackFirstLine.split(':')[1].split('/'); 
+			filename = fileNameArray[fileNameArray.length-1]; 
 
-			var stackFirstLine = ( browserString.indexOf('Firefox') != -1) ? stackLines[1] : stackLines[3];
-			var lineNumber = stackFirstLine.split(':')[2]; 
-			var fileNameArray = stackFirstLine.split(':')[1].split('/'); 
-			var filename = fileNameArray[fileNameArray.length-1]; 
-
-			args.unshift('pbjs: ' + filename + ' (line '+lineNumber+'): ');		
+			args.unshift('pbjs: '+filename+' (line '+lineNumber+'): ');		
 		} else {
 
 			args.unshift('pbjs: ');	
