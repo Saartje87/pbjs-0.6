@@ -156,13 +156,15 @@ PB.log = function () {
 
 		var args = PB.toArray(arguments);
 		var tmp = Error.apply(this, arguments);
+		var browserString = window.navigator.userAgent;
+
 
 		/* TODO rewrite this to a regex solution */		
 		if(tmp && tmp.stack) {
 
 		var stackLines = tmp.stack.split('\n');
 
-			var stackFirstLine = stackLines[3] || stackLines[1];
+			var stackFirstLine = ( browserString.indexOf('Firefox') != -1) ? stackLines[1] : stackLines[3];
 			var lineNumber = stackFirstLine.split(':')[2]; 
 			var fileNameArray = stackFirstLine.split(':')[1].split('/'); 
 			var filename = fileNameArray[fileNameArray.length-1]; 
