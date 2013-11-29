@@ -11,6 +11,13 @@ if( legacyEventModel ) {
 			hook: function ( event, originalEvent ) {
 
 				event.target = originalEvent.srcElement || originalEvent.toElement;
+
+				// Add correct value for which
+				event.which = (event.keyCode === undefined) ? event.charCode : event.keyCode;
+
+				// Normalize mouse button codes..
+				// left: 0, middle: 1, right: 2
+				event.which = (event.which === 0 ? 1 : (event.which === 4 ? 2: (event.which === 2 ? 3 : event.which)));
 			}
 		},
 
@@ -28,7 +35,7 @@ if( legacyEventModel ) {
 				}
 
 				// Set which
-				event.which = (originalEvent.keyCode === undefined) ? originalEvent.charCode : originalEvent.keyCode;
+				event.which = originalEvent.keyCode || originalEvent.charCode;
 
 				// Normalize mousebutton codes to W3C standards
 				// Left: 0, Middle: 1, Right: 2
@@ -42,8 +49,8 @@ if( legacyEventModel ) {
 	 */
 	PB.$.Event.prototype.stopPropagation = function () {
 		
-		this.defaultPrevented = true;
-		this.cancelBubble = true;
+		this.originalEvent.defaultPrevented = true;
+		this.originalEvent.cancelBubble = true;
 	};
 
 	/**
@@ -51,7 +58,7 @@ if( legacyEventModel ) {
 	 */
 	PB.$.Event.prototype.preventDefault = function () {
 		
-		this.returnValue = false;
+		this.originalEvent.returnValue = false;
 	};
 
 	/**

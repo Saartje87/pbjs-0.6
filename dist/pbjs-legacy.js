@@ -85,7 +85,7 @@ PB.extend(Array, {
 	
 	isArray: function ( object) {
 		
-		return PB.is('Array', object);
+		return PB.type(object) === 'array';
 	}
 });
 
@@ -273,8 +273,14 @@ var doc = context.document,
 // Clear memory
 div = null;
 
+PB.ready(function () {
+
+	body = doc.body;
+});
+
 var ropacity = /alpha\(opacity=(.*)\)/i,
-	rpixel = /^-?[\d.]+px$/i;
+	rpixel = /^-?[\d.]+px$/i,
+	rnum = /^-?[\d.]/;
 
 // IE < 9 opacity support
 if( !supportsOpacityProperty ) {
@@ -366,7 +372,10 @@ if( !supportsGetComputedStyle ) {
 
 			// Awesomo trick! from http://blog.stchur.com/2006/09/20/converting-to-pixels-with-javascript/
 			// Calculate non pixel values
-			if( !/px$/.test(value) ) {
+
+			// Is not a pixel number
+			//if( value && !rpixel.test(value) && !rnum.test(value) ) {
+			if( value && (/em|%|pt/.test(value) || /border/.test(styleName)) ) {
 
 				div = document.createElement('div');
 				div.style.cssText = 'visbility: hidden; position: absolute; line-height: 0;';
@@ -512,6 +521,13 @@ if( legacyEventModel ) {
 			hook: function ( event, originalEvent ) {
 
 				event.target = originalEvent.srcElement || originalEvent.toElement;
+
+				// Add correct value for which
+				event.which = (event.keyCode === undefined) ? event.charCode : event.keyCode;
+
+				// Normalize mouse button codes..
+				// left: 0, middle: 1, right: 2
+				event.which = (event.which === 0 ? 1 : (event.which === 4 ? 2: (event.which === 2 ? 3 : event.which)));
 			}
 		},
 
@@ -529,7 +545,7 @@ if( legacyEventModel ) {
 				}
 
 				// Set which
-				event.which = (originalEvent.keyCode === undefined) ? originalEvent.charCode : originalEvent.keyCode;
+				event.which = originalEvent.keyCode || originalEvent.charCode;
 
 				// Normalize mousebutton codes to W3C standards
 				// Left: 0, Middle: 1, Right: 2
@@ -543,8 +559,8 @@ if( legacyEventModel ) {
 	 */
 	PB.$.Event.prototype.stopPropagation = function () {
 		
-		this.defaultPrevented = true;
-		this.cancelBubble = true;
+		this.originalEvent.defaultPrevented = true;
+		this.originalEvent.cancelBubble = true;
 	};
 
 	/**
@@ -552,7 +568,7 @@ if( legacyEventModel ) {
 	 */
 	PB.$.Event.prototype.preventDefault = function () {
 		
-		this.returnValue = false;
+		this.originalEvent.returnValue = false;
 	};
 
 	/**

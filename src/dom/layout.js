@@ -119,8 +119,8 @@ PB.overwrite(PB.$.fn, {
 
 		return {
 
-			top: box.top + (window.scrollY || window.pageYOffset),
-			left: box.left + (window.scrollX || window.pageXOffset)
+			top: box.top + (window.scrollY || window.pageYOffset || docElement.scrollTop),
+			left: box.left + (window.scrollX || window.pageXOffset || docElement.scrollLeft)
 		};
 	},
 
@@ -234,17 +234,11 @@ PB.overwrite(PB.$.fn, {
 	 */
 	show: function () {
 
-		var style,
-			i = 0;
+		var i = 0;
 
 		for( ; i < this.length; i++ ) {
 
-			style = this[i].style;
-
-			if( style.display === 'none' ) {
-
-				style.display = domGetStorage(this[i])['css-display'] || 'block';
-			}
+			this[i].style.display = domGetStorage(this[i])['css-display'] || 'block';
 		}
 
 		return this;
@@ -255,21 +249,21 @@ PB.overwrite(PB.$.fn, {
 	 */
 	hide: function () {
 
-		var style,
+		var display,
 			i = 0;
 
 		for( ; i < this.length; i++ ) {
 
-			style = this[i].style;
+			display = PB.$(this[i]).getStyle('display');
 
-			if( style.display !== 'none' ) {
+			// Store css display value
+			if( display !== 'none' ) {
 
-				// Store css display value
-				domGetStorage(this[i])['css-display'] = PB.$(this[i]).getStyle('display');
-
-				// Hide element
-				style.display = 'none';
+				domGetStorage(this[i])['css-display'] = display;
 			}
+
+			// Hide element
+			this[i].style.display = 'none';
 		}
 
 		return this;

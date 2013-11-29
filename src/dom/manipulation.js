@@ -195,7 +195,7 @@ PB.overwrite(PB.$.fn, {
 
 				children = PB.$(ret[i]).find('*');
 
-				for ( ; i < length; i++) {
+				for ( ; i < children.length; i++) {
 
 					children[i].removeAttribute('id');
 					children[i].removeAttribute('__PBID__');
@@ -212,7 +212,8 @@ PB.overwrite(PB.$.fn, {
 	// Should we make an option to parse script tags?
 	setHtml: function ( value ) {
 
-		var i = 0;
+		var i = 0,
+			children;
 
 		for( ; i < this.length; i++ ) {
 
@@ -224,7 +225,8 @@ PB.overwrite(PB.$.fn, {
 			} catch (e) {
 
 				// Remove all childs
-				PB.$(this[i]).children().remove();
+				children = PB.$(this[i]).children();
+				children && children.remove();
 
 				// Check for certain node names, in case of tbody|tr|td we have to use a 'special' approach
 				// in which we create the element with a wrapper.

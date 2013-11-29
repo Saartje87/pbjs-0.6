@@ -3,7 +3,7 @@ var mouseenterleave = 'onmouseenter' in docElement && 'onmouseleave' in docEleme
 	// Contains all event that should be triggered `manual` node.focus()
 	rmanualevent = /^(?:load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll)$/,
 
-	standardEvents = 'type target defaultPrevented bubbles'.split(' '),
+	standardEvents = 'type target defaultPrevented bubbles which'.split(' '),
 
 	mouseEvents = 'altKey ctrlKey metaKey shiftKey which pageX pageY'.split(' ');
 
@@ -12,7 +12,8 @@ var mouseenterleave = 'onmouseenter' in docElement && 'onmouseleave' in docEleme
  */
 function Event ( originalEvent, element ) {
 
-	var type = originalEvent.type,
+	var hooks = Event.hooks,
+		type = originalEvent.type,
 		key;
 
 	this.originalEvent = originalEvent;
@@ -24,9 +25,9 @@ function Event ( originalEvent, element ) {
 	// Any hooks for this event.type ?
 	for( key in Event.hooks ) {
 
-		if( Event.hooks.hasOwnProperty(key) && Event.hooks[key].matches.test(type) ) {
+		if( hooks.hasOwnProperty(key) && hooks[key].matches.test(type) ) {
 
-			Event.hooks[key].hook(this, originalEvent);
+			hooks[key].hook(this, originalEvent);
 		}
 	}
 }
@@ -301,7 +302,7 @@ function eventResponder ( pbid, eventName, handler, context, selector ) {
 
 			relatedTarget = event.relatedTarget;
 
-			if( element === relatedTarget || element.contains(relatedTarget) ) {
+			if( element === relatedTarget || (element.contains && element.contains(relatedTarget)) ) {
 
 				return;
 			}
@@ -437,8 +438,8 @@ PB.overwrite(PB.$.fn, {
 
 		for( ; i < this.length; i++ ) {
 
-			// Some events need manual trigger, like element.focus()
-			if( manual || (this[i].nodeName === 'input' && eventName === 'click') ) {
+			// Some events need manual trigger, like element.focus() make sure the method exsits on given element
+			if( (manual && eventName in this[i]) || (this[i].nodeName === 'input' && eventName === 'click') ) {
 
 				this[i][eventName]();
 			}

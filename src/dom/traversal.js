@@ -73,6 +73,16 @@ PB.overwrite(PB.$.fn, {
 	},
 
 	/**
+	 * Returns x element in the set.
+	 *
+	 * @return {Object} PB.$ or null
+	 */
+	get: function ( index ) {
+
+		return PB.$(this[index]);
+	},
+
+	/**
 	 * Returns the first element in the set.
 	 *
 	 * @return {Object} PB.$ or null
@@ -226,7 +236,7 @@ PB.overwrite(PB.$.fn, {
 		}
 		
 		// we should return an unique set
-		return elements.length || !nullable ? new this.constructor(elements) : null;
+		return elements && elements.length || !nullable ? new this.constructor(elements) : null;
 	},
 
 	/**

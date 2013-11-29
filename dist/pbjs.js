@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-10-25 11:10
+ * Build date 2013-11-29 19:43
  */
 (function ( name, context, definition ) {
 	
@@ -580,7 +580,7 @@ PB.$ = function ( selector ) {
 	if( typeof selector === 'string' ) {
 
 		// Element id given
-		if( selector.charAt(0) === '#' ) {
+		if( selector.charAt(0) === '#' && selector.indexOf(' ') === -1 ) {
 
 			// Select element
 			selector = doc.getElementById(selector.substr(1));
@@ -839,7 +839,7 @@ PB.overwrite(PB.$.fn, {
 
 			id = this[i].__PBID__;
 
-			if( !id || !PB.$.cache[id] ) {
+			if( !id || !PB.$.cache[id] || !PB.$.cache[id].data ) {
 
 				continue;
 			}
@@ -1243,7 +1243,7 @@ PB.overwrite(PB.$.fn, {
 
 				children = PB.$(ret[i]).find('*');
 
-				for ( ; i < length; i++) {
+				for ( ; i < children.length; i++) {
 
 					children[i].removeAttribute('id');
 					children[i].removeAttribute('__PBID__');
@@ -1260,7 +1260,8 @@ PB.overwrite(PB.$.fn, {
 	// Should we make an option to parse script tags?
 	setHtml: function ( value ) {
 
-		var i = 0;
+		var i = 0,
+			children;
 
 		for( ; i < this.length; i++ ) {
 
@@ -1272,7 +1273,8 @@ PB.overwrite(PB.$.fn, {
 			} catch (e) {
 
 				// Remove all childs
-				PB.$(this[i]).children().remove();
+				children = PB.$(this[i]).children();
+				children && children.remove();
 
 				// Check for certain node names, in case of tbody|tr|td we have to use a 'special' approach
 				// in which we create the element with a wrapper.
@@ -1452,8 +1454,8 @@ PB.overwrite(PB.$.fn, {
 
 		return {
 
-			top: box.top + (window.scrollY || window.pageYOffset),
-			left: box.left + (window.scrollX || window.pageXOffset)
+			top: box.top + (window.scrollY || window.pageYOffset || docElement.scrollTop),
+			left: box.left + (window.scrollX || window.pageXOffset || docElement.scrollLeft)
 		};
 	},
 
@@ -1567,17 +1569,11 @@ PB.overwrite(PB.$.fn, {
 	 */
 	show: function () {
 
-		var style,
-			i = 0;
+		var i = 0;
 
 		for( ; i < this.length; i++ ) {
 
-			style = this[i].style;
-
-			if( style.display === 'none' ) {
-
-				style.display = domGetStorage(this[i])['css-display'] || 'block';
-			}
+			this[i].style.display = domGetStorage(this[i])['css-display'] || 'block';
 		}
 
 		return this;
@@ -1588,21 +1584,21 @@ PB.overwrite(PB.$.fn, {
 	 */
 	hide: function () {
 
-		var style,
+		var display,
 			i = 0;
 
 		for( ; i < this.length; i++ ) {
 
-			style = this[i].style;
+			display = PB.$(this[i]).getStyle('display');
 
-			if( style.display !== 'none' ) {
+			// Store css display value
+			if( display !== 'none' ) {
 
-				// Store css display value
-				domGetStorage(this[i])['css-display'] = PB.$(this[i]).getStyle('display');
-
-				// Hide element
-				style.display = 'none';
+				domGetStorage(this[i])['css-display'] = display;
 			}
+
+			// Hide element
+			this[i].style.display = 'none';
 		}
 
 		return this;
@@ -1692,6 +1688,16 @@ PB.overwrite(PB.$.fn, {
 	lastChild: function () {
 
 		return PB.$(this[0].lastElementChild || this[0].lastChild);
+	},
+
+	/**
+	 * Returns x element in the set.
+	 *
+	 * @return {Object} PB.$ or null
+	 */
+	get: function ( index ) {
+
+		return PB.$(this[index]);
 	},
 
 	/**
@@ -1848,7 +1854,7 @@ PB.overwrite(PB.$.fn, {
 		}
 		
 		// we should return an unique set
-		return elements.length || !nullable ? new this.constructor(elements) : null;
+		return elements && elements.length || !nullable ? new this.constructor(elements) : null;
 	},
 
 	/**
@@ -1878,7 +1884,7 @@ var mouseenterleave = 'onmouseenter' in docElement && 'onmouseleave' in docEleme
 	// Contains all event that should be triggered `manual` node.focus()
 	rmanualevent = /^(?:load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll)$/,
 
-	standardEvents = 'type target defaultPrevented bubbles'.split(' '),
+	standardEvents = 'type target defaultPrevented bubbles which'.split(' '),
 
 	mouseEvents = 'altKey ctrlKey metaKey shiftKey which pageX pageY'.split(' ');
 
@@ -1887,7 +1893,8 @@ var mouseenterleave = 'onmouseenter' in docElement && 'onmouseleave' in docEleme
  */
 function Event ( originalEvent, element ) {
 
-	var type = originalEvent.type,
+	var hooks = Event.hooks,
+		type = originalEvent.type,
 		key;
 
 	this.originalEvent = originalEvent;
@@ -1899,9 +1906,9 @@ function Event ( originalEvent, element ) {
 	// Any hooks for this event.type ?
 	for( key in Event.hooks ) {
 
-		if( Event.hooks.hasOwnProperty(key) && Event.hooks[key].matches.test(type) ) {
+		if( hooks.hasOwnProperty(key) && hooks[key].matches.test(type) ) {
 
-			Event.hooks[key].hook(this, originalEvent);
+			hooks[key].hook(this, originalEvent);
 		}
 	}
 }
@@ -2176,7 +2183,7 @@ function eventResponder ( pbid, eventName, handler, context, selector ) {
 
 			relatedTarget = event.relatedTarget;
 
-			if( element === relatedTarget || element.contains(relatedTarget) ) {
+			if( element === relatedTarget || (element.contains && element.contains(relatedTarget)) ) {
 
 				return;
 			}
@@ -2312,8 +2319,8 @@ PB.overwrite(PB.$.fn, {
 
 		for( ; i < this.length; i++ ) {
 
-			// Some events need manual trigger, like element.focus()
-			if( manual || (this[i].nodeName === 'input' && eventName === 'click') ) {
+			// Some events need manual trigger, like element.focus() make sure the method exsits on given element
+			if( (manual && eventName in this[i]) || (this[i].nodeName === 'input' && eventName === 'click') ) {
 
 				this[i][eventName]();
 			}
@@ -3210,6 +3217,11 @@ PB.overwrite(PB.Request, {
 });
 
 /*
+PB.get('file.json', {foo: 'bar'}, function ( t ) {
+	
+	alert("Done!");
+});
+
 PB.each({get: 'GET', post: 'POST', put: 'PUT', del: 'DELETE'}, function ( key, value ) {
 	
 	// arguments -> url, data, success, error ?
@@ -3323,7 +3335,7 @@ PB.extend(Array, {
 	
 	isArray: function ( object) {
 		
-		return PB.is('Array', object);
+		return PB.type(object) === 'array';
 	}
 });
 
@@ -3511,8 +3523,14 @@ var doc = context.document,
 // Clear memory
 div = null;
 
+PB.ready(function () {
+
+	body = doc.body;
+});
+
 var ropacity = /alpha\(opacity=(.*)\)/i,
-	rpixel = /^-?[\d.]+px$/i;
+	rpixel = /^-?[\d.]+px$/i,
+	rnum = /^-?[\d.]/;
 
 // IE < 9 opacity support
 if( !supportsOpacityProperty ) {
@@ -3604,7 +3622,10 @@ if( !supportsGetComputedStyle ) {
 
 			// Awesomo trick! from http://blog.stchur.com/2006/09/20/converting-to-pixels-with-javascript/
 			// Calculate non pixel values
-			if( !/px$/.test(value) ) {
+
+			// Is not a pixel number
+			//if( value && !rpixel.test(value) && !rnum.test(value) ) {
+			if( value && (/em|%|pt/.test(value) || /border/.test(styleName)) ) {
 
 				div = document.createElement('div');
 				div.style.cssText = 'visbility: hidden; position: absolute; line-height: 0;';
@@ -3750,6 +3771,13 @@ if( legacyEventModel ) {
 			hook: function ( event, originalEvent ) {
 
 				event.target = originalEvent.srcElement || originalEvent.toElement;
+
+				// Add correct value for which
+				event.which = (event.keyCode === undefined) ? event.charCode : event.keyCode;
+
+				// Normalize mouse button codes..
+				// left: 0, middle: 1, right: 2
+				event.which = (event.which === 0 ? 1 : (event.which === 4 ? 2: (event.which === 2 ? 3 : event.which)));
 			}
 		},
 
@@ -3767,7 +3795,7 @@ if( legacyEventModel ) {
 				}
 
 				// Set which
-				event.which = (originalEvent.keyCode === undefined) ? originalEvent.charCode : originalEvent.keyCode;
+				event.which = originalEvent.keyCode || originalEvent.charCode;
 
 				// Normalize mousebutton codes to W3C standards
 				// Left: 0, Middle: 1, Right: 2
@@ -3781,8 +3809,8 @@ if( legacyEventModel ) {
 	 */
 	PB.$.Event.prototype.stopPropagation = function () {
 		
-		this.defaultPrevented = true;
-		this.cancelBubble = true;
+		this.originalEvent.defaultPrevented = true;
+		this.originalEvent.cancelBubble = true;
 	};
 
 	/**
@@ -3790,7 +3818,7 @@ if( legacyEventModel ) {
 	 */
 	PB.$.Event.prototype.preventDefault = function () {
 		
-		this.returnValue = false;
+		this.originalEvent.returnValue = false;
 	};
 
 	/**
