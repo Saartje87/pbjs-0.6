@@ -75,7 +75,7 @@ PB.extend(Array, {
 	
 	isArray: function ( object) {
 		
-		return PB.is('Array', object);
+		return PB.type(object) === 'array';
 	}
 });
 

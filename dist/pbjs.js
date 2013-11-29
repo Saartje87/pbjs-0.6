@@ -8,7 +8,7 @@
  * Copyright 2013 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-10-19 15:26
+ * Build date 2013-11-29 17:48
  */
 (function ( name, context, definition ) {
 	
@@ -3314,7 +3314,7 @@ PB.extend(Array, {
 	
 	isArray: function ( object) {
 		
-		return PB.is('Array', object);
+		return PB.type(object) === 'array';
 	}
 });
 
@@ -3501,6 +3501,11 @@ var doc = context.document,
 
 // Clear memory
 div = null;
+
+PB.ready(function () {
+
+	body = doc.body;
+});
 
 var ropacity = /alpha\(opacity=(.*)\)/i,
 	rpixel = /^-?[\d.]+px$/i,

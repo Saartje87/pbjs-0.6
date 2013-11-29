@@ -15,3 +15,8 @@ var doc = context.document,
 
 // Clear memory
 div = null;
+
+PB.ready(function () {
+
+	body = doc.body;
+});
