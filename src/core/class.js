@@ -1,129 +1,70 @@
-/*  // Set Const.prototype.__proto__ to Super.prototype
-  function inherit (Const, Super) {
-    function F () {}
-    F.prototype = Super.prototype;
-    Const.prototype = new F();
-    Const.prototype.constructor = Const;
-  }*/
-
 /**
  * Create a wrapper function that makes it possible to call the parent method
  * trough 'this.parent()'
  */
-function createClassResponser ( method, parentMethod ) {
+function createClassResponder ( method, parentMethod ) {
 
     return function () {
 
-        var _parent = this.parent,
-            result;
-
         this.parent = parentMethod;
 
-        result = method.apply( this, arguments );
-
-        this.parent = _parent;
-
-        return result;
+        return method.apply( this, arguments );
     };
 }
 
-/**
- * OOP in javascript, insprired by Prototypejs and Base
- *
- * If one argument is given it is used as base
- */
-PB.Class = function ( parentClass, base ) {
+PB.Class = function ( parentClass, baseProto ) {
 
-	var constructor,
-        klass,
-        name,
-        ancestor,
-        property,
-        parentPrototype;
+    var child, childProto, constructor,
+        name, prop, parentProp, parentProto, parentConstructor;
 
-        // Handle arguments
-	if( !base ) {
+    if( !baseProto ) {
 
-		base = parentClass;
-		parentClass = null;
-	} else {
-
-		parentPrototype = parentClass.prototype;
-	}
-
-	// Set our constructor
-	constructor = base.construct;
-
-    // Setup the class constructor
-    if( typeof constructor === 'function' ) {
-
-        if( parentClass && parentPrototype.construct ) {
-
-            klass = function () {
-
-                var _constructor = constructor;
-
-                constructor = function () {
-
-                    var _parent;
-
-                    if( !this ) {
-
-                        return _constructor.apply( this, arguments );
-                    }
-
-                    _parent = this.parent;
-
-                    this.parent = parentPrototype.construct;
-
-                    _constructor.apply( this, arguments );
-
-                    this.parent = _parent;
-                };
-
-                if( typeof constructor === 'function' ) {
-                    
-                    return constructor.apply( this, arguments );
-                }
-            };
-        } else {
-
-            klass = base.construct;
-        }
-    } else if ( parentClass && parentPrototype.construct ) {
-
-		klass = function () {
-
-			parentPrototype.construct.apply( this, arguments );
-		};
-    } else {
-
-		klass = function () {};
+        baseProto = parentClass;
+        parentClass = null;
     }
 
-	// Fill our prototype
-	for( name in base ) {
-		
-		if( base.hasOwnProperty(name) ) {
+    if( baseProto.construct || baseProto.constructor.toString().indexOf('Function()') > -1 ) {
 
-			property = base[name];
+        constructor = baseProto.construct || baseProto.constructor;
+    }
 
-			ancestor = parentClass ? parentPrototype[name] : false;
-
-			if( typeof ancestor === 'function' && typeof property === 'function' ) {
-
-				property = createClassResponser( property, ancestor );
-			}
-
-			klass.prototype[name] = property;
-		}
-	}
-    
-    // For every parent method / property thats not added
     if( parentClass ) {
 
-		PB.extend(klass.prototype, parentPrototype);
+        parentProto = parentClass.prototype;
+
+        if( constructor ) {
+
+            parentConstructor = parentClass;
+        } else {
+
+            constructor = parentClass;
+        }
     }
 
-	return klass;
+    child = constructor
+        ? function () { if( parentConstructor ) { this.parent = parentConstructor; }  return constructor.apply(this, arguments); }
+        : function () {};
+    
+    childProto = child.prototype;
+
+    // Fill our prototype
+    for( name in baseProto ) {
+        
+        if( baseProto.hasOwnProperty(name) && name !== 'construct' ) {
+
+            prop = baseProto[name];
+            parentProp = parentClass ? parentProto[name] : null;
+
+            if( parentProp && typeof prop === 'function' && typeof parentProp === 'function' ) {
+
+                prop = createClassResponder(prop, parentProp);
+            }
+
+            childProto[name] = prop;
+        }
+    }
+
+    PB.extend(childProto, parentProto);
+
+    return child;
 };
