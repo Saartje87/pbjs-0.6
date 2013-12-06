@@ -4,13 +4,13 @@
 
 ---
 
-### PB.$.Ready
+### PB.Ready
 
 Add callback for when the dom is ready for manipulation.
 
 ###### Signature
 ```js
-PB.$.ready(function ( PB ) {
+PB.ready(function ( PB ) {
 	
 	// Document ready to be touched
 });
