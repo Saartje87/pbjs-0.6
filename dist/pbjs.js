@@ -1,14 +1,14 @@
 /*!
- * pbjs JavaScript Framework v0.6.1
+ * pbjs JavaScript Framework v0.6.2
  * http://saartje87.github.com/pbjs
  *
  * Includes Qwery
  * https://github.com/ded/qwery
  *
- * Copyright 2013 Niek Saarberg
+ * Copyright 2014 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2013-12-05 11:05
+ * Build date 2014-04-07 15:51
  */
 (function ( name, context, definition ) {
 	
@@ -767,6 +767,46 @@ PB.overwrite(PB.$.fn, {
 		}
 
 		return this;
+	},
+
+	/**
+	 * Checks every element in the set.
+	 */
+	check: function () {
+
+		var i = 0,
+			elem;
+
+		for( ; i < this.length; i++ ) {
+
+			elem = this[i];
+
+			if( elem.checked === undefined ) {
+				continue;
+			}
+
+			elem.checked = true;
+		}
+	},
+
+	/**
+	 * Unchecks every element in the set.
+	 */
+	uncheck: function () {
+
+		var i = 0,
+			elem;
+
+		for( ; i < this.length; i++ ) {
+
+			elem = this[i];
+
+			if( elem.checked === undefined ) {
+				continue;
+			}
+
+			elem.checked = false;
+		}
 	},
 
 	/**
@@ -2239,7 +2279,7 @@ PB.overwrite(PB.$.fn, {
 		for( ; i < this.length; i++ ) {
 
 			// Some events need manual trigger, like element.focus() make sure the method exsits on given element
-			if( (manual && eventName in this[i]) || (this[i].nodeName === 'input' && eventName === 'click') ) {
+			if( (manual && eventName in this[i]) || (this[i].nodeName === 'INPUT' && eventName === 'click') ) {
 
 				this[i][eventName]();
 			}
@@ -3136,11 +3176,6 @@ PB.overwrite(PB.Request, {
 });
 
 /*
-PB.get('file.json', {foo: 'bar'}, function ( t ) {
-	
-	alert("Done!");
-});
-
 PB.each({get: 'GET', post: 'POST', put: 'PUT', del: 'DELETE'}, function ( key, value ) {
 	
 	// arguments -> url, data, success, error ?
