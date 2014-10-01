@@ -8,7 +8,7 @@
  * Copyright 2014 Niek Saarberg
  * Licensed MIT
  *
- * Build date 2014-04-07 15:51
+ * Build date 2014-10-01 12:10
  */
 (function ( name, context, definition ) {
 	
@@ -3163,7 +3163,15 @@ function parseQueryString ( str ) {
 		
 		part = entry.split('=');
 		
-		parts[decodeURIComponent(part[0])] = decodeURIComponent(part[1]);
+		// utf8 fail in decoding.. Escape works fine with utf8 strings..
+		try {
+
+			parts[decodeURIComponent(part[0])] = decodeURIComponent(part[1]);
+		} catch ( e ) {
+
+			parts[unescape(part[0])] = unescape(part[1]);
+		}
+		
 	});
 	
 	return parts;
