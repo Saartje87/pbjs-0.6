@@ -98,7 +98,7 @@ if( !supportsGetComputedStyle ) {
 			if( value && (/em|%|pt/.test(value) || /border/.test(styleName)) ) {
 
 				div = document.createElement('div');
-				div.style.cssText = 'visbility: hidden; position: absolute; line-height: 0;';
+				div.style.cssText = 'visibility: hidden; position: absolute; line-height: 0;';
 
 				// 
 				if( value === 'auto' || value.lastIndexOf('%') > 0 ) {
